@@ -1041,47 +1041,42 @@
                 transition: background-color 0.2s ease;
                 z-index: 10;
             }
-
-            .column-resizer:hover {
-                background-color: #007acc;
-            }
-
-            .column-resizer.resizing {
-                background-color: #007acc;
-            }
-
             /* Show all columns on desktop */
             .left-panel,
             .right-column,
             .risk-column,
             .settings-panel {
                 display: block !important;
-                position: static !important;
-                height: 100vh !important;
-                flex-shrink: 0;
             }
 
-            /* New proportional layout: divide screen into thirds */
-            /* Column A + D share 1/3, Column B gets 1/3, Column C gets 1/3 */
+            /* Fixed layout to prevent overflow - ensure all columns fit within viewport */
+            .desktop-layout {
+                max-width: 100vw;
+                overflow-x: hidden;
+            }
             
             .left-panel {
-                flex: 0 0 16.67%; /* Half of 1/3 = 1/6 of screen */
+                flex: 0 0 16.67%;
                 min-width: 200px;
+                max-width: 300px;
             }
 
             .right-column {
-                flex: 0 0 33.33%; /* 1/3 of screen */
+                flex: 1 1 33.33%;
                 min-width: 300px;
+                max-width: calc(100vw - 600px); /* Ensure space for other columns */
             }
 
             .risk-column {
-                flex: 0 0 33.33%; /* 1/3 of screen */
-                min-width: 400px;
+                flex: 1 1 33.33%;
+                min-width: 300px;
+                max-width: calc(100vw - 600px); /* Ensure space for other columns */
             }
 
             .settings-panel {
-                flex: 0 0 16.67%; /* Half of 1/3 = 1/6 of screen */
+                flex: 0 0 16.67%;
                 min-width: 200px;
+                max-width: 300px;
             }
 
             /* When settings are hidden, expand right column */
@@ -2285,6 +2280,13 @@
                             <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Fuel Weight (lbs/gal)</label>
                             <input type="number" step="0.1" id="customFuelWeight" value="6.0" placeholder="6.0" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
                         </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Fuel Burn Rate (gph)</label>
+                            <input type="number" step="0.1" id="customFuelBurn" placeholder="8.5" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div></div>
                     </div>
                     <div id="customFuelTankInputs"></div>
                 </div>
@@ -5375,6 +5377,7 @@ function loadCustomAircraftTemplate() {
     // Fuel configuration
     document.getElementById('customFuelTanks').value = '2';
     document.getElementById('customFuelWeight').value = '6.0';
+    document.getElementById('customFuelBurn').value = '8.5';
     updateCustomFuelTanks();
     
     // Set tank values after update
@@ -5433,6 +5436,7 @@ function saveCustomAircraft() {
         baggage2Arm: parseFloat(document.getElementById('customBaggage2Arm').value) || 0,
         baggage2Max: parseFloat(document.getElementById('customBaggage2Max').value) || 0,
         fuelWeight: parseFloat(document.getElementById('customFuelWeight').value) || 6.0,
+        fuelBurnRate: parseFloat(document.getElementById('customFuelBurn').value) || 0,
         fuelCapacity: parseFloat(document.getElementById('customFuelCapacity').value) || 0,
         
         // Collect fuel tank data
