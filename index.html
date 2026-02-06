@@ -2344,15 +2344,71 @@
             });
         }
 
+        // Debug function to log panel sizes (can be called from console)
+        window.debugPanelSizes = function debugPanelSizes() {
+            const panels = [
+                { name: 'Panel A (Data)', element: document.querySelector('.left-panel') },
+                { name: 'Panel B (Charts)', element: document.querySelector('.right-column') },
+                { name: 'Panel C (Risk Assessment)', element: document.querySelector('.risk-column') },
+                { name: 'Panel D (Settings)', element: document.querySelector('.settings-panel') }
+            ];
+            
+            console.log('=== PANEL SIZE DEBUG ===');
+            panels.forEach(panel => {
+                if (panel.element) {
+                    const rect = panel.element.getBoundingClientRect();
+                    const computedStyle = window.getComputedStyle(panel.element);
+                    console.log(`${panel.name}:`);
+                    console.log(`  Actual width: ${rect.width}px`);
+                    console.log(`  CSS width: ${computedStyle.width}`);
+                    console.log(`  CSS min-width: ${computedStyle.minWidth}`);
+                    console.log(`  CSS max-width: ${computedStyle.maxWidth}`);
+                    console.log(`  CSS flex: ${computedStyle.flex}`);
+                    console.log(`  CSS flex-shrink: ${computedStyle.flexShrink}`);
+                    console.log('---');
+                }
+            });
+            
+            // Check settings toggle button
+            const settingsToggle = document.querySelector('.settings-toggle');
+            if (settingsToggle) {
+                const toggleRect = settingsToggle.getBoundingClientRect();
+                console.log('Settings Toggle Button:');
+                console.log(`  Position: ${settingsToggle.style.position || 'default'}`);
+                console.log(`  Right: ${settingsToggle.style.right || 'default'}`);
+                console.log(`  Width: ${toggleRect.width}px`);
+                console.log('---');
+            }
+            
+            // Check desktop layout
+            const desktopLayout = document.querySelector('.desktop-layout');
+            if (desktopLayout) {
+                const layoutRect = desktopLayout.getBoundingClientRect();
+                const layoutStyle = window.getComputedStyle(desktopLayout);
+                console.log('Desktop Layout:');
+                console.log(`  Total width: ${layoutRect.width}px`);
+                console.log(`  CSS width: ${layoutStyle.width}`);
+                console.log(`  Overflow: ${layoutStyle.overflow}`);
+                console.log('---');
+            }
+            console.log('=== END DEBUG ===');
+        }
+
         // Initialize on page load
         window.addEventListener('DOMContentLoaded', function() {
             initializeMobileInterface();
             initializeColumnResizers();
             
+            // Debug panel sizes after initialization
+            setTimeout(() => {
+                debugPanelSizes();
+            }, 1000);
+            
             // Add resize event listener
             window.addEventListener('resize', function() {
                 setTimeout(() => {
                     drawCGChart();
+                    debugPanelSizes(); // Debug on resize too
                 }, 100);
             });
         });
