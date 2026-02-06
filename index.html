@@ -5398,194 +5398,193 @@ function loadCustomAircraftTemplate() {
 }
 
 function saveCustomAircraft() {
-        const aircraftName = document.getElementById('customAircraftName').value;
-        const aircraftModel = document.getElementById('customAircraftModel').value;
-        
-        if (!aircraftName || !aircraftModel) {
-            alert('Please enter aircraft name and model/type.');
-            return;
-        }
-        
-        // Collect all configuration data
-        const customAircraft = {
-            name: aircraftName,
-            model: aircraftModel,
-            type: 'CUSTOM',
-            emptyWeight: parseFloat(document.getElementById('customEmptyWeight').value) || 0,
-            emptyArm: parseFloat(document.getElementById('customEmptyArm').value) || 0,
-            maxWeight: parseFloat(document.getElementById('customMaxWeight').value) || 0,
-            forwardCG: parseFloat(document.getElementById('customForwardCG').value) || 0,
-            aftCG: parseFloat(document.getElementById('customAftCG').value) || 0,
-            pilotArm: parseFloat(document.getElementById('customPilotArm').value) || 0,
-            rearArm: parseFloat(document.getElementById('customRearArm').value) || 0,
-            baggage1Arm: parseFloat(document.getElementById('customBaggage1Arm').value) || 0,
-            baggage1Max: parseFloat(document.getElementById('customBaggage1Max').value) || 0,
-            baggage2Arm: parseFloat(document.getElementById('customBaggage2Arm').value) || 0,
-            baggage2Max: parseFloat(document.getElementById('customBaggage2Max').value) || 0,
-            fuelWeight: parseFloat(document.getElementById('customFuelWeight').value) || 6.0,
-            fuelCapacity: parseFloat(document.getElementById('customFuelCapacity').value) || 0,
-            
-            // Collect fuel tank data
-            fuelTanks: [],
-            
-            // V-speeds
-            vspeeds: {
-                vs0: parseInt(document.getElementById('customVs0').value) || 0,
-                vs1: parseInt(document.getElementById('customVs1').value) || 0,
-                vr: parseInt(document.getElementById('customVr').value) || 0,
-                vx: parseInt(document.getElementById('customVx').value) || 0,
-                vy: parseInt(document.getElementById('customVy').value) || 0,
-                va: parseInt(document.getElementById('customVa').value) || 0,
-                vno: parseInt(document.getElementById('customVno').value) || 0,
-                vne: parseInt(document.getElementById('customVne').value) || 0,
-                vfe: parseInt(document.getElementById('customVfe').value) || 0,
-                vmc: parseInt(document.getElementById('customVmc').value) || 0,
-                vyse: parseInt(document.getElementById('customVyse').value) || 0,
-                cruise: parseInt(document.getElementById('customCruiseSpeed').value) || 0
-            },
-            
-            // Performance data
-            performance: {
-                serviceCeiling: parseInt(document.getElementById('customServiceCeiling').value) || 0,
-                rateOfClimb: parseInt(document.getElementById('customRateOfClimb').value) || 0
-            },
-            
-            savedDate: new Date().toISOString()
-        };
+    const aircraftName = document.getElementById('customAircraftName').value;
+    const aircraftModel = document.getElementById('customAircraftModel').value;
+    
+    if (!aircraftName || !aircraftModel) {
+        alert('Please enter aircraft name and model/type.');
+        return;
+    }
+    
+    // Collect all configuration data
+    const customAircraft = {
+        name: aircraftName,
+        model: aircraftModel,
+        type: 'CUSTOM',
+        emptyWeight: parseFloat(document.getElementById('customEmptyWeight').value) || 0,
+        emptyArm: parseFloat(document.getElementById('customEmptyArm').value) || 0,
+        maxWeight: parseFloat(document.getElementById('customMaxWeight').value) || 0,
+        forwardCG: parseFloat(document.getElementById('customForwardCG').value) || 0,
+        aftCG: parseFloat(document.getElementById('customAftCG').value) || 0,
+        pilotArm: parseFloat(document.getElementById('customPilotArm').value) || 0,
+        rearArm: parseFloat(document.getElementById('customRearArm').value) || 0,
+        baggage1Arm: parseFloat(document.getElementById('customBaggage1Arm').value) || 0,
+        baggage1Max: parseFloat(document.getElementById('customBaggage1Max').value) || 0,
+        baggage2Arm: parseFloat(document.getElementById('customBaggage2Arm').value) || 0,
+        baggage2Max: parseFloat(document.getElementById('customBaggage2Max').value) || 0,
+        fuelWeight: parseFloat(document.getElementById('customFuelWeight').value) || 6.0,
+        fuelCapacity: parseFloat(document.getElementById('customFuelCapacity').value) || 0,
         
         // Collect fuel tank data
-        const numTanks = parseInt(document.getElementById('customFuelTanks').value);
-        for (let i = 1; i <= numTanks; i++) {
-            const capacity = parseFloat(document.getElementById(`customTank${i}Capacity`).value) || 0;
-            const arm = parseFloat(document.getElementById(`customTank${i}Arm`).value) || 0;
-            const unusable = parseFloat(document.getElementById(`customTank${i}Unusable`).value) || 0;
-            
-            customAircraft.fuelTanks.push({
-                capacity: capacity,
-                arm: arm,
-                unusable: unusable
-            });
-        }
+        fuelTanks: [],
         
-        try {
-            // Save to localStorage
-            const savedCustomAircraft = JSON.parse(localStorage.getItem('wb_custom_aircraft') || '{}');
-            savedCustomAircraft[aircraftName] = customAircraft;
-            localStorage.setItem('wb_custom_aircraft', JSON.stringify(savedCustomAircraft));
-            
-            // Add to aircraft specs for immediate use
-            aircraftSpecs[`CUSTOM_${aircraftName.replace(/\s+/g, '_')}`] = {
-                emptyWeight: customAircraft.emptyWeight,
-                emptyArm: customAircraft.emptyArm,
-                maxWeight: customAircraft.maxWeight,
-                forwardCG: customAircraft.forwardCG,
-                aftCG: customAircraft.aftCG,
-                pilotArm: customAircraft.pilotArm,
-                rearArm: customAircraft.rearArm,
-                baggage1Arm: customAircraft.baggage1Arm,
-                baggage1Max: customAircraft.baggage1Max,
-                baggage2Arm: customAircraft.baggage2Arm,
-                baggage2Max: customAircraft.baggage2Max,
-                fuelArm: customAircraft.fuelTanks.length > 0 ? customAircraft.fuelTanks[0].arm : 48.0,
-                fuelWeight: customAircraft.fuelWeight,
-                vspeeds: customAircraft.vspeeds,
-                performance: customAircraft.performance,
-                fuelTanks: customAircraft.fuelTanks,
-                isCustom: true
-            };
-            
-            // Update aircraft type dropdown to include custom aircraft
-            updateAircraftTypeDropdown();
-            
-            alert(`Custom aircraft "${aircraftName}" saved successfully!`);
-            hideCustomAircraftBuilder();
-            
-        } catch (error) {
-            alert('Error saving custom aircraft: ' + error.message);
-        }
-    }
-
-function updateAircraftTypeDropdown() {
-        const customAircraft = JSON.parse(localStorage.getItem('wb_custom_aircraft') || '{}');
-        const dropdowns = document.querySelectorAll('#aircraftType, #aircraftType-mobile');
+        // V-speeds
+        vspeeds: {
+            vs0: parseInt(document.getElementById('customVs0').value) || 0,
+            vs1: parseInt(document.getElementById('customVs1').value) || 0,
+            vr: parseInt(document.getElementById('customVr').value) || 0,
+            vx: parseInt(document.getElementById('customVx').value) || 0,
+            vy: parseInt(document.getElementById('customVy').value) || 0,
+            va: parseInt(document.getElementById('customVa').value) || 0,
+            vno: parseInt(document.getElementById('customVno').value) || 0,
+            vne: parseInt(document.getElementById('customVne').value) || 0,
+            vfe: parseInt(document.getElementById('customVfe').value) || 0,
+            vmc: parseInt(document.getElementById('customVmc').value) || 0,
+            vyse: parseInt(document.getElementById('customVyse').value) || 0,
+            cruise: parseInt(document.getElementById('customCruiseSpeed').value) || 0
+        },
         
-        dropdowns.forEach(dropdown => {
-            // Remove existing custom options
-            const options = dropdown.querySelectorAll('option[data-custom="true"]');
-            options.forEach(option => option.remove());
-            
-            // Add custom aircraft options
-            Object.keys(customAircraft).forEach(name => {
-                const option = document.createElement('option');
-                option.value = `CUSTOM_${name.replace(/\s+/g, '_')}`;
-                option.textContent = `${name} (Custom)`;
-                option.setAttribute('data-custom', 'true');
-                dropdown.appendChild(option);
-            });
+        // Performance data
+        performance: {
+            serviceCeiling: parseInt(document.getElementById('customServiceCeiling').value) || 0,
+            rateOfClimb: parseInt(document.getElementById('customRateOfClimb').value) || 0
+        },
+        
+        savedDate: new Date().toISOString()
+    };
+    
+    // Collect fuel tank data
+    const numTanks = parseInt(document.getElementById('customFuelTanks').value);
+    for (let i = 1; i <= numTanks; i++) {
+        const capacity = parseFloat(document.getElementById(`customTank${i}Capacity`).value) || 0;
+        const arm = parseFloat(document.getElementById(`customTank${i}Arm`).value) || 0;
+        const unusable = parseFloat(document.getElementById(`customTank${i}Unusable`).value) || 0;
+        
+        customAircraft.fuelTanks.push({
+            capacity: capacity,
+            arm: arm,
+            unusable: unusable
         });
     }
+    
+    try {
+        // Save to localStorage
+        const savedCustomAircraft = JSON.parse(localStorage.getItem('wb_custom_aircraft') || '{}');
+        savedCustomAircraft[aircraftName] = customAircraft;
+        localStorage.setItem('wb_custom_aircraft', JSON.stringify(savedCustomAircraft));
+        
+        // Add to aircraft specs for immediate use
+        aircraftSpecs[`CUSTOM_${aircraftName.replace(/\s+/g, '_')}`] = {
+            emptyWeight: customAircraft.emptyWeight,
+            emptyArm: customAircraft.emptyArm,
+            maxWeight: customAircraft.maxWeight,
+            forwardCG: customAircraft.forwardCG,
+            aftCG: customAircraft.aftCG,
+            pilotArm: customAircraft.pilotArm,
+            rearArm: customAircraft.rearArm,
+            baggage1Arm: customAircraft.baggage1Arm,
+            baggage1Max: customAircraft.baggage1Max,
+            baggage2Arm: customAircraft.baggage2Arm,
+            baggage2Max: customAircraft.baggage2Max,
+            fuelArm: customAircraft.fuelTanks.length > 0 ? customAircraft.fuelTanks[0].arm : 48.0,
+            fuelWeight: customAircraft.fuelWeight,
+            vspeeds: customAircraft.vspeeds,
+            performance: customAircraft.performance,
+            fuelTanks: customAircraft.fuelTanks,
+            isCustom: true
+        };
+        
+        // Update aircraft type dropdown to include custom aircraft
+        updateAircraftTypeDropdown();
+        
+        alert(`Custom aircraft "${aircraftName}" saved successfully!`);
+        hideCustomAircraftBuilder();
+        
+    } catch (error) {
+        alert('Error saving custom aircraft: ' + error.message);
+    }
+}
+
+function updateAircraftTypeDropdown() {
+    const customAircraft = JSON.parse(localStorage.getItem('wb_custom_aircraft') || '{}');
+    const dropdowns = document.querySelectorAll('#aircraftType, #aircraftType-mobile');
+    
+    dropdowns.forEach(dropdown => {
+        // Remove existing custom options
+        const options = dropdown.querySelectorAll('option[data-custom="true"]');
+        options.forEach(option => option.remove());
+        
+        // Add custom aircraft options
+        Object.keys(customAircraft).forEach(name => {
+            const option = document.createElement('option');
+            option.value = `CUSTOM_${name.replace(/\s+/g, '_')}`;
+            option.textContent = `${name} (Custom)`;
+            option.setAttribute('data-custom', 'true');
+            dropdown.appendChild(option);
+        });
+    });
+}
 
 function loadCustomAircraft(customKey) {
-        const customAircraft = JSON.parse(localStorage.getItem('wb_custom_aircraft') || '{}');
-        const aircraftName = customKey.replace('CUSTOM_', '').replace(/_/g, ' ');
-        const aircraft = customAircraft[aircraftName];
+    const customAircraft = JSON.parse(localStorage.getItem('wb_custom_aircraft') || '{}');
+    const aircraftName = customKey.replace('CUSTOM_', '').replace(/_/g, ' ');
+    const aircraft = customAircraft[aircraftName];
+    
+    if (aircraft) {
+        // Populate the calculator with custom aircraft data
+        document.getElementById('emptyWeight').value = aircraft.emptyWeight;
+        document.getElementById('emptyArm').value = aircraft.emptyArm;
         
-        if (aircraft) {
-            // Populate the calculator with custom aircraft data
-            document.getElementById('emptyWeight').value = aircraft.emptyWeight;
-            document.getElementById('emptyArm').value = aircraft.emptyArm;
-            
-            // Update displays
-            updateWeightBalanceCalculations();
-            
-            // Show custom aircraft info in performance section
-            displayCustomAircraftInfo(aircraft);
-        }
+        // Update displays
+        updateWeightBalanceCalculations();
+        
+        // Show custom aircraft info in performance section
+        displayCustomAircraftInfo(aircraft);
     }
+}
 
 function displayCustomAircraftInfo(aircraft) {
-        // Update performance displays with custom aircraft data
-        const performanceSection = document.querySelector('.info-grid');
-        if (performanceSection && aircraft.vspeeds) {
-            // Create custom performance display
-            let customInfo = '<div style="background-color: #3a3a3a; padding: 15px; border-radius: 8px; margin-top: 10px;">';
-            customInfo += `<h4 style="color: #4CAF50; margin-bottom: 10px;">${aircraft.name} - Custom Aircraft</h4>`;
-            customInfo += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">';
-            
-            // V-speeds column
-            customInfo += '<div><h5 style="color: #e0e0e0; margin-bottom: 8px;">V-Speeds</h5>';
-            if (aircraft.vspeeds.vs0) customInfo += `<div style="color: #ccc; font-size: 12px;">Vs0: ${aircraft.vspeeds.vs0} kts</div>`;
-            if (aircraft.vspeeds.vs1) customInfo += `<div style="color: #ccc; font-size: 12px;">Vs1: ${aircraft.vspeeds.vs1} kts</div>`;
-            if (aircraft.vspeeds.vr) customInfo += `<div style="color: #ccc; font-size: 12px;">Vr: ${aircraft.vspeeds.vr} kts</div>`;
-            if (aircraft.vspeeds.vx) customInfo += `<div style="color: #ccc; font-size: 12px;">Vx: ${aircraft.vspeeds.vx} kts</div>`;
-            if (aircraft.vspeeds.vy) customInfo += `<div style="color: #ccc; font-size: 12px;">Vy: ${aircraft.vspeeds.vy} kts</div>`;
-            if (aircraft.vspeeds.va) customInfo += `<div style="color: #ccc; font-size: 12px;">Va: ${aircraft.vspeeds.va} kts</div>`;
-            if (aircraft.vspeeds.vno) customInfo += `<div style="color: #ccc; font-size: 12px;">Vno: ${aircraft.vspeeds.vno} kts</div>`;
-            if (aircraft.vspeeds.vne) customInfo += `<div style="color: #ccc; font-size: 12px;">Vne: ${aircraft.vspeeds.vne} kts</div>`;
-            customInfo += '</div>';
-            
-            // Limits column
-            customInfo += '<div><h5 style="color: #e0e0e0; margin-bottom: 8px;">Limits</h5>';
-            customInfo += `<div style="color: #ccc; font-size: 12px;">Max Weight: ${aircraft.maxWeight} lbs</div>`;
-            customInfo += `<div style="color: #ccc; font-size: 12px;">Forward CG: ${aircraft.forwardCG} in</div>`;
-            customInfo += `<div style="color: #ccc; font-size: 12px;">Aft CG: ${aircraft.aftCG} in</div>`;
-            if (aircraft.performance.serviceCeiling) customInfo += `<div style="color: #ccc; font-size: 12px;">Service Ceiling: ${aircraft.performance.serviceCeiling} ft</div>`;
-            if (aircraft.performance.rateOfClimb) customInfo += `<div style="color: #ccc; font-size: 12px;">Rate of Climb: ${aircraft.performance.rateOfClimb} fpm</div>`;
-            customInfo += '</div>';
-            
-            customInfo += '</div></div>';
-            
-            // Insert after existing performance data
-            const existingCustomInfo = document.getElementById('customAircraftInfo');
-            if (existingCustomInfo) {
-                existingCustomInfo.remove();
-            }
-            
-            const customDiv = document.createElement('div');
-            customDiv.id = 'customAircraftInfo';
-            customDiv.innerHTML = customInfo;
-            performanceSection.appendChild(customDiv);
+    // Update performance displays with custom aircraft data
+    const performanceSection = document.querySelector('.info-grid');
+    if (performanceSection && aircraft.vspeeds) {
+        // Create custom performance display
+        let customInfo = '<div style="background-color: #3a3a3a; padding: 15px; border-radius: 8px; margin-top: 10px;">';
+        customInfo += `<h4 style="color: #4CAF50; margin-bottom: 10px;">${aircraft.name} - Custom Aircraft</h4>`;
+        customInfo += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">';
+        
+        // V-speeds column
+        customInfo += '<div><h5 style="color: #e0e0e0; margin-bottom: 8px;">V-Speeds</h5>';
+        if (aircraft.vspeeds.vs0) customInfo += `<div style="color: #ccc; font-size: 12px;">Vs0: ${aircraft.vspeeds.vs0} kts</div>`;
+        if (aircraft.vspeeds.vs1) customInfo += `<div style="color: #ccc; font-size: 12px;">Vs1: ${aircraft.vspeeds.vs1} kts</div>`;
+        if (aircraft.vspeeds.vr) customInfo += `<div style="color: #ccc; font-size: 12px;">Vr: ${aircraft.vspeeds.vr} kts</div>`;
+        if (aircraft.vspeeds.vx) customInfo += `<div style="color: #ccc; font-size: 12px;">Vx: ${aircraft.vspeeds.vx} kts</div>`;
+        if (aircraft.vspeeds.vy) customInfo += `<div style="color: #ccc; font-size: 12px;">Vy: ${aircraft.vspeeds.vy} kts</div>`;
+        if (aircraft.vspeeds.va) customInfo += `<div style="color: #ccc; font-size: 12px;">Va: ${aircraft.vspeeds.va} kts</div>`;
+        if (aircraft.vspeeds.vno) customInfo += `<div style="color: #ccc; font-size: 12px;">Vno: ${aircraft.vspeeds.vno} kts</div>`;
+        if (aircraft.vspeeds.vne) customInfo += `<div style="color: #ccc; font-size: 12px;">Vne: ${aircraft.vspeeds.vne} kts</div>`;
+        customInfo += '</div>';
+        
+        // Limits column
+        customInfo += '<div><h5 style="color: #e0e0e0; margin-bottom: 8px;">Limits</h5>';
+        customInfo += `<div style="color: #ccc; font-size: 12px;">Max Weight: ${aircraft.maxWeight} lbs</div>`;
+        customInfo += `<div style="color: #ccc; font-size: 12px;">Forward CG: ${aircraft.forwardCG} in</div>`;
+        customInfo += `<div style="color: #ccc; font-size: 12px;">Aft CG: ${aircraft.aftCG} in</div>`;
+        if (aircraft.performance.serviceCeiling) customInfo += `<div style="color: #ccc; font-size: 12px;">Service Ceiling: ${aircraft.performance.serviceCeiling} ft</div>`;
+        if (aircraft.performance.rateOfClimb) customInfo += `<div style="color: #ccc; font-size: 12px;">Rate of Climb: ${aircraft.performance.rateOfClimb} fpm</div>`;
+        customInfo += '</div>';
+        
+        customInfo += '</div></div>';
+        
+        // Insert after existing performance data
+        const existingCustomInfo = document.getElementById('customAircraftInfo');
+        if (existingCustomInfo) {
+            existingCustomInfo.remove();
         }
+        
+        const customDiv = document.createElement('div');
+        customDiv.id = 'customAircraftInfo';
+        customDiv.innerHTML = customInfo;
+        performanceSection.appendChild(customDiv);
     }
 }
 
