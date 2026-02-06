@@ -490,13 +490,18 @@
 
         .risk-row.stacked .risk-content {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
+            gap: 0;
         }
 
         .risk-row.stacked .risk-buttons {
             margin-left: 160px; /* Same as risk-label min-width to maintain alignment */
-            flex: 1;
+            margin-right: auto;
+        }
+
+        .risk-row.stacked .risk-total {
+            margin-left: auto;
         }
 
         .risk-label {
