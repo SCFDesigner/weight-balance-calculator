@@ -935,12 +935,13 @@
             }
 
             .column-resizer {
-                width: 4px;
+                width: 6px;
                 background-color: #555;
                 cursor: col-resize;
                 position: relative;
                 flex-shrink: 0;
                 transition: background-color 0.2s ease;
+                z-index: 10;
             }
 
             .column-resizer:hover {
@@ -962,29 +963,27 @@
                 flex-shrink: 0;
             }
 
+            /* New proportional layout: divide screen into thirds */
+            /* Column A + D share 1/3, Column B gets 1/3, Column C gets 1/3 */
+            
             .left-panel {
-                width: 340px;
-                min-width: 340px;
-                flex-shrink: 0;
+                flex: 0 0 16.67%; /* Half of 1/3 = 1/6 of screen */
+                min-width: 200px;
             }
 
             .right-column {
-                flex: 1;
-                min-width: 350px;
-                max-width: 500px;
-                width: auto;
+                flex: 0 0 33.33%; /* 1/3 of screen */
+                min-width: 300px;
             }
 
             .risk-column {
-                width: 520px;
-                min-width: 520px;
-                flex-shrink: 0;
+                flex: 0 0 33.33%; /* 1/3 of screen */
+                min-width: 400px;
             }
 
             .settings-panel {
-                width: 300px;
-                min-width: 300px;
-                flex-shrink: 0;
+                flex: 0 0 16.67%; /* Half of 1/3 = 1/6 of screen */
+                min-width: 200px;
             }
 
             /* When settings are hidden, expand right column */
@@ -1091,6 +1090,7 @@
     <!-- Desktop Layout -->
     <div class="desktop-layout" style="display: flex; width: 100%; height: 100vh;">
         <div class="left-panel">
+            <div class="column-width-debug" style="background: rgba(76, 175, 80, 0.2); color: #4CAF50; text-align: center; padding: 5px; font-weight: bold; font-size: 12px; border-bottom: 1px solid #555;">Column A: <span id="width-a">0px</span></div>
         <!-- Section 0: Aircraft Type -->
         <div class="input-section">
             <div class="input-group">
@@ -1281,6 +1281,7 @@
 
     <!-- Right Column Container -->
     <div class="right-column">
+        <div class="column-width-debug" style="background: rgba(33, 150, 243, 0.2); color: #2196F3; text-align: center; padding: 5px; font-weight: bold; font-size: 12px; border-bottom: 1px solid #555;">Column B: <span id="width-b">0px</span></div>
         <!-- Zulu Time Calculator Panel -->
         <div class="time-panel">
             <div class="time-grid">
@@ -1575,6 +1576,7 @@
 
     <!-- Risk Assessment Column (Column C) -->
     <div class="risk-column">
+        <div class="column-width-debug" style="background: rgba(255, 152, 0, 0.2); color: #FF9800; text-align: center; padding: 5px; font-weight: bold; font-size: 12px; border-bottom: 1px solid #555;">Column C: <span id="width-c">0px</span></div>
         <!-- Pilot Panel -->
         <div class="risk-panel">
             <div class="risk-panel-title">Pilot</div>
@@ -1990,6 +1992,7 @@
 
     <!-- Settings Panel (Column D) -->
     <div class="settings-panel" style="padding: 20px; background-color: #2a2a2a; overflow-y: auto; height: 100vh; border-left: 1px solid #555;">
+        <div class="column-width-debug" style="background: rgba(156, 39, 176, 0.2); color: #9C27B0; text-align: center; padding: 5px; font-weight: bold; font-size: 12px; border-bottom: 1px solid #555; margin: -20px -20px 15px -20px;">Column D: <span id="width-d">0px</span></div>
         <h2 style="color: #4CAF50; margin-bottom: 20px; font-size: 18px;">Settings</h2>
         
         <!-- User Profile Section -->
@@ -2344,6 +2347,28 @@
             });
         }
 
+        // Update width displays in real-time
+        function updateWidthDisplays() {
+            const panels = [
+                { id: 'width-a', element: document.querySelector('.left-panel') },
+                { id: 'width-b', element: document.querySelector('.right-column') },
+                { id: 'width-c', element: document.querySelector('.risk-column') },
+                { id: 'width-d', element: document.querySelector('.settings-panel') }
+            ];
+            
+            panels.forEach(panel => {
+                if (panel.element) {
+                    const rect = panel.element.getBoundingClientRect();
+                    const widthDisplay = document.getElementById(panel.id);
+                    if (widthDisplay) {
+                        const screenWidth = window.innerWidth;
+                        const percentage = ((rect.width / screenWidth) * 100).toFixed(1);
+                        widthDisplay.textContent = `${Math.round(rect.width)}px (${percentage}%)`;
+                    }
+                }
+            });
+        }
+
         // Debug function to log panel sizes (can be called from console)
         window.debugPanelSizes = function debugPanelSizes() {
             const panels = [
@@ -2354,43 +2379,24 @@
             ];
             
             console.log('=== PANEL SIZE DEBUG ===');
+            const screenWidth = window.innerWidth;
+            console.log(`Screen Width: ${screenWidth}px`);
+            console.log('---');
+            
             panels.forEach(panel => {
                 if (panel.element) {
                     const rect = panel.element.getBoundingClientRect();
                     const computedStyle = window.getComputedStyle(panel.element);
+                    const percentage = ((rect.width / screenWidth) * 100).toFixed(1);
                     console.log(`${panel.name}:`);
-                    console.log(`  Actual width: ${rect.width}px`);
-                    console.log(`  CSS width: ${computedStyle.width}`);
-                    console.log(`  CSS min-width: ${computedStyle.minWidth}`);
-                    console.log(`  CSS max-width: ${computedStyle.maxWidth}`);
+                    console.log(`  Actual width: ${rect.width}px (${percentage}%)`);
                     console.log(`  CSS flex: ${computedStyle.flex}`);
-                    console.log(`  CSS flex-shrink: ${computedStyle.flexShrink}`);
+                    console.log(`  CSS min-width: ${computedStyle.minWidth}`);
                     console.log('---');
                 }
             });
             
-            // Check settings toggle button
-            const settingsToggle = document.querySelector('.settings-toggle');
-            if (settingsToggle) {
-                const toggleRect = settingsToggle.getBoundingClientRect();
-                console.log('Settings Toggle Button:');
-                console.log(`  Position: ${settingsToggle.style.position || 'default'}`);
-                console.log(`  Right: ${settingsToggle.style.right || 'default'}`);
-                console.log(`  Width: ${toggleRect.width}px`);
-                console.log('---');
-            }
-            
-            // Check desktop layout
-            const desktopLayout = document.querySelector('.desktop-layout');
-            if (desktopLayout) {
-                const layoutRect = desktopLayout.getBoundingClientRect();
-                const layoutStyle = window.getComputedStyle(desktopLayout);
-                console.log('Desktop Layout:');
-                console.log(`  Total width: ${layoutRect.width}px`);
-                console.log(`  CSS width: ${layoutStyle.width}`);
-                console.log(`  Overflow: ${layoutStyle.overflow}`);
-                console.log('---');
-            }
+            updateWidthDisplays();
             console.log('=== END DEBUG ===');
         }
 
@@ -2399,8 +2405,9 @@
             initializeMobileInterface();
             initializeColumnResizers();
             
-            // Debug panel sizes after initialization
+            // Update width displays after initialization
             setTimeout(() => {
+                updateWidthDisplays();
                 debugPanelSizes();
             }, 1000);
             
@@ -2408,9 +2415,12 @@
             window.addEventListener('resize', function() {
                 setTimeout(() => {
                     drawCGChart();
-                    debugPanelSizes(); // Debug on resize too
+                    updateWidthDisplays(); // Update displays on resize
                 }, 100);
             });
+            
+            // Update width displays periodically and on column resize
+            setInterval(updateWidthDisplays, 500);
         });
     </script>
 
