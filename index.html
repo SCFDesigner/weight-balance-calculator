@@ -976,8 +976,8 @@
             }
 
             .settings-panel {
-                width: 340px;
-                min-width: 340px;
+                width: 300px;
+                min-width: 300px;
                 flex-shrink: 0;
             }
 
@@ -2306,12 +2306,12 @@
                         minWidthLeft = 480;
                     }
                     
-                    // Settings panel should match left panel
+                    // Settings panel minimum width
                     if (rightColumn && rightColumn.classList.contains('settings-panel')) {
-                        minWidthRight = 300;
+                        minWidthRight = 250;
                     }
                     if (leftColumn && leftColumn.classList.contains('settings-panel')) {
-                        minWidthLeft = 300;
+                        minWidthLeft = 250;
                     }
                     
                     if (newLeftWidth >= minWidthLeft && newRightWidth >= minWidthRight) {
