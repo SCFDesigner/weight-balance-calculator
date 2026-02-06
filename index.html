@@ -1687,112 +1687,130 @@
                 <div class="risk-total">Total</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Illness</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('pilot-illness', 1)" data-value="1">no</button>
-                    <button class="risk-btn" disabled data-value="2"></button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-illness', 3)" data-value="3">minor</button>
-                    <button class="risk-btn" disabled data-value="4"></button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-illness', 5)" data-value="5">major</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('pilot-illness', 1)" data-value="1">no</button>
+                        <button class="risk-btn" disabled data-value="2"></button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-illness', 3)" data-value="3">minor</button>
+                        <button class="risk-btn" disabled data-value="4"></button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-illness', 5)" data-value="5">major</button>
+                    </div>
+                    <div class="risk-total" id="pilot-illness-total">0</div>
                 </div>
-                <div class="risk-total" id="pilot-illness-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Medication</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('pilot-medication', 1)" data-value="1">no</button>
-                    <button class="risk-btn" disabled data-value="2"></button>
-                    <button class="risk-btn" disabled data-value="3"></button>
-                    <button class="risk-btn" disabled data-value="4"></button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-medication', 5)" data-value="5">yes</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('pilot-medication', 1)" data-value="1">no</button>
+                        <button class="risk-btn" disabled data-value="2"></button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-medication', 3)" data-value="3">yes</button>
+                        <button class="risk-btn" disabled data-value="4"></button>
+                        <button class="risk-btn" disabled data-value="5"></button>
+                    </div>
+                    <div class="risk-total" id="pilot-medication-total">0</div>
                 </div>
-                <div class="risk-total" id="pilot-medication-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Stress</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('pilot-stress', 1)" data-value="1">no</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-stress', 2)" data-value="2">low</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-stress', 3)" data-value="3">med</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-stress', 4)" data-value="4">high</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-stress', 5)" data-value="5">severe</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('pilot-stress', 1)" data-value="1">no</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-stress', 2)" data-value="2">low</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-stress', 3)" data-value="3">med</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-stress', 4)" data-value="4">high</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-stress', 5)" data-value="5">severe</button>
+                    </div>
+                    <div class="risk-total" id="pilot-stress-total">0</div>
                 </div>
-                <div class="risk-total" id="pilot-stress-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Alcohol (last 24 hrs)</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('pilot-alcohol', 1)" data-value="1">no</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-alcohol', 2)" data-value="2">>20hr</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-alcohol', 3)" data-value="3">>18hr</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-alcohol', 4)" data-value="4">>12hr</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-alcohol', 5)" data-value="5">≥12hr</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('pilot-alcohol', 1)" data-value="1">no</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-alcohol', 2)" data-value="2">>20hr</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-alcohol', 3)" data-value="3">>18hr</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-alcohol', 4)" data-value="4">>12hr</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-alcohol', 5)" data-value="5">≥12hr</button>
+                    </div>
+                    <div class="risk-total" id="pilot-alcohol-total">0</div>
                 </div>
-                <div class="risk-total" id="pilot-alcohol-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Fatigue (hrs of sleep)</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('pilot-fatigue', 1)" data-value="1">>8</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-fatigue', 2)" data-value="2">6-8</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-fatigue', 3)" data-value="3">5-6</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-fatigue', 4)" data-value="4">4-5</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-fatigue', 5)" data-value="5"><6</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('pilot-fatigue', 1)" data-value="1">>8</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-fatigue', 2)" data-value="2">6-8</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-fatigue', 3)" data-value="3">5-6</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-fatigue', 4)" data-value="4">4-5</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-fatigue', 5)" data-value="5"><6</button>
+                    </div>
+                    <div class="risk-total" id="pilot-fatigue-total">0</div>
                 </div>
-                <div class="risk-total" id="pilot-fatigue-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Eating (hrs since last)</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('pilot-eating', 1)" data-value="1"><2</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-eating', 2)" data-value="2">2-4</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-eating', 3)" data-value="3">4-5</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-eating', 4)" data-value="4">5-6</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-eating', 5)" data-value="5">>6</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('pilot-eating', 1)" data-value="1"><2</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-eating', 2)" data-value="2">2-4</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-eating', 3)" data-value="3">4-5</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-eating', 4)" data-value="4">5-6</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-eating', 5)" data-value="5">>6</button>
+                    </div>
+                    <div class="risk-total" id="pilot-eating-total">0</div>
                 </div>
-                <div class="risk-total" id="pilot-eating-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Emotion</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('pilot-emotion', 1)" data-value="1">low</button>
-                    <button class="risk-btn" disabled data-value="2"></button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-emotion', 3)" data-value="3">med</button>
-                    <button class="risk-btn" disabled data-value="4"></button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-emotion', 5)" data-value="5">high</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('pilot-emotion', 1)" data-value="1">low</button>
+                        <button class="risk-btn" disabled data-value="2"></button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-emotion', 3)" data-value="3">med</button>
+                        <button class="risk-btn" disabled data-value="4"></button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-emotion', 5)" data-value="5">high</button>
+                    </div>
+                    <div class="risk-total" id="pilot-emotion-total">0</div>
                 </div>
-                <div class="risk-total" id="pilot-emotion-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Days in a row at Academy</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('pilot-academy', 1)" data-value="1">≤2</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-academy', 2)" data-value="2">3</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-academy', 3)" data-value="3">4</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-academy', 4)" data-value="4">5</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-academy', 5)" data-value="5">≥6</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('pilot-academy', 1)" data-value="1">≤2</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-academy', 2)" data-value="2">3</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-academy', 3)" data-value="3">4</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-academy', 4)" data-value="4">5</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-academy', 5)" data-value="5">≥6</button>
+                    </div>
+                    <div class="risk-total" id="pilot-academy-total">0</div>
                 </div>
-                <div class="risk-total" id="pilot-academy-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Currency for Flt (days)</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('pilot-currency', 1)" data-value="1"><1</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-currency', 2)" data-value="2"><15</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-currency', 3)" data-value="3"><30</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-currency', 4)" data-value="4"><45</button>
-                    <button class="risk-btn" onclick="selectRisk('pilot-currency', 5)" data-value="5"><60</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('pilot-currency', 1)" data-value="1"><1</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-currency', 2)" data-value="2"><15</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-currency', 3)" data-value="3"><30</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-currency', 4)" data-value="4"><45</button>
+                        <button class="risk-btn" onclick="selectRisk('pilot-currency', 5)" data-value="5"><60</button>
+                    </div>
+                    <div class="risk-total" id="pilot-currency-total">0</div>
                 </div>
-                <div class="risk-total" id="pilot-currency-total">0</div>
             </div>
             
             <div class="risk-row" style="border-top: 1px solid #555; padding-top: 15px; margin-top: 15px;">
@@ -1817,28 +1835,32 @@
                 <div class="risk-total">Total</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Single eng. Aircraft (fpm)</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('aircraft-single', 1)" data-value="1">≥550</button>
-                    <button class="risk-btn" onclick="selectRisk('aircraft-single', 2)" data-value="2">≥450</button>
-                    <button class="risk-btn" onclick="selectRisk('aircraft-single', 3)" data-value="3">≥350</button>
-                    <button class="risk-btn" onclick="selectRisk('aircraft-single', 4)" data-value="4">≥250</button>
-                    <button class="risk-btn" onclick="selectRisk('aircraft-single', 5)" data-value="5"><250</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('aircraft-single', 1)" data-value="1">≥550</button>
+                        <button class="risk-btn" onclick="selectRisk('aircraft-single', 2)" data-value="2">≥450</button>
+                        <button class="risk-btn" onclick="selectRisk('aircraft-single', 3)" data-value="3">≥350</button>
+                        <button class="risk-btn" onclick="selectRisk('aircraft-single', 4)" data-value="4">≥250</button>
+                        <button class="risk-btn" onclick="selectRisk('aircraft-single', 5)" data-value="5"><250</button>
+                    </div>
+                    <div class="risk-total" id="aircraft-single-total">0</div>
                 </div>
-                <div class="risk-total" id="aircraft-single-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Multi Eng. W/ OEI (fpm)</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('aircraft-multi', 1)" data-value="1">≥200</button>
-                    <button class="risk-btn" onclick="selectRisk('aircraft-multi', 2)" data-value="2">≥150</button>
-                    <button class="risk-btn" onclick="selectRisk('aircraft-multi', 3)" data-value="3">≥100</button>
-                    <button class="risk-btn" onclick="selectRisk('aircraft-multi', 4)" data-value="4">≥50</button>
-                    <button class="risk-btn" onclick="selectRisk('aircraft-multi', 5)" data-value="5"><50</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('aircraft-multi', 1)" data-value="1">≥200</button>
+                        <button class="risk-btn" onclick="selectRisk('aircraft-multi', 2)" data-value="2">≥150</button>
+                        <button class="risk-btn" onclick="selectRisk('aircraft-multi', 3)" data-value="3">≥100</button>
+                        <button class="risk-btn" onclick="selectRisk('aircraft-multi', 4)" data-value="4">≥50</button>
+                        <button class="risk-btn" onclick="selectRisk('aircraft-multi', 5)" data-value="5"><50</button>
+                    </div>
+                    <div class="risk-total" id="aircraft-multi-total">0</div>
                 </div>
-                <div class="risk-total" id="aircraft-multi-total">0</div>
             </div>
             
             <div class="risk-row stacked">
@@ -1855,16 +1877,18 @@
                 </div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Time to Next MX (hrs)</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('aircraft-mx', 1)" data-value="1">>10</button>
-                    <button class="risk-btn" onclick="selectRisk('aircraft-mx', 2)" data-value="2">10-8</button>
-                    <button class="risk-btn" onclick="selectRisk('aircraft-mx', 3)" data-value="3">8-5</button>
-                    <button class="risk-btn" onclick="selectRisk('aircraft-mx', 4)" data-value="4">5-1.5</button>
-                    <button class="risk-btn" onclick="selectRisk('aircraft-mx', 5)" data-value="5"><1.5</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('aircraft-mx', 1)" data-value="1">>10</button>
+                        <button class="risk-btn" onclick="selectRisk('aircraft-mx', 2)" data-value="2">10-8</button>
+                        <button class="risk-btn" onclick="selectRisk('aircraft-mx', 3)" data-value="3">8-5</button>
+                        <button class="risk-btn" onclick="selectRisk('aircraft-mx', 4)" data-value="4">5-1.5</button>
+                        <button class="risk-btn" onclick="selectRisk('aircraft-mx', 5)" data-value="5"><1.5</button>
+                    </div>
+                    <div class="risk-total" id="aircraft-mx-total">0</div>
                 </div>
-                <div class="risk-total" id="aircraft-mx-total">0</div>
             </div>
             
             <div class="risk-row" style="border-top: 1px solid #555; padding-top: 15px; margin-top: 15px;">
@@ -1889,100 +1913,116 @@
                 <div class="risk-total">Total</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Mission Duration >3hrs</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('env-duration', 1)" data-value="1">no</button>
-                    <button class="risk-btn" disabled data-value="2"></button>
-                    <button class="risk-btn" onclick="selectRisk('env-duration', 3)" data-value="3">yes</button>
-                    <button class="risk-btn" disabled data-value="4"></button>
-                    <button class="risk-btn" disabled data-value="5"></button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('env-duration', 1)" data-value="1">no</button>
+                        <button class="risk-btn" disabled data-value="2"></button>
+                        <button class="risk-btn" onclick="selectRisk('env-duration', 3)" data-value="3">yes</button>
+                        <button class="risk-btn" disabled data-value="4"></button>
+                        <button class="risk-btn" disabled data-value="5"></button>
+                    </div>
+                    <div class="risk-total" id="env-duration-total">0</div>
                 </div>
-                <div class="risk-total" id="env-duration-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Back to Back Flights</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('env-backtoback', 1)" data-value="1">no</button>
-                    <button class="risk-btn" disabled data-value="2"></button>
-                    <button class="risk-btn" onclick="selectRisk('env-backtoback', 3)" data-value="3">yes</button>
-                    <button class="risk-btn" disabled data-value="4"></button>
-                    <button class="risk-btn" disabled data-value="5"></button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('env-backtoback', 1)" data-value="1">no</button>
+                        <button class="risk-btn" disabled data-value="2"></button>
+                        <button class="risk-btn" onclick="selectRisk('env-backtoback', 3)" data-value="3">yes</button>
+                        <button class="risk-btn" disabled data-value="4"></button>
+                        <button class="risk-btn" disabled data-value="5"></button>
+                    </div>
+                    <div class="risk-total" id="env-backtoback-total">0</div>
                 </div>
-                <div class="risk-total" id="env-backtoback-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Going to new airport</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('env-newairport', 1)" data-value="1">no</button>
-                    <button class="risk-btn" disabled data-value="2"></button>
-                    <button class="risk-btn" onclick="selectRisk('env-newairport', 3)" data-value="3">yes</button>
-                    <button class="risk-btn" disabled data-value="4"></button>
-                    <button class="risk-btn" disabled data-value="5"></button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('env-newairport', 1)" data-value="1">no</button>
+                        <button class="risk-btn" disabled data-value="2"></button>
+                        <button class="risk-btn" onclick="selectRisk('env-newairport', 3)" data-value="3">yes</button>
+                        <button class="risk-btn" disabled data-value="4"></button>
+                        <button class="risk-btn" disabled data-value="5"></button>
+                    </div>
+                    <div class="risk-total" id="env-newairport-total">0</div>
                 </div>
-                <div class="risk-total" id="env-newairport-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Departure visibility (sm)</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('env-depvis', 1)" data-value="1">≥6 sm</button>
-                    <button class="risk-btn" onclick="selectRisk('env-depvis', 2)" data-value="2">5 sm</button>
-                    <button class="risk-btn" onclick="selectRisk('env-depvis', 3)" data-value="3">4 sm</button>
-                    <button class="risk-btn" onclick="selectRisk('env-depvis', 4)" data-value="4">3 sm</button>
-                    <button class="risk-btn" onclick="selectRisk('env-depvis', 5)" data-value="5"><3 sm</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('env-depvis', 1)" data-value="1">≥6 sm</button>
+                        <button class="risk-btn" onclick="selectRisk('env-depvis', 2)" data-value="2">5 sm</button>
+                        <button class="risk-btn" onclick="selectRisk('env-depvis', 3)" data-value="3">4 sm</button>
+                        <button class="risk-btn" onclick="selectRisk('env-depvis', 4)" data-value="4">3 sm</button>
+                        <button class="risk-btn" onclick="selectRisk('env-depvis', 5)" data-value="5"><3 sm</button>
+                    </div>
+                    <div class="risk-total" id="env-depvis-total">0</div>
                 </div>
-                <div class="risk-total" id="env-depvis-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Departure Ceiling (ft)</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('env-depceil', 1)" data-value="1">≥5000</button>
-                    <button class="risk-btn" onclick="selectRisk('env-depceil', 2)" data-value="2">≥3000</button>
-                    <button class="risk-btn" onclick="selectRisk('env-depceil', 3)" data-value="3">≥1500</button>
-                    <button class="risk-btn" onclick="selectRisk('env-depceil', 4)" data-value="4">≥800</button>
-                    <button class="risk-btn" onclick="selectRisk('env-depceil', 5)" data-value="5"><800</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('env-depceil', 1)" data-value="1">≥5000</button>
+                        <button class="risk-btn" onclick="selectRisk('env-depceil', 2)" data-value="2">≥3000</button>
+                        <button class="risk-btn" onclick="selectRisk('env-depceil', 3)" data-value="3">≥1500</button>
+                        <button class="risk-btn" onclick="selectRisk('env-depceil', 4)" data-value="4">≥800</button>
+                        <button class="risk-btn" onclick="selectRisk('env-depceil', 5)" data-value="5"><800</button>
+                    </div>
+                    <div class="risk-total" id="env-depceil-total">0</div>
                 </div>
-                <div class="risk-total" id="env-depceil-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Destination Visibility (sm)</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('env-destvis', 1)" data-value="1">≥6 sm</button>
-                    <button class="risk-btn" onclick="selectRisk('env-destvis', 2)" data-value="2">5 sm</button>
-                    <button class="risk-btn" onclick="selectRisk('env-destvis', 3)" data-value="3">4 sm</button>
-                    <button class="risk-btn" onclick="selectRisk('env-destvis', 4)" data-value="4">3 sm</button>
-                    <button class="risk-btn" onclick="selectRisk('env-destvis', 5)" data-value="5"><3 sm</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('env-destvis', 1)" data-value="1">≥6 sm</button>
+                        <button class="risk-btn" onclick="selectRisk('env-destvis', 2)" data-value="2">5 sm</button>
+                        <button class="risk-btn" onclick="selectRisk('env-destvis', 3)" data-value="3">4 sm</button>
+                        <button class="risk-btn" onclick="selectRisk('env-destvis', 4)" data-value="4">3 sm</button>
+                        <button class="risk-btn" onclick="selectRisk('env-destvis', 5)" data-value="5"><3 sm</button>
+                    </div>
+                    <div class="risk-total" id="env-destvis-total">0</div>
                 </div>
-                <div class="risk-total" id="env-destvis-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Destination Ceiling (ft)</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('env-destceil', 1)" data-value="1">≥5000</button>
-                    <button class="risk-btn" onclick="selectRisk('env-destceil', 2)" data-value="2">≥3000</button>
-                    <button class="risk-btn" onclick="selectRisk('env-destceil', 3)" data-value="3">≥1500</button>
-                    <button class="risk-btn" onclick="selectRisk('env-destceil', 4)" data-value="4">≥800</button>
-                    <button class="risk-btn" onclick="selectRisk('env-destceil', 5)" data-value="5"><800</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('env-destceil', 1)" data-value="1">≥5000</button>
+                        <button class="risk-btn" onclick="selectRisk('env-destceil', 2)" data-value="2">≥3000</button>
+                        <button class="risk-btn" onclick="selectRisk('env-destceil', 3)" data-value="3">≥1500</button>
+                        <button class="risk-btn" onclick="selectRisk('env-destceil', 4)" data-value="4">≥800</button>
+                        <button class="risk-btn" onclick="selectRisk('env-destceil', 5)" data-value="5"><800</button>
+                    </div>
+                    <div class="risk-total" id="env-destceil-total">0</div>
                 </div>
-                <div class="risk-total" id="env-destceil-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">X-wind as % of max</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('env-xwind', 1)" data-value="1"><20%</button>
-                    <button class="risk-btn" onclick="selectRisk('env-xwind', 2)" data-value="2">20-49%</button>
-                    <button class="risk-btn" onclick="selectRisk('env-xwind', 3)" data-value="3">50-79%</button>
-                    <button class="risk-btn" onclick="selectRisk('env-xwind', 4)" data-value="4">80-99%</button>
-                    <button class="risk-btn" onclick="selectRisk('env-xwind', 5)" data-value="5">≥100%</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('env-xwind', 1)" data-value="1"><20%</button>
+                        <button class="risk-btn" onclick="selectRisk('env-xwind', 2)" data-value="2">20-49%</button>
+                        <button class="risk-btn" onclick="selectRisk('env-xwind', 3)" data-value="3">50-79%</button>
+                        <button class="risk-btn" onclick="selectRisk('env-xwind', 4)" data-value="4">80-99%</button>
+                        <button class="risk-btn" onclick="selectRisk('env-xwind', 5)" data-value="5">≥100%</button>
+                    </div>
+                    <div class="risk-total" id="env-xwind-total">0</div>
                 </div>
-                <div class="risk-total" id="env-xwind-total">0</div>
             </div>
             
             <div class="risk-row" style="border-top: 1px solid #555; padding-top: 15px; margin-top: 15px;">
@@ -2049,28 +2089,32 @@
                 </div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Mission # for the day</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('ext-mission', 1)" data-value="1">1st</button>
-                    <button class="risk-btn" onclick="selectRisk('ext-mission', 2)" data-value="2">2nd</button>
-                    <button class="risk-btn" onclick="selectRisk('ext-mission', 3)" data-value="3">3rd</button>
-                    <button class="risk-btn" onclick="selectRisk('ext-mission', 4)" data-value="4">4th</button>
-                    <button class="risk-btn" onclick="selectRisk('ext-mission', 5)" data-value="5">5th</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('ext-mission', 1)" data-value="1">1st</button>
+                        <button class="risk-btn" onclick="selectRisk('ext-mission', 2)" data-value="2">2nd</button>
+                        <button class="risk-btn" onclick="selectRisk('ext-mission', 3)" data-value="3">3rd</button>
+                        <button class="risk-btn" onclick="selectRisk('ext-mission', 4)" data-value="4">4th</button>
+                        <button class="risk-btn" onclick="selectRisk('ext-mission', 5)" data-value="5">5th</button>
+                    </div>
+                    <div class="risk-total" id="ext-mission-total">0</div>
                 </div>
-                <div class="risk-total" id="ext-mission-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Mission type</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('ext-type', 1)" data-value="1">Dual</button>
-                    <button class="risk-btn" onclick="selectRisk('ext-type', 2)" data-value="2">Solo</button>
-                    <button class="risk-btn" onclick="selectRisk('ext-type', 3)" data-value="3">Night</button>
-                    <button class="risk-btn" onclick="selectRisk('ext-type', 4)" data-value="4">IMC</button>
-                    <button class="risk-btn" onclick="selectRisk('ext-type', 5)" data-value="5">LIFR</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('ext-type', 1)" data-value="1">Dual</button>
+                        <button class="risk-btn" onclick="selectRisk('ext-type', 2)" data-value="2">Solo</button>
+                        <button class="risk-btn" onclick="selectRisk('ext-type', 3)" data-value="3">Night</button>
+                        <button class="risk-btn" onclick="selectRisk('ext-type', 4)" data-value="4">IMC</button>
+                        <button class="risk-btn" onclick="selectRisk('ext-type', 5)" data-value="5">LIFR</button>
+                    </div>
+                    <div class="risk-total" id="ext-type-total">0</div>
                 </div>
-                <div class="risk-total" id="ext-type-total">0</div>
             </div>
             
             <div class="risk-row" style="border-top: 1px solid #555; padding-top: 15px; margin-top: 15px;">
