@@ -2845,7 +2845,10 @@
             const mobileSelect = document.getElementById('aircraftType-mobile');
             if (mobileSelect) mobileSelect.value = aircraftType;
             
-            if (aircraftType && aircraftSpecs[aircraftType]) {
+            // Handle custom aircraft selection
+            if (aircraftType && aircraftType.startsWith('CUSTOM_')) {
+                loadCustomAircraft(aircraftType);
+            } else if (aircraftType && aircraftSpecs[aircraftType]) {
                 populateAircraftSpecificValues(aircraftType);
             }
         });
@@ -2864,7 +2867,10 @@
                 const desktopSelect = document.getElementById('aircraftType');
                 if (desktopSelect) desktopSelect.value = aircraftType;
                 
-                if (aircraftType && aircraftSpecs[aircraftType]) {
+                // Handle custom aircraft selection
+                if (aircraftType && aircraftType.startsWith('CUSTOM_')) {
+                    loadCustomAircraft(aircraftType);
+                } else if (aircraftType && aircraftSpecs[aircraftType]) {
                     populateAircraftSpecificValues(aircraftType);
                 }
             });
@@ -4578,17 +4584,21 @@
             // Initialize input field event listeners
             initializeInputFields();
             
+            // Load saved custom aircraft into dropdown
+            updateAircraftTypeDropdown();
+            
             // Load saved data and trigger initial calculations
             loadPersistedData();
             
             // Initialize charts for both desktop and mobile
             setTimeout(() => {
                 updateCGLimitsDisplay();
+                drawCGChart();
                 // Force chart redraw on window resize (mobile orientation changes)
                 window.addEventListener('resize', () => {
                     setTimeout(updateCGLimitsDisplay, 100);
                 });
-            }, 100);
+            }, 200);
             
             console.log('Application initialization complete');
         }
