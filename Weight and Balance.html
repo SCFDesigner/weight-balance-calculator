@@ -1,0 +1,4231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>P2006T Weight & Balance Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2a2a2a;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .left-panel {
+            width: 340px;
+            min-width: 340px;
+            padding: 20px;
+            background-color: #2a2a2a;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .input-section {
+            background-color: #3a3a3a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Time panel styling */
+        .time-panel {
+            background-color: #3a3a3a;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            box-sizing: border-box;
+            width: 100%;
+            min-height: fit-content;
+            height: auto;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .time-item {
+            background-color: #4a4a4a;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .time-label {
+            font-size: 11px;
+            color: #ccc;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .time-value {
+            font-size: 14px;
+            color: #4CAF50;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .input-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #e0e0e0;
+            min-width: 120px;
+        }
+
+        .input-field {
+            background-color: #4a4a4a;
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #ffffff;
+            font-size: 14px;
+            min-width: 110px;
+            max-width: 110px;
+            width: 110px;
+            -webkit-appearance: textfield;
+            -moz-appearance: textfield;
+        }
+
+        .input-field::-webkit-outer-spin-button,
+        .input-field::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #007acc;
+            background-color: #505050;
+            box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+        }
+
+        .input-field::placeholder {
+            color: #888;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #2a2a2a;
+            overflow-y: auto;
+        }
+
+        .section-divider {
+            height: 1px;
+            background-color: #555;
+            margin: 15px 0;
+        }
+
+        .right-panel {
+            background-color: #3a3a3a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .tail-number-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .calculator-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        .data-table th {
+            background-color: #4a4a4a;
+            color: #ffffff;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid #555;
+        }
+
+        .data-table td {
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            padding: 8px 12px;
+            border: 1px solid #555;
+            font-size: 14px;
+        }
+
+        .data-table tr:nth-child(even) td {
+            background-color: #404040;
+        }
+
+        .panel-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #404040;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .info-label {
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .airspeed-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .airspeed-item {
+            background-color: #404040;
+            padding: 6px 8px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 12px;
+            color: #e0e0e0;
+        }
+
+        .time-panel {
+            background-color: #3a3a3a;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .time-item {
+            text-align: center;
+            background-color: #404040;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .time-label {
+            font-size: 12px;
+            color: #cccccc;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .time-value {
+            font-size: 18px;
+            color: #ffffff;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        .select-field {
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .select-field:focus {
+            border-color: #007acc;
+            box-shadow: 0 0 8px rgba(0, 122, 204, 0.3);
+        }
+
+        /* Bottom Navigation - Floating Style */
+        .bottom-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background-color: #3a3a3a;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 10px;
+            border-radius: 50px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            border: 1px solid #555;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #cccccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            font-size: 12px;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .nav-button:hover {
+            color: #4CAF50;
+        }
+
+        .nav-button.active {
+            color: #4CAF50;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        /* Tab Content Areas */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Right Column (Second Column) */
+        .right-column {
+            flex: 1;
+            padding: 20px;
+            background-color: #2a2a2a;
+            overflow-y: auto;
+            height: 100vh;
+            min-width: 400px;
+        }
+
+        /* CG Chart container with 16:10 aspect ratio */
+        .cg-chart-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 62.5%; /* 16:10 aspect ratio (10/16 = 0.625) */
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .cg-chart-container canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Settings Panel (Third Column) */
+        .settings-panel {
+            width: 350px;
+            min-width: 350px;
+            padding: 20px;
+            background-color: #2a2a2a;
+            overflow-y: auto;
+            height: 100vh;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Hidden settings panel */
+        .settings-panel.settings-hidden {
+            display: none;
+        }
+
+        /* Desktop layout when settings are collapsed */
+        .desktop-layout.settings-collapsed .right-column {
+            flex: 1;
+            max-width: none;
+        }
+
+        /* Floating Settings Toggle */
+        .settings-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .settings-toggle:hover {
+            background-color: #45a049;
+            transform: scale(1.1);
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            html, body {
+                margin: 0;
+                padding: 0;
+                height: 100vh;
+                overflow: hidden;
+                background-color: #1a1a1a;
+            }
+
+            /* Desktop layout becomes mobile column container */
+            .desktop-layout {
+                display: flex !important;
+                height: calc(100vh - 80px);
+                overflow: hidden;
+                transition: transform 0.3s ease;
+                width: 100vw;
+                position: relative;
+            }
+
+            /* Hide all columns by default on mobile */
+            .left-panel,
+            .right-column,
+            .settings-panel {
+                display: none;
+                width: 100vw !important;
+                height: 100%;
+                overflow-y: auto;
+                overflow-x: hidden;
+                padding: 10px;
+                box-sizing: border-box;
+                position: relative;
+            }
+
+            /* Compact mobile panel spacing */
+            .left-panel .input-section,
+            .right-column .input-section {
+                padding: 12px;
+                margin-bottom: 10px;
+            }
+
+            .left-panel .input-group,
+            .right-column .input-group {
+                margin-bottom: 8px;
+            }
+
+            .left-panel .right-panel,
+            .right-column .right-panel {
+                margin-bottom: 12px;
+                padding: 12px;
+            }
+
+            .left-panel .panel-title,
+            .right-column .panel-title {
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+
+            /* Compact settings panel for mobile */
+            .settings-panel {
+                padding: 8px !important;
+            }
+
+            .settings-panel .input-section {
+                padding: 10px;
+                margin-bottom: 8px;
+            }
+
+            .settings-panel .input-group {
+                margin-bottom: 6px;
+            }
+
+            .settings-panel h2 {
+                font-size: 16px !important;
+                margin-bottom: 12px !important;
+            }
+
+            .settings-panel button {
+                padding: 8px 12px !important;
+                font-size: 12px !important;
+                margin: 2px !important;
+            }
+
+            /* Compact data tables on mobile */
+            .data-table {
+                font-size: 11px;
+                margin-bottom: 10px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 4px 6px;
+            }
+
+            /* Compact info grids on mobile */
+            .info-grid {
+                gap: 6px;
+                margin-bottom: 8px;
+            }
+
+            .info-item {
+                padding: 6px 8px;
+            }
+
+            .info-label,
+            .info-value {
+                font-size: 11px;
+            }
+
+            /* Compact airspeed grid on mobile */
+            .airspeed-grid {
+                gap: 6px;
+                margin-bottom: 8px;
+            }
+
+            .airspeed-item {
+                padding: 6px 8px;
+            }
+
+            .airspeed-label,
+            .airspeed-value {
+                font-size: 11px;
+            }
+
+            /* Responsive time panel on mobile */
+            .time-panel {
+                margin-bottom: 10px;
+                padding: 10px;
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+                min-height: fit-content;
+            }
+
+            .time-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                width: 100%;
+            }
+
+            .time-item {
+                padding: 8px 6px;
+                background-color: #4a4a4a;
+                border-radius: 6px;
+                text-align: center;
+                min-width: 0;
+                box-sizing: border-box;
+            }
+
+            .time-label {
+                font-size: 9px;
+                color: #ccc;
+                margin-bottom: 2px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .time-value {
+                font-size: 11px;
+                font-weight: bold;
+                color: #4CAF50;
+                font-family: 'Courier New', monospace;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* Responsive chart container */
+            .chart-container {
+                height: 200px !important;
+                margin-bottom: 10px;
+            }
+
+            .chart-container canvas {
+                max-width: 100%;
+                height: 100% !important;
+            }
+
+            /* CG Chart responsive on mobile */
+            .cg-chart-container {
+                padding-bottom: 62.5%; /* Maintain 16:10 aspect ratio */
+                margin-bottom: 15px;
+            }
+
+            /* Responsive data table */
+            .data-table-container {
+                overflow-x: auto;
+                margin-bottom: 10px;
+            }
+
+            .data-table {
+                min-width: 300px;
+                width: 100%;
+            }
+
+            /* Compact button layouts */
+            .button-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                margin-bottom: 8px;
+            }
+
+            .button-row button {
+                flex: 1;
+                min-width: 80px;
+                padding: 6px 8px;
+                font-size: 11px;
+            }
+
+            /* Show specific columns based on mobile state */
+            .desktop-layout.mobile-show-left .left-panel {
+                display: block !important;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 10;
+            }
+
+            .desktop-layout.mobile-show-left .right-column,
+            .desktop-layout.mobile-show-left .settings-panel {
+                display: none !important;
+            }
+
+            .desktop-layout.mobile-show-right .right-column {
+                display: block !important;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 10;
+            }
+
+            .desktop-layout.mobile-show-right .left-panel,
+            .desktop-layout.mobile-show-right .settings-panel {
+                display: none !important;
+            }
+
+            .desktop-layout.mobile-show-settings .settings-panel {
+                display: block !important;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 10;
+            }
+
+            .desktop-layout.mobile-show-settings .left-panel,
+            .desktop-layout.mobile-show-settings .right-column {
+                display: none !important;
+            }
+
+            /* Mobile Navigation */
+            .mobile-nav {
+                display: flex !important;
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                background-color: #2a2a2a;
+                height: 80px;
+                z-index: 1000;
+                border-top: 1px solid #333;
+            }
+
+            /* Hide settings toggle on mobile */
+            .settings-toggle {
+                display: none !important;
+            }
+
+            .mobile-nav-btn {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: none;
+                border: none;
+                color: #888;
+                cursor: pointer;
+                padding: 10px;
+                transition: color 0.3s ease;
+            }
+
+            .mobile-nav-btn.active {
+                color: #4CAF50;
+            }
+
+            .mobile-nav-btn:hover {
+                color: #4CAF50;
+            }
+
+            .nav-icon {
+                font-size: 20px;
+                margin-bottom: 4px;
+            }
+
+            /* Ensure mobile columns scale properly */
+            .left-panel,
+            .right-column,
+            .settings-panel {
+                font-size: 14px;
+            }
+
+            .input-field, .select-field {
+                font-size: 16px; /* Prevents zoom on iOS */
+                padding: 12px;
+                min-height: 44px; /* iOS touch target minimum */
+            }
+        }
+
+        /* Desktop - hide mobile elements */
+        @media (min-width: 769px) {
+            .mobile-nav {
+                display: none;
+            }
+
+            .desktop-layout {
+                display: flex;
+                width: 100vw;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            /* Show all columns on desktop */
+            .left-panel,
+            .right-column,
+            .settings-panel {
+                display: block !important;
+                position: static !important;
+                height: 100vh !important;
+                flex-shrink: 0;
+            }
+
+            .left-panel {
+                width: 340px !important;
+                min-width: 340px !important;
+                flex-shrink: 0 !important;
+            }
+
+            .right-column {
+                flex: 1 !important;
+                min-width: 400px !important;
+                width: auto !important;
+            }
+
+            .settings-panel {
+                width: 350px !important;
+                min-width: 350px !important;
+                flex-shrink: 0 !important;
+            }
+
+            /* When settings are hidden, expand right column */
+            .desktop-layout.settings-collapsed .settings-panel {
+                display: none !important;
+            }
+
+            .desktop-layout.settings-collapsed .right-column {
+                flex: 1 !important;
+                max-width: none !important;
+                width: auto !important;
+            }
+
+            /* Reset mobile classes for desktop */
+            .desktop-layout.mobile-show-left .left-panel,
+            .desktop-layout.mobile-show-right .right-column,
+            .desktop-layout.mobile-show-settings .settings-panel {
+                display: block !important;
+            }
+        }
+
+        /* Landscape orientation adjustments */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .time-grid {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+            }
+
+            .chart-container {
+                height: 200px;
+            }
+        }
+
+        /* Very narrow screen adjustments */
+        @media (max-width: 480px) {
+            .time-panel {
+                padding: 8px;
+                margin: 10px 0;
+                height: auto;
+                min-height: fit-content;
+            }
+
+            .time-grid {
+                gap: 6px;
+            }
+
+            .time-item {
+                padding: 6px 4px;
+            }
+
+            .time-label {
+                font-size: 8px;
+            }
+
+            .time-value {
+                font-size: 10px;
+            }
+        }
+
+        /* Extra narrow screen - stack time items vertically */
+        @media (max-width: 320px) {
+            .time-panel {
+                padding: 10px;
+                margin: 8px 0;
+                height: auto;
+                min-height: fit-content;
+            }
+
+            .time-grid {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+
+            .time-item {
+                padding: 10px;
+                width: 100%;
+            }
+
+            .time-label {
+                font-size: 9px;
+            }
+
+            .time-value {
+                font-size: 11px;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .input-field:focus,
+            .select-field:focus {
+                transform: scale(1.02);
+                transition: transform 0.2s ease;
+            }
+
+            /* Larger touch targets */
+            button, .input-field, .select-field {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Desktop Layout -->
+    <div class="desktop-layout" style="display: flex; width: 100%; height: 100vh;">
+        <div class="left-panel">
+        <!-- Section 0: Aircraft Type -->
+        <div class="input-section">
+            <div class="input-group">
+                <label class="input-label">Aircraft Type</label>
+                <select class="select-field" id="aircraftType">
+                    <option value="">Select Aircraft</option>
+                    <option value="C-152">C-152</option>
+                    <option value="C-172">C-172</option>
+                    <option value="P2006T">P2006T</option>
+                    <option value="P2010">P2010</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Section 1: Tail Number -->
+        <div class="input-section">
+            <div class="input-group">
+                <label class="input-label"><a href="https://app.flightschedulepro.com/" target="_blank" style="color: #4CAF50; text-decoration: none;">Tail Number</a></label>
+                <input type="text" class="input-field" id="tailNumber" placeholder="">
+            </div>
+        </div>
+
+        <!-- Section 2: Weight & Personal Info -->
+        <div class="input-section">
+            <div class="input-group">
+                <label class="input-label">Weight</label>
+                <input type="number" class="input-field" id="weight" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Arm</label>
+                <input type="number" class="input-field" id="arm" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Moment</label>
+                <input type="number" class="input-field" id="moment" placeholder="">
+            </div>
+            <div class="section-divider"></div>
+            <div class="input-group">
+                <label class="input-label">My Weight</label>
+                <input type="number" class="input-field" id="myWeight" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">My Bag</label>
+                <input type="number" class="input-field" id="myBag" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Instructor Weight</label>
+                <input type="number" class="input-field" id="instructorWeight" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Instructor Bag</label>
+                <input type="number" class="input-field" id="instructorBag" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Baggage 1</label>
+                <input type="number" class="input-field" id="baggage1" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Baggage 2</label>
+                <input type="number" class="input-field" id="baggage2" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Fuel</label>
+                <input type="number" class="input-field" id="fuel" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Time</label>
+                <input type="text" class="input-field" id="time" placeholder="">
+            </div>
+        </div>
+
+        <!-- Section 3: Maintenance -->
+        <div class="input-section">
+            <div class="input-group">
+                <label class="input-label">50 Hr</label>
+                <input type="text" class="input-field" id="hr50" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">100 Hr</label>
+                <input type="text" class="input-field" id="hr100" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">AD</label>
+                <input type="text" class="input-field" id="ad1" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">AD</label>
+                <input type="text" class="input-field" id="ad2" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Annual</label>
+                <input type="text" class="input-field" id="annual" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Regist</label>
+                <input type="text" class="input-field" id="regist" placeholder="">
+            </div>
+        </div>
+
+        <!-- Section 4: Weather -->
+        <div class="input-section">
+            <div class="input-group">
+                <label class="input-label"><a href="https://www.1800wxbrief.com" target="_blank" style="color: #4CAF50; text-decoration: none;">Weather Observation</a></label>
+                <input type="text" class="input-field" id="weatherObs" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Wind Direction</label>
+                <input type="number" class="input-field" id="windDirection" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Wind Speed</label>
+                <input type="number" class="input-field" id="windSpeed" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Visibility</label>
+                <input type="number" class="input-field" id="visibility" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Weather</label>
+                <input type="text" class="input-field" id="weather" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Temperature</label>
+                <input type="number" class="input-field" id="temperature" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Dewpoint</label>
+                <input type="number" class="input-field" id="dewpoint" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Altimeter</label>
+                <input type="number" class="input-field" id="altimeter" placeholder="" step="0.01">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Headwind</label>
+                <input type="number" class="input-field" id="headwind" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Crosswind</label>
+                <input type="number" class="input-field" id="crosswind" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Field Elevation</label>
+                <input type="number" class="input-field" id="fieldElevation" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Pressure Altitude</label>
+                <input type="number" class="input-field" id="pressureAltitude" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Density Altitude</label>
+                <input type="number" class="input-field" id="densityAltitude" placeholder="">
+            </div>
+        </div>
+
+        <!-- Section 5: Runway & Performance -->
+        <div class="input-section">
+            <div class="input-group">
+                <label class="input-label">Rwy Hdg</label>
+                <input type="number" class="input-field" id="runwayHeading" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Takeoff GR</label>
+                <input type="number" class="input-field" id="takeoffGR" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">T/O Dist. (50')</label>
+                <input type="number" class="input-field" id="fiftyFtObst" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">RW Length</label>
+                <input type="number" class="input-field" id="runwayLength" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Landing GR</label>
+                <input type="number" class="input-field" id="landingGR" placeholder="">
+            </div>
+            <div class="input-group">
+                <label class="input-label">LDG Dist. (50')</label>
+                <input type="number" class="input-field" id="landingDist50" placeholder="">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Right Column Container -->
+    <div class="right-column">
+        <!-- Zulu Time Calculator Panel -->
+        <div class="time-panel">
+            <div class="time-grid">
+                <div class="time-item">
+                    <div class="time-label">Local Time</div>
+                    <div class="time-value" id="localTime">--:--:--</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-label">Zulu Time (UTC)</div>
+                    <div class="time-value" id="zuluTime">--:--:--</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-label">Local Date</div>
+                    <div class="time-value" id="localDate">--/--/----</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-label">Zulu Date</div>
+                    <div class="time-value" id="zuluDate">--/--/----</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weight & Balance Calculator Panel -->
+        <div class="right-panel">
+            <div class="tail-number-display" id="tailNumberDisplay">N</div>
+            <div class="calculator-title">Weight & Balance Calculator - <span id="aircraftTypeDisplay" style="color: #cccccc;"></span></div>
+            
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Weight (Lbs)</th>
+                        <th>Arm</th>
+                        <th>Moment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Item">Basic Empty Weight</td>
+                        <td data-label="Weight (lbs)"></td>
+                        <td data-label="Arm (in)"></td>
+                        <td data-label="Moment (in-lbs)"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Item">Front Seats</td>
+                        <td data-label="Weight (lbs)"></td>
+                        <td data-label="Arm (in)"></td>
+                        <td data-label="Moment (in-lbs)"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Item">Rear Seats</td>
+                        <td data-label="Weight (lbs)"></td>
+                        <td data-label="Arm (in)"></td>
+                        <td data-label="Moment (in-lbs)"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Item">Baggage 1</td>
+                        <td data-label="Weight (lbs)"></td>
+                        <td data-label="Arm (in)"></td>
+                        <td data-label="Moment (in-lbs)"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Item">Baggage 2</td>
+                        <td data-label="Weight (lbs)"></td>
+                        <td data-label="Arm (in)"></td>
+                        <td data-label="Moment (in-lbs)"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Item">Zero Fuel Weight</td>
+                        <td data-label="Weight (lbs)"></td>
+                        <td data-label="Arm (in)"></td>
+                        <td data-label="Moment (in-lbs)"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Item">Fuel</td>
+                        <td data-label="Weight (lbs)"></td>
+                        <td data-label="Arm (in)"></td>
+                        <td data-label="Moment (in-lbs)"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Item">Ramp Weight</td>
+                        <td data-label="Weight (lbs)"></td>
+                        <td data-label="Arm (in)"></td>
+                        <td data-label="Moment (in-lbs)"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Item">Grnd Fuel Use</td>
+                        <td data-label="Weight (lbs)"></td>
+                        <td data-label="Arm (in)"></td>
+                        <td data-label="Moment (in-lbs)"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Item">T/O Weight</td>
+                        <td data-label="Weight (lbs)"></td>
+                        <td data-label="Arm (in)"></td>
+                        <td data-label="Moment (in-lbs)"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Item">Est. Fuel Burn (+25%)</td>
+                        <td data-label="Weight (lbs)"></td>
+                        <td data-label="Arm (in)"></td>
+                        <td data-label="Moment (in-lbs)"></td>
+                    </tr>
+                    <tr>
+                        <td data-label="Item">Est. Landing Weight</td>
+                        <td data-label="Weight (lbs)"></td>
+                        <td data-label="Arm (in)"></td>
+                        <td data-label="Moment (in-lbs)"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Limits Panel -->
+        <div class="right-panel">
+            <div class="panel-title">Limits</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Max T/O Weight</span>
+                    <span class="info-value"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Max LDG Weight</span>
+                    <span class="info-value"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">T/O CG fwd/aft</span>
+                    <span class="info-value">/</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">LDG CG fwd/aft</span>
+                    <span class="info-value">/</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Zero Fuel CG fwd/aft</span>
+                    <span class="info-value">/</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Demo Crosswind</span>
+                    <span class="info-value"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weather Panel -->
+        <div class="right-panel">
+            <div class="panel-title">Weather</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Aprt. Wx. Observation</span>
+                    <span class="info-value" data-field="wxObs"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Crosswind</span>
+                    <span class="info-value" data-field="crosswind"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Surface Wind</span>
+                    <span class="info-value" data-field="surfaceWind"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Headwind</span>
+                    <span class="info-value" data-field="headwind"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Vis/Weather</span>
+                    <span class="info-value" data-field="visWeather"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Airport Elevation</span>
+                    <span class="info-value" data-field="airportElevation"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Temp/Dew Pt.</span>
+                    <span class="info-value" data-field="tempDewPt"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Pressure Altitude</span>
+                    <span class="info-value" data-field="pressureAltitude"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Altimeter Setting</span>
+                    <span class="info-value" data-field="altimeterSetting"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Density Altitude</span>
+                    <span class="info-value" data-field="densityAltitude"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Data Panel -->
+        <div class="right-panel">
+            <div class="panel-title">Performance Data</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Expected Runway</span>
+                    <span class="info-value" data-field="expectedRunway"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Runway Length</span>
+                    <span class="info-value" data-field="runwayLength"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">T/O Grnd Roll</span>
+                    <span class="info-value" data-field="takeoffGR"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">LDG Grnd Roll</span>
+                    <span class="info-value" data-field="landingGR"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">T/O Dist. (50')</span>
+                    <span class="info-value" data-field="takeoffDist50"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">LDG Dist. (50')</span>
+                    <span class="info-value" data-field="landingDist50"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maintenance Data Panel -->
+        <div class="right-panel">
+            <div class="panel-title">Maintenance Data</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">50Hr</span>
+                    <span class="info-value" data-field="mx50Hr"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">100Hr</span>
+                    <span class="info-value" data-field="mx100Hr"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">AD</span>
+                    <span class="info-value" data-field="mxAD"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">AD</span>
+                    <span class="info-value" data-field="mxAD2"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Annual</span>
+                    <span class="info-value" data-field="mxAnnual"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Registration</span>
+                    <span class="info-value" data-field="mxRegistration"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Airspeeds Panel -->
+        <div class="right-panel">
+            <div class="panel-title">Aircraft Reference Speeds</div>
+            <div class="airspeed-grid">
+                <div class="airspeed-item">Vr</div>
+                <div class="airspeed-item">Vxse</div>
+                <div class="airspeed-item">Vle</div>
+                <div class="airspeed-item">Vg</div>
+                <div class="airspeed-item">Vr 50'</div>
+                <div class="airspeed-item">Vyse</div>
+                <div class="airspeed-item">Vlo</div>
+                <div class="airspeed-item">Vmc</div>
+                <div class="airspeed-item">Vx</div>
+                <div class="airspeed-item">Vs0</div>
+                <div class="airspeed-item">Va</div>
+                <div class="airspeed-item">Vapp Short</div>
+                <div class="airspeed-item">Vy</div>
+                <div class="airspeed-item">Vs1</div>
+                <div class="airspeed-item">Va Max</div>
+                <div class="airspeed-item">Vapp Normal</div>
+                <div class="airspeed-item">Vcc</div>
+                <div class="airspeed-item">Vfe</div>
+                <div class="airspeed-item">Vne</div>
+                <div class="airspeed-item">Vapp Flapless</div>
+            </div>
+        </div>
+
+        <!-- CG Envelope Chart Panel -->
+        <div class="right-panel">
+            <div class="panel-title">Center of Gravity Limits</div>
+            <div class="cg-chart-container">
+                <canvas id="cgChart" width="800" height="500"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Panel (Column C) -->
+    <div class="settings-panel" style="width: 350px; padding: 20px; background-color: #2a2a2a; overflow-y: auto; height: 100vh; border-left: 1px solid #555;">
+        <h2 style="color: #4CAF50; margin-bottom: 20px; font-size: 18px;">Settings</h2>
+        
+        <!-- User Profile Section -->
+        <div class="input-section">
+            <h3 style="color: #e0e0e0; margin-bottom: 15px; font-size: 16px;">User Profile</h3>
+            <div class="input-group">
+                <label class="input-label">My Weight (lbs)</label>
+                <input type="number" class="input-field" id="userWeight" placeholder="Enter weight">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Flight Bag (lbs)</label>
+                <input type="number" class="input-field" id="userBagWeight" placeholder="Enter bag weight">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Default Aircraft</label>
+                <select class="select-field" id="defaultAircraft">
+                    <option value="">No Default Selected</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button onclick="saveUserProfile()" style="background-color: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px;">💾 Save Profile</button>
+                <button onclick="loadUserProfile()" style="background-color: #2196F3; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px;">📂 Load Profile</button>
+                <button onclick="clearUserProfile()" style="background-color: #f44336; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px;">🗑️ Clear Data</button>
+            </div>
+            <div id="settingsStatus" style="margin-top: 10px; padding: 8px; border-radius: 4px; font-size: 12px; display: none;"></div>
+        </div>
+
+        <!-- Aircraft Management Section -->
+        <div class="input-section">
+            <h3 style="color: #e0e0e0; margin-bottom: 15px; font-size: 16px;">Aircraft Management</h3>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button onclick="saveCurrentAircraft()" style="background-color: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px;">✈️ Save Current Aircraft</button>
+                <button onclick="showAircraftManager()" style="background-color: #FF9800; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px;">📋 Manage Aircraft</button>
+            </div>
+            
+            <!-- Aircraft Manager Modal -->
+            <div id="aircraftManager" style="display: none; background-color: #3a3a3a; border-radius: 8px; padding: 15px; margin-top: 10px; border: 1px solid #555;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h4 style="color: #e0e0e0; margin: 0;">Saved Aircraft</h4>
+                    <button onclick="hideAircraftManager()" style="background: none; border: none; color: #ccc; font-size: 18px; cursor: pointer;">×</button>
+                </div>
+                <div id="aircraftList"></div>
+            </div>
+        </div>
+
+        <!-- App Information Section -->
+        <div class="input-section">
+            <h3 style="color: #e0e0e0; margin-bottom: 15px; font-size: 16px;">About</h3>
+            <p style="color: #ccc; font-size: 12px; line-height: 1.4;">
+                Weight & Balance Calculator<br>
+                Version 2.0<br>
+                Supports C-152, C-172, P2006T aircraft<br>
+                <br>
+                Features:<br>
+                • Real-time W&B calculations<br>
+                • Performance data interpolation<br>
+                • Aircraft profile management<br>
+                • Mobile-responsive design
+            </p>
+        </div>
+    </div>
+
+
+    </div> <!-- Close desktop-layout div -->
+
+    <!-- Floating Settings Toggle (Desktop Only) -->
+    <div class="settings-toggle" onclick="toggleSettingsPanel()">
+        🔧
+    </div>
+
+    <!-- New Mobile Navigation -->
+    <div class="mobile-nav">
+        <button class="mobile-nav-btn active" onclick="showMobileColumn('left')">
+            <div class="nav-icon">✏️</div>
+            <div>Data</div>
+        </button>
+        <button class="mobile-nav-btn" onclick="showMobileColumn('right')">
+            <div class="nav-icon">✈️</div>
+            <div>Charts</div>
+        </button>
+        <button class="mobile-nav-btn" onclick="showMobileColumn('settings')">
+            <div class="nav-icon">⚙️</div>
+            <div>Settings</div>
+        </button>
+    </div>
+
+    <script>
+        // New Mobile Column Switching
+        function showMobileColumn(column) {
+            console.log('Showing mobile column:', column);
+            
+            const desktopLayout = document.querySelector('.desktop-layout');
+            const leftPanel = document.querySelector('.left-panel');
+            const rightColumn = document.querySelector('.right-column');
+            const navButtons = document.querySelectorAll('.mobile-nav-btn');
+            
+            if (!desktopLayout) return;
+            
+            // Remove active class from all nav buttons
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            if (event && event.target) {
+                const button = event.target.closest('.mobile-nav-btn');
+                if (button) {
+                    button.classList.add('active');
+                }
+            }
+            
+            // Remove all mobile column classes
+            desktopLayout.classList.remove('mobile-show-left', 'mobile-show-right', 'mobile-show-settings');
+            
+            // Add appropriate mobile column class
+            switch(column) {
+                case 'left':
+                    desktopLayout.classList.add('mobile-show-left');
+                    break;
+                case 'right':
+                    desktopLayout.classList.add('mobile-show-right');
+                    // Redraw charts after a short delay to ensure proper rendering
+                    setTimeout(() => {
+                        updateWeightBalanceCalculations();
+                        updateTakeoffPerformance();
+                        updateLandingPerformance();
+                        // Redraw CG chart for mobile
+                        drawCGChart();
+                    }, 100);
+                    break;
+                case 'settings':
+                    desktopLayout.classList.add('mobile-show-settings');
+                    break;
+            }
+        }
+
+        // Toggle settings panel visibility (desktop only)
+        function toggleSettingsPanel() {
+            const settingsPanel = document.querySelector('.settings-panel');
+            const desktopLayout = document.querySelector('.desktop-layout');
+            
+            if (!settingsPanel || !desktopLayout) return;
+            
+            // Toggle the hidden class instead of inline styles
+            if (settingsPanel.classList.contains('settings-hidden')) {
+                settingsPanel.classList.remove('settings-hidden');
+                desktopLayout.classList.remove('settings-collapsed');
+            } else {
+                settingsPanel.classList.add('settings-hidden');
+                desktopLayout.classList.add('settings-collapsed');
+            }
+        }
+
+        // Initialize mobile interface
+        function initializeMobileInterface() {
+            // Set initial mobile state to show left panel (Data)
+            if (window.innerWidth <= 768) {
+                const desktopLayout = document.querySelector('.desktop-layout');
+                if (desktopLayout) {
+                    desktopLayout.classList.add('mobile-show-left');
+                }
+                
+                // Ensure CG chart is drawn after mobile initialization
+                setTimeout(() => {
+                    drawCGChart();
+                }, 200);
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMobileInterface();
+            
+            // Re-initialize on window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth <= 768) {
+                    initializeMobileInterface();
+                }
+                // Redraw CG chart on resize to handle orientation changes
+                setTimeout(() => {
+                    drawCGChart();
+                }, 100);
+            });
+        });
+    </script>
+
+    <script>
+        // Update tail number display when user types
+        document.getElementById('tailNumber').addEventListener('input', function() {
+            const tailNumberInput = this.value;
+            const display = document.getElementById('tailNumberDisplay');
+            display.textContent = 'N' + tailNumberInput;
+        });
+
+        // Aircraft specifications for different types
+        const aircraftSpecs = {
+            'C-152': {
+                frontSeatArm: 39,
+                rearSeatArm: null, // Block out rear seats
+                baggage1Arm: 64,
+                baggage2Arm: null, // Block out baggage 2
+                fuelArm: 42.2,
+                fuelWeightMultiplier: 6,
+                fuelBurnRate: 6, // GPH
+                groundFuelUse: -5,
+                maxTakeoffWeight: 1710,
+                maxLandingWeight: 1670,
+                aftLimit: 36.5,
+                demoCrosswind: 12,
+                // CG forward limits based on weight (from POH table + STC)
+                cgForwardLimits: [
+                    { weight: 1000, cgLimit: 31.0 },
+                    { weight: 1350, cgLimit: 31.0 },
+                    { weight: 1670, cgLimit: 32.6 },
+                    { weight: 1710, cgLimit: 33.0 }  // STC forward limit at max weight
+                ]
+            },
+            'C-172': {
+                frontSeatArm: 37,
+                rearSeatArm: 73,
+                baggage1Arm: 95,
+                baggage2Arm: 142,
+                fuelArm: 48,
+                fuelWeightMultiplier: 6,
+                fuelBurnRate: 8,
+                groundFuelUse: -3
+            },
+            'P2006T': {
+                frontSeatArm: -2.93,  // Front seats arm
+                rearSeatArm: 0.741,   // Rear seats arm
+                baggage1Arm: 3.986,   // Baggage 1 arm
+                baggage2Arm: null,    // Baggage 2 arm (N/A)
+                fuelArm: 2.477,       // Fuel arm
+                groundFuelArm: 2.477, // Ground fuel use arm
+                estFuelBurnArm: 2.477, // Est fuel burn arm
+                fuelWeightMultiplier: 6, // 6 gallons per lb per tank
+                fuelBurnRate: 9,      // 9 gal per hour
+                groundFuelUse: -12,   // Always -12
+                maxTakeoffWeight: 2844,
+                maxLandingWeight: 2844,
+                forwardLimit: 16.5,   // Forward CG limit up to 2712 lb, then 19.5% at 2844 lb
+                aftLimit: 31,         // Aft CG limit for all conditions
+                forwardLimitHigh: 19.5, // Forward limit at maximum weight (2844 lb)
+                weightBreakpoint: 2712, // Weight where forward limit changes
+                macConstant: 4.39     // MAC constant for D% calculation
+            },
+            'P2010': {
+                frontSeatArm: 89.8,
+                rearSeatArm: 118.1,
+                baggage1Arm: 142.2,
+                fuelArm: 89.8,
+                fuelWeightMultiplier: 6,
+                fuelBurnRate: 10,
+                groundFuelUse: -6
+            }
+        };
+
+        // Update aircraft type display and populate aircraft-specific values
+        document.getElementById('aircraftType').addEventListener('change', function() {
+            const aircraftType = this.value;
+            const display = document.getElementById('aircraftTypeDisplay');
+            const mobileDisplay = document.getElementById('aircraftTypeDisplay-mobile');
+            display.textContent = aircraftType;
+            if (mobileDisplay) mobileDisplay.textContent = aircraftType;
+            
+            // Sync mobile dropdown
+            const mobileSelect = document.getElementById('aircraftType-mobile');
+            if (mobileSelect) mobileSelect.value = aircraftType;
+            
+            if (aircraftType && aircraftSpecs[aircraftType]) {
+                populateAircraftSpecificValues(aircraftType);
+            }
+        });
+
+        // Add mobile aircraft type listener
+        const mobileAircraftType = document.getElementById('aircraftType-mobile');
+        if (mobileAircraftType) {
+            mobileAircraftType.addEventListener('change', function() {
+                const aircraftType = this.value;
+                const display = document.getElementById('aircraftTypeDisplay');
+                const mobileDisplay = document.getElementById('aircraftTypeDisplay-mobile');
+                display.textContent = aircraftType;
+                if (mobileDisplay) mobileDisplay.textContent = aircraftType;
+                
+                // Sync desktop dropdown
+                const desktopSelect = document.getElementById('aircraftType');
+                if (desktopSelect) desktopSelect.value = aircraftType;
+                
+                if (aircraftType && aircraftSpecs[aircraftType]) {
+                    populateAircraftSpecificValues(aircraftType);
+                }
+            });
+        }
+
+        function populateAircraftSpecificValues(aircraftType) {
+            console.log('populateAircraftSpecificValues called with:', aircraftType);
+            const specs = aircraftSpecs[aircraftType];
+            console.log('Aircraft specs:', specs);
+            
+            // Clear all arms first
+            const allArmCells = document.querySelectorAll('.data-table tbody tr td:nth-child(3)');
+            allArmCells.forEach(cell => cell.textContent = '');
+            console.log('Cleared', allArmCells.length, 'arm cells');
+            
+            // Clear all weights except basic empty weight
+            const allWeightCells = document.querySelectorAll('.data-table tbody tr td:nth-child(2)');
+            allWeightCells.forEach((cell, index) => {
+                if (index !== 0) { // Don't clear basic empty weight
+                    cell.textContent = '';
+                }
+            });
+            console.log('Cleared weight cells (except basic empty weight)');
+            
+            // Get specific table cells for arms (using tbody to be more specific)
+            const frontSeatArmCell = document.querySelector('.data-table tbody tr:nth-child(2) td:nth-child(3)'); // Front Seat arm
+            const rearSeatRow = document.querySelector('.data-table tbody tr:nth-child(3)'); // Rear Seat row
+            const baggage1ArmCell = document.querySelector('.data-table tbody tr:nth-child(4) td:nth-child(3)'); // Baggage 1 arm (back to row 4)
+            const fuelArmCell = document.querySelector('.data-table tbody tr:nth-child(7) td:nth-child(3)'); // Fuel arm (back to row 7)
+            const grndFuelArmCell = document.querySelector('.data-table tbody tr:nth-child(9) td:nth-child(3)'); // Grnd Fuel Use arm (back to row 9)
+            const grndFuelWeightCell = document.querySelector('.data-table tbody tr:nth-child(9) td:nth-child(2)'); // Grnd Fuel Use weight (back to row 9)
+            const estFuelBurnArmCell = document.querySelector('.data-table tbody tr:nth-child(11) td:nth-child(3)'); // Est Fuel Burn arm (back to row 11)
+            
+            // Populate only the correct arms
+            if (frontSeatArmCell) {
+                frontSeatArmCell.textContent = specs.frontSeatArm;
+                console.log('Set front seat arm to:', specs.frontSeatArm);
+            }
+            if (baggage1ArmCell) {
+                baggage1ArmCell.textContent = specs.baggage1Arm;
+                console.log('Set baggage 1 arm to:', specs.baggage1Arm);
+            }
+            if (fuelArmCell) {
+                fuelArmCell.textContent = specs.fuelArm;
+                console.log('Set fuel arm to:', specs.fuelArm);
+            }
+            
+            // Handle different fuel arm configurations for P2006T
+            if (aircraftType === 'P2006T') {
+                if (grndFuelArmCell) grndFuelArmCell.textContent = specs.groundFuelArm;
+                if (estFuelBurnArmCell) estFuelBurnArmCell.textContent = specs.estFuelBurnArm;
+            } else {
+                if (grndFuelArmCell) grndFuelArmCell.textContent = specs.fuelArm; // Same as fuel arm for other aircraft
+                if (estFuelBurnArmCell) estFuelBurnArmCell.textContent = specs.fuelArm; // Same as fuel arm for other aircraft
+            }
+            
+            if (grndFuelWeightCell) grndFuelWeightCell.textContent = specs.groundFuelUse;
+            
+            // Handle rear seat row for different aircraft types
+            if (rearSeatRow) {
+                if (aircraftType === 'C-152') {
+                    rearSeatRow.style.backgroundColor = '#2a2a2a';
+                    rearSeatRow.style.opacity = '0.5';
+                    const rearSeatCells = rearSeatRow.querySelectorAll('td');
+                    rearSeatCells.forEach(cell => {
+                        cell.textContent = 'N/A';
+                        cell.style.fontStyle = 'italic';
+                    });
+                } else {
+                    rearSeatRow.style.backgroundColor = '';
+                    rearSeatRow.style.opacity = '';
+                    const rearSeatCells = rearSeatRow.querySelectorAll('td');
+                    rearSeatCells[0].textContent = 'Rear Seats';
+                    rearSeatCells[1].textContent = '';
+                    rearSeatCells[2].textContent = specs.rearSeatArm || '';
+                    rearSeatCells[3].textContent = '';
+                    console.log('Set rear seat arm to:', specs.rearSeatArm);
+                    rearSeatCells.forEach(cell => {
+                        cell.style.fontStyle = '';
+                    });
+                }
+            }
+            
+            
+            // Handle baggage 2 row for C-152 (block it out)
+            const baggage2Row = document.querySelector('.data-table tbody tr:nth-child(5)'); // Baggage 2 row (back to row 5)
+            if (baggage2Row) {
+                if (aircraftType === 'C-152') {
+                    baggage2Row.style.backgroundColor = '#2a2a2a';
+                    baggage2Row.style.opacity = '0.5';
+                    const baggage2Cells = baggage2Row.querySelectorAll('td');
+                    baggage2Cells.forEach(cell => {
+                        cell.textContent = 'N/A';
+                        cell.style.fontStyle = 'italic';
+                    });
+                } else {
+                    baggage2Row.style.backgroundColor = '';
+                    baggage2Row.style.opacity = '';
+                    const baggage2Cells = baggage2Row.querySelectorAll('td');
+                    baggage2Cells[0].textContent = 'Baggage 2';
+                    baggage2Cells[1].textContent = '';
+                    baggage2Cells[2].textContent = '';
+                    baggage2Cells[3].textContent = '';
+                    baggage2Cells.forEach(cell => {
+                        cell.style.fontStyle = '';
+                    });
+                }
+            }
+            
+            // Update calculations and displays
+            updateDisplays();
+            updateWeightBalanceCalculations();
+            
+            // Populate limits panel
+            populateLimitsPanel(aircraftType, specs);
+            
+            // Draw CG chart
+            drawCGChart();
+            
+            // Populate V-speeds panel
+            populateVSpeedsPanel(aircraftType);
+            
+            // Update takeoff performance
+            updateTakeoffPerformance();
+            
+            // Update landing performance
+            updateLandingPerformance();
+            
+            // Populate demo data for C-152 if no existing data
+            if (aircraftType === 'C-152') {
+                populateC152DemoData();
+            }
+            
+            // Update landing performance
+            updateLandingPerformance();
+        }
+
+        function populateC152DemoData() {
+            // Only populate if fields are empty to avoid overwriting user data
+            const windDirection = document.getElementById('windDirection');
+            const windSpeed = document.getElementById('windSpeed');
+            const runwayHeading = document.getElementById('runwayHeading');
+            
+            if (!windDirection.value && !windSpeed.value && !runwayHeading.value) {
+                // Set demo values that will result in 12kt crosswind
+                // Wind from 090° at 15kts, runway 36 = 90° crosswind component
+                windDirection.value = '090';
+                windSpeed.value = '15';
+                runwayHeading.value = '36';
+                
+                // Trigger calculations
+                updateDisplays();
+                updateWeightBalanceCalculations();
+            }
+        }
+        
+        // C-152 Performance Data Tables
+        const C152_TAKEOFF_DATA = {
+            // Pressure altitudes (rows)
+            pressureAltitudes: [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000],
+            // Temperatures (columns) - 0, 10, 20, 30, 40 degrees C
+            temperatures: [0, 10, 20, 30, 40],
+            // Ground roll distances (feet)
+            groundRoll: [
+                [540, 695, 755, 810, 875],    // Sea level
+                [705, 765, 825, 890, 960],    // 1000 ft
+                [775, 840, 910, 980, 1055],   // 2000 ft
+                [865, 925, 1000, 1080, 1165], // 3000 ft
+                [940, 1020, 1100, 1190, 1285], // 4000 ft
+                [1040, 1125, 1215, 1315, 1420], // 5000 ft
+                [1145, 1245, 1345, 1455, 1570], // 6000 ft
+                [1270, 1375, 1490, 1615, 1745], // 7000 ft
+                [1405, 1525, 1655, 1795, 1940]  // 8000 ft
+            ],
+            // 50ft obstacle clearance distances (feet)
+            obstacle50ft: [
+                [1190, 1290, 1390, 1495, 1605], // Sea level
+                [1310, 1420, 1530, 1645, 1770], // 1000 ft
+                [1445, 1565, 1690, 1820, 1960], // 2000 ft
+                [1600, 1730, 1870, 2020, 2185], // 3000 ft
+                [1775, 1920, 2080, 2250, 2440], // 4000 ft
+                [1970, 2140, 2320, 2525, 2750], // 5000 ft
+                [2200, 2395, 2610, 2855, 3125], // 6000 ft
+                [2470, 2705, 2960, 3255, 3590], // 7000 ft
+                [2800, 3080, 3385, 3765, 4195]  // 8000 ft
+            ]
+        };
+
+        const C152_LANDING_DATA = {
+            // Pressure altitudes (rows) - same as takeoff
+            pressureAltitudes: [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000],
+            // Temperatures (columns) - 0, 10, 20, 30, 40 degrees C
+            temperatures: [0, 10, 20, 30, 40],
+            // Ground roll distances (feet) - from POH landing data
+            groundRoll: [
+                [450, 465, 485, 515, 550],    // Sea level
+                [480, 495, 520, 550, 585],    // 1000 ft
+                [505, 525, 550, 585, 625],    // 2000 ft
+                [535, 560, 590, 625, 670],    // 3000 ft
+                [570, 595, 630, 670, 720],    // 4000 ft
+                [605, 635, 675, 720, 775],    // 5000 ft
+                [645, 680, 725, 775, 835],    // 6000 ft
+                [690, 730, 780, 835, 900],    // 7000 ft
+                [740, 785, 840, 900, 970]     // 8000 ft
+            ],
+            // 50ft obstacle clearance distances (feet) - from POH landing data
+            obstacle50ft: [
+                [1190, 1185, 1215, 1240, 1265], // Sea level
+                [1185, 1215, 1250, 1270, 1295], // 1000 ft
+                [1240, 1275, 1305, 1335, 1360], // 2000 ft
+                [1275, 1325, 1355, 1370, 1400], // 3000 ft
+                [1340, 1370, 1410, 1440, 1475], // 4000 ft
+                [1375, 1410, 1445, 1480, 1515], // 5000 ft
+                [1430, 1465, 1505, 1545, 1590], // 6000 ft
+                [1490, 1530, 1575, 1620, 1670], // 7000 ft
+                [1560, 1605, 1655, 1705, 1760]  // 8000 ft
+            ]
+        };
+
+        // P2006T Landing Performance Data (from POH) - Weight-based tables
+        const P2006T_LANDING_DATA = {
+            // Weight categories (lbs)
+            weights: [2051, 2381, 2844],
+            
+            // 2844 lbs weight category
+            2844: {
+                pressureAltitudes: [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
+                temperatures: [-25, 0, 25, 50, 15], // ISA last column
+                groundRoll: [
+                    [708, 781, 853, 922, 823],    // Sea level
+                    [735, 810, 882, 958, 846],    // 1000 ft
+                    [761, 840, 915, 994, 872],    // 2000 ft
+                    [790, 869, 951, 1030, 899],   // 3000 ft
+                    [820, 902, 987, 1069, 928],   // 4000 ft
+                    [853, 938, 1023, 1109, 954],  // 5000 ft
+                    [886, 974, 1063, 1151, 984],  // 6000 ft
+                    [918, 1010, 1105, 1197, 1017], // 7000 ft
+                    [954, 1050, 1148, 1243, 1046], // 8000 ft
+                    [991, 1092, 1191, 1292, 1079], // 9000 ft
+                    [1030, 1135, 1240, 1342, 1115] // 10000 ft
+                ],
+                obstacle50ft: [
+                    [1086, 1178, 1266, 1355, 1230], // Sea level
+                    [1118, 1214, 1305, 1397, 1260], // 1000 ft
+                    [1155, 1250, 1345, 1440, 1292], // 2000 ft
+                    [1191, 1289, 1387, 1486, 1325], // 3000 ft
+                    [1227, 1328, 1430, 1532, 1358], // 4000 ft
+                    [1266, 1371, 1476, 1581, 1394], // 5000 ft
+                    [1305, 1417, 1525, 1633, 1430], // 6000 ft
+                    [1348, 1463, 1574, 1686, 1466], // 7000 ft
+                    [1394, 1509, 1627, 1742, 1506], // 8000 ft
+                    [1440, 1561, 1683, 1801, 1545], // 9000 ft
+                    [1486, 1614, 1738, 1863, 1588]  // 10000 ft
+                ]
+            },
+            
+            // 2381 lbs weight category
+            2381: {
+                pressureAltitudes: [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
+                temperatures: [-25, 0, 25, 50, 15], // ISA last column
+                groundRoll: [
+                    [574, 630, 689, 745, 666],    // Sea level
+                    [594, 653, 715, 774, 686],    // 1000 ft
+                    [617, 679, 741, 804, 705],    // 2000 ft
+                    [640, 705, 768, 833, 728],    // 3000 ft
+                    [663, 731, 797, 863, 748],    // 4000 ft
+                    [689, 758, 827, 895, 771],    // 5000 ft
+                    [715, 787, 859, 932, 797],    // 6000 ft
+                    [741, 817, 892, 968, 820],    // 7000 ft
+                    [771, 850, 928, 1004, 846],   // 8000 ft
+                    [800, 882, 964, 1043, 872],   // 9000 ft
+                    [833, 918, 1000, 1086, 902]   // 10000 ft
+                ],
+                obstacle50ft: [
+                    [889, 961, 1033, 1105, 1004],  // Sea level
+                    [915, 991, 1066, 1141, 1030],  // 1000 ft
+                    [945, 1020, 1099, 1174, 1056], // 2000 ft
+                    [1004, 1086, 1168, 1250, 1109], // 3000 ft
+                    [1004, 1086, 1168, 1250, 1109], // 4000 ft (duplicate in data)
+                    [1033, 1122, 1207, 1292, 1138], // 5000 ft
+                    [1066, 1158, 1246, 1332, 1168], // 6000 ft
+                    [1102, 1194, 1286, 1378, 1197], // 7000 ft
+                    [1138, 1233, 1328, 1424, 1230], // 8000 ft
+                    [1174, 1273, 1371, 1469, 1263], // 9000 ft
+                    [1214, 1315, 1417, 1519, 1296]  // 10000 ft
+                ]
+            },
+            
+            // 2051 lbs weight category
+            2051: {
+                pressureAltitudes: [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
+                temperatures: [-25, 0, 25, 50, 15], // ISA last column
+                groundRoll: [
+                    [492, 544, 594, 643, 574],    // Sea level
+                    [512, 564, 613, 666, 590],    // 1000 ft
+                    [531, 584, 636, 692, 607],    // 2000 ft
+                    [551, 607, 663, 718, 626],    // 3000 ft
+                    [571, 630, 686, 745, 646],    // 4000 ft
+                    [594, 653, 712, 771, 666],    // 5000 ft
+                    [617, 679, 741, 800, 686],    // 6000 ft
+                    [640, 705, 768, 833, 705],    // 7000 ft
+                    [666, 731, 797, 866, 728],    // 8000 ft
+                    [689, 761, 830, 899, 751],    // 9000 ft
+                    [718, 790, 863, 935, 777]     // 10000 ft
+                ],
+                obstacle50ft: [
+                    [764, 827, 889, 951, 866],    // Sea level
+                    [787, 853, 918, 981, 886],    // 1000 ft
+                    [813, 879, 945, 1014, 909],   // 2000 ft
+                    [863, 935, 1007, 1076, 954],  // 3000 ft
+                    [863, 935, 1007, 1076, 954],  // 4000 ft (duplicate in data)
+                    [892, 964, 1040, 1112, 981],  // 5000 ft
+                    [918, 997, 1073, 1148, 1007], // 6000 ft
+                    [948, 1027, 1109, 1184, 1033], // 7000 ft
+                    [981, 1063, 1145, 1223, 1059], // 8000 ft
+                    [1010, 1096, 1181, 1266, 1086], // 9000 ft
+                    [1046, 1135, 1220, 1309, 1115]  // 10000 ft
+                ]
+            }
+        };
+
+        // P2006T Takeoff Performance Data (from POH) - Weight-based tables
+        const P2006T_TAKEOFF_DATA = {
+            // Weight categories (lbs)
+            weights: [2051, 2381, 2844],
+            
+            // 2844 lbs weight category
+            2844: {
+                pressureAltitudes: [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
+                temperatures: [-25, 0, 25, 50, 15], // ISA last column
+                groundRoll: [
+                    [705, 899, 1118, 1368, 1027],    // Sea level
+                    [787, 1004, 1246, 1525, 1125],   // 1000 ft
+                    [879, 1118, 1394, 1706, 1237],   // 2000 ft
+                    [984, 1253, 1558, 1906, 1358],   // 3000 ft
+                    [1102, 1401, 1742, 2132, 1492],  // 4000 ft
+                    [1233, 1568, 1952, 2388, 1643],  // 5000 ft
+                    [1384, 1758, 2188, 2676, 1807],  // 6000 ft
+                    [1581, 2011, 2503, 3064, 2034],  // 7000 ft
+                    [1814, 2306, 2870, 3510, 2286],  // 8000 ft
+                    [2076, 2640, 3287, 4021, 2572],  // 9000 ft
+                    [2381, 3027, 3769, 4612, 2896]   // 10000 ft
+                ],
+                obstacle50ft: [
+                    [971, 1237, 1538, 1883, 1368],   // Sea level
+                    [1086, 1378, 1715, 2099, 1499],  // 1000 ft
+                    [1210, 1542, 1919, 2345, 1647],  // 2000 ft
+                    [1355, 1722, 2145, 2621, 1807],  // 3000 ft
+                    [1515, 1925, 2398, 2932, 1988],  // 4000 ft
+                    [1696, 2158, 2686, 3287, 2188],  // 5000 ft
+                    [1902, 2417, 3011, 3683, 2408],  // 6000 ft
+                    [2178, 2768, 3447, 4215, 2709],  // 7000 ft
+                    [2496, 3172, 3946, 4828, 3047],  // 8000 ft
+                    [2860, 3634, 4523, 5533, 3428],  // 9000 ft
+                    [3277, 4169, 5189, 6344, 3861]   // 10000 ft
+                ]
+            },
+            
+            // 2381 lbs weight category
+            2381: {
+                pressureAltitudes: [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
+                temperatures: [-25, 0, 25, 50, 15], // ISA last column
+                groundRoll: [
+                    [485, 617, 768, 938, 705],    // Sea level
+                    [541, 689, 856, 1046, 771],   // 1000 ft
+                    [604, 768, 954, 1168, 846],   // 2000 ft
+                    [676, 859, 1069, 1305, 932],  // 3000 ft
+                    [754, 961, 1194, 1463, 1023], // 4000 ft
+                    [846, 1076, 1338, 1637, 1125], // 5000 ft
+                    [948, 1207, 1499, 1834, 1240], // 6000 ft
+                    [1063, 1351, 1683, 2060, 1368], // 7000 ft
+                    [1194, 1519, 1893, 2312, 1509], // 8000 ft
+                    [1345, 1709, 2125, 2601, 1666], // 9000 ft
+                    [1512, 1922, 2394, 2929, 1840]  // 10000 ft
+                ],
+                obstacle50ft: [
+                    [633, 807, 1004, 1227, 922],    // Sea level
+                    [708, 899, 1118, 1371, 1010],   // 1000 ft
+                    [790, 1004, 1250, 1528, 1109],  // 2000 ft
+                    [987, 1256, 1565, 1912, 1342],  // 3000 ft
+                    [987, 1256, 1565, 1912, 1342],  // 4000 ft (duplicate in data)
+                    [1109, 1407, 1752, 2142, 1473], // 5000 ft
+                    [1240, 1578, 1965, 2401, 1624], // 6000 ft
+                    [1394, 1771, 2204, 2696, 1788], // 7000 ft
+                    [1565, 1988, 2476, 3027, 1975], // 8000 ft
+                    [1758, 2237, 2785, 3405, 2178], // 9000 ft
+                    [1981, 2516, 3132, 3831, 2408]  // 10000 ft
+                ]
+            },
+            
+            // 2051 lbs weight category
+            2051: {
+                pressureAltitudes: [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
+                temperatures: [-25, 0, 25, 50, 15], // ISA last column
+                groundRoll: [
+                    [328, 417, 518, 636, 479],    // Sea level
+                    [367, 466, 581, 708, 525],    // 1000 ft
+                    [410, 522, 646, 794, 574],    // 2000 ft
+                    [459, 581, 725, 886, 630],    // 3000 ft
+                    [512, 649, 810, 991, 695],    // 4000 ft
+                    [574, 728, 909, 1109, 764],   // 5000 ft
+                    [643, 817, 1017, 1243, 840],  // 6000 ft
+                    [722, 918, 1141, 1397, 925],  // 7000 ft
+                    [810, 1030, 1282, 1568, 1023], // 8000 ft
+                    [912, 1158, 1443, 1765, 1128], // 9000 ft
+                    [1027, 1302, 1624, 1984, 1246] // 10000 ft
+                ],
+                obstacle50ft: [
+                    [430, 548, 679, 833, 623],    // Sea level
+                    [479, 610, 758, 928, 686],    // 1000 ft
+                    [535, 682, 846, 1036, 751],   // 2000 ft
+                    [669, 853, 1059, 1296, 909],  // 3000 ft
+                    [669, 853, 1059, 1296, 909],  // 4000 ft (duplicate in data)
+                    [751, 954, 1187, 1453, 1000], // 5000 ft
+                    [843, 1069, 1332, 1627, 1099], // 6000 ft
+                    [945, 1200, 1492, 1827, 1214], // 7000 ft
+                    [1059, 1348, 1679, 2053, 1338], // 8000 ft
+                    [1194, 1515, 1886, 2309, 1476], // 9000 ft
+                    [1342, 1706, 2125, 2598, 1633]  // 10000 ft
+                ]
+            }
+        };
+
+        function bilinearInterpolation(x, y, x1, x2, y1, y2, q11, q12, q21, q22) {
+            // Bilinear interpolation formula
+            const term1 = q11 * (x2 - x) * (y2 - y);
+            const term2 = q21 * (x - x1) * (y2 - y);
+            const term3 = q12 * (x2 - x) * (y - y1);
+            const term4 = q22 * (x - x1) * (y - y1);
+            
+            return (term1 + term2 + term3 + term4) / ((x2 - x1) * (y2 - y1));
+        }
+
+        function calculatePerformance(temperature, pressureAltitude, dataTable) {
+            const data = dataTable;
+            
+            // Find bounding indices for pressure altitude
+            let altIndex1 = 0;
+            for (let i = 0; i < data.pressureAltitudes.length - 1; i++) {
+                if (pressureAltitude >= data.pressureAltitudes[i] && pressureAltitude <= data.pressureAltitudes[i + 1]) {
+                    altIndex1 = i;
+                    break;
+                }
+            }
+            const altIndex2 = Math.min(altIndex1 + 1, data.pressureAltitudes.length - 1);
+            
+            // Find bounding indices for temperature
+            let tempIndex1 = 0;
+            for (let i = 0; i < data.temperatures.length - 1; i++) {
+                if (temperature >= data.temperatures[i] && temperature <= data.temperatures[i + 1]) {
+                    tempIndex1 = i;
+                    break;
+                }
+            }
+            const tempIndex2 = Math.min(tempIndex1 + 1, data.temperatures.length - 1);
+            
+            // Get corner values for ground roll
+            const grQ11 = data.groundRoll[altIndex1][tempIndex1];
+            const grQ12 = data.groundRoll[altIndex1][tempIndex2];
+            const grQ21 = data.groundRoll[altIndex2][tempIndex1];
+            const grQ22 = data.groundRoll[altIndex2][tempIndex2];
+            
+            // Get corner values for 50ft obstacle
+            const obQ11 = data.obstacle50ft[altIndex1][tempIndex1];
+            const obQ12 = data.obstacle50ft[altIndex1][tempIndex2];
+            const obQ21 = data.obstacle50ft[altIndex2][tempIndex1];
+            const obQ22 = data.obstacle50ft[altIndex2][tempIndex2];
+            
+            // Perform bilinear interpolation
+            const groundRoll = bilinearInterpolation(
+                temperature, pressureAltitude,
+                data.temperatures[tempIndex1], data.temperatures[tempIndex2],
+                data.pressureAltitudes[altIndex1], data.pressureAltitudes[altIndex2],
+                grQ11, grQ12, grQ21, grQ22
+            );
+            
+            const obstacle50ft = bilinearInterpolation(
+                temperature, pressureAltitude,
+                data.temperatures[tempIndex1], data.temperatures[tempIndex2],
+                data.pressureAltitudes[altIndex1], data.pressureAltitudes[altIndex2],
+                obQ11, obQ12, obQ21, obQ22
+            );
+            
+            return {
+                groundRoll: Math.round(groundRoll),
+                obstacle50ft: Math.round(obstacle50ft)
+            };
+        }
+
+        function calculateTakeoffPerformance(temperature, pressureAltitude) {
+            return calculatePerformance(temperature, pressureAltitude, C152_TAKEOFF_DATA);
+        }
+
+        function calculateLandingPerformance(temperature, pressureAltitude) {
+            return calculatePerformance(temperature, pressureAltitude, C152_LANDING_DATA);
+        }
+
+        function calculateP2006TLandingPerformance(temperature, pressureAltitude, weight) {
+            // Find the appropriate weight category
+            const weights = P2006T_LANDING_DATA.weights;
+            let selectedWeight;
+            
+            if (weight <= weights[0]) {
+                selectedWeight = weights[0]; // 2051 lbs
+            } else if (weight <= weights[1]) {
+                selectedWeight = weights[1]; // 2381 lbs
+            } else {
+                selectedWeight = weights[2]; // 2844 lbs
+            }
+            
+            // Get the data table for the selected weight
+            const dataTable = P2006T_LANDING_DATA[selectedWeight];
+            
+            const performance = calculatePerformance(temperature, pressureAltitude, dataTable);
+            // Add the selected weight to the result
+            performance.selectedWeight = selectedWeight;
+            
+            return performance;
+        }
+
+        function calculateP2006TTakeoffPerformance(temperature, pressureAltitude, weight) {
+            // Find the appropriate weight category
+            const weights = P2006T_TAKEOFF_DATA.weights;
+            let selectedWeight;
+            
+            if (weight <= weights[0]) {
+                selectedWeight = weights[0]; // 2051 lbs
+            } else if (weight <= weights[1]) {
+                selectedWeight = weights[1]; // 2381 lbs
+            } else {
+                selectedWeight = weights[2]; // 2844 lbs
+            }
+            
+            // Get the data table for the selected weight
+            const dataTable = P2006T_TAKEOFF_DATA[selectedWeight];
+            
+            const performance = calculatePerformance(temperature, pressureAltitude, dataTable);
+            // Add the selected weight to the result
+            performance.selectedWeight = selectedWeight;
+            
+            return performance;
+        }
+
+        function populateVSpeedsPanel(aircraftType) {
+            const vSpeedItems = document.querySelectorAll('.airspeed-item');
+            
+            if (aircraftType === 'C-152') {
+                // C-152 specific V-speeds
+                const c152VSpeeds = [
+                    'Vr - 50', 'Vxse', 'Vle', 'Vg - 60',
+                    'Vr 50\' - 50', 'Vyse', 'Vlo', 'Vmc',
+                    'Vx - 55', 'Vs0 - 35', 'Va - 104', 'Vapp Short - 55',
+                    'Vy - 67', 'Vs1 - 40', 'Va Max - 111', 'Vapp Normal - 60',
+                    'Vcc - 80', 'Vfe - 85', 'Vne - 149', 'Vapp Flapless - 65-70'
+                ];
+                
+                vSpeedItems.forEach((item, index) => {
+                    if (index < c152VSpeeds.length) {
+                        item.textContent = c152VSpeeds[index];
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            } else if (aircraftType === 'P2006T') {
+                // P2006T specific V-speeds
+                const p2006tVSpeeds = [
+                    'Vr - 65', 'Vxse - 70', 'Vle - 122', 'Vg - 84',
+                    'Vr 50\' - 65', 'Vyse - 84', 'Vlo - 122', 'Vmc - 62',
+                    'Vx - 72', 'Vs0 - 53', 'Va Max - 118', 'Vapp Short - 70',
+                    'Vy - 84', 'Vs1 - 66', 'Vno - 135', 'Vapp Normal - 75',
+                    'Vcc - 95', 'Vfe - 122/95', 'Vne - 167', 'Vapp Flapless - 75'
+                ];
+                
+                vSpeedItems.forEach((item, index) => {
+                    if (index < p2006tVSpeeds.length) {
+                        item.textContent = p2006tVSpeeds[index];
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            } else {
+                // Generic V-speeds for other aircraft
+                const genericVSpeeds = [
+                    'Vr', 'Vxse', 'Vle', 'Vg',
+                    'Vr 50\'', 'Vyse', 'Vlo', 'Vmc',
+                    'Vx', 'Vs0', 'Va', 'Vapp Short',
+                    'Vy', 'Vs1', 'Va Max', 'Vapp Normal',
+                    'Vcc', 'Vfe', 'Vne', 'Vapp Flapless'
+                ];
+                
+                vSpeedItems.forEach((item, index) => {
+                    if (index < genericVSpeeds.length) {
+                        item.textContent = genericVSpeeds[index];
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+        }
+        
+        function populateLimitsPanel(aircraftType, specs) {
+            const limitsPanel = document.querySelector('.right-panel .panel-title');
+            if (!limitsPanel || limitsPanel.textContent !== 'Limits') return;
+            
+            const infoItems = limitsPanel.parentElement.querySelectorAll('.info-item');
+            
+            infoItems.forEach(item => {
+                const label = item.querySelector('.info-label').textContent;
+                const valueSpan = item.querySelector('.info-value');
+                
+                switch(label) {
+                    case 'Max T/O Weight':
+                        valueSpan.textContent = specs.maxTakeoffWeight ? specs.maxTakeoffWeight + ' lbs' : '';
+                        break;
+                    case 'Max LDG Weight':
+                        valueSpan.textContent = specs.maxLandingWeight ? specs.maxLandingWeight + ' lbs' : '';
+                        break;
+                    case 'Demo Crosswind':
+                        valueSpan.textContent = specs.demoCrosswind ? specs.demoCrosswind + ' kt' : '';
+                        break;
+                }
+            });
+        }
+        
+        function calculateCGForwardLimit(weight, aircraftType) {
+            if (!aircraftType || !aircraftSpecs[aircraftType]) {
+                return null;
+            }
+            
+            const specs = aircraftSpecs[aircraftType];
+            
+            // P2006T has fixed forward limit for all conditions
+            if (aircraftType === 'P2006T') {
+                return specs.forwardLimit; // Always 16.5
+            }
+            
+            // For other aircraft, use the existing cgForwardLimits logic
+            if (!specs.cgForwardLimits) {
+                return null;
+            }
+            
+            const limits = specs.cgForwardLimits;
+            
+            // Find the appropriate CG limit based on weight
+            for (let i = 0; i < limits.length - 1; i++) {
+                if (weight >= limits[i].weight && weight <= limits[i + 1].weight) {
+                    // Linear interpolation between two points
+                    const weightRange = limits[i + 1].weight - limits[i].weight;
+                    const cgRange = limits[i + 1].cgLimit - limits[i].cgLimit;
+                    const weightDiff = weight - limits[i].weight;
+                    
+                    return limits[i].cgLimit + (cgRange * weightDiff / weightRange);
+                }
+            }
+            
+            // If weight is below minimum, use first limit
+            if (weight <= limits[0].weight) {
+                return limits[0].cgLimit;
+            }
+            
+            // If weight is above maximum, use last limit
+            if (weight >= limits[limits.length - 1].weight) {
+                return limits[limits.length - 1].cgLimit;
+            }
+            
+            return null;
+        }
+        
+        function updateTakeoffPerformance() {
+            const aircraftType = document.getElementById('aircraftType').value;
+            if (aircraftType !== 'C-152' && aircraftType !== 'P2006T') {
+                // Clear performance data for unsupported aircraft
+                document.querySelector('[data-field="takeoffGR"]').textContent = '';
+                document.querySelector('[data-field="takeoffDist50"]').textContent = '';
+                // Clear left panel fields
+                document.getElementById('takeoffGR').value = '';
+                document.getElementById('fiftyFtObst').value = '';
+                return;
+            }
+
+            // Get temperature and pressure altitude from weather inputs
+            const temperature = parseFloat(document.getElementById('temperature').value) || 15; // Default to 15°C
+            const pressureAltitude = parseFloat(document.getElementById('pressureAltitude').value) || 0; // Default to sea level
+
+            // Calculate base takeoff performance based on aircraft type
+            let performance;
+            if (aircraftType === 'C-152') {
+                performance = calculateTakeoffPerformance(temperature, pressureAltitude);
+            } else if (aircraftType === 'P2006T') {
+                // Get current aircraft weight for P2006T weight-based performance
+                const takeoffWeightElement = document.querySelector('.data-table tbody tr:nth-child(10) td:nth-child(2)');
+                const currentWeight = parseFloat(takeoffWeightElement?.textContent) || 2844;
+                // P2006T data is in Celsius, no conversion needed
+                performance = calculateP2006TTakeoffPerformance(temperature, pressureAltitude, currentWeight);
+            }
+            
+            // Apply headwind correction based on aircraft type
+            const headwind = parseFloat(document.getElementById('headwind').value) || 0;
+            let correctedGroundRoll, correctedObstacle50ft;
+            
+            if (aircraftType === 'C-152') {
+                // C-152: decrease distances 10% for each 9 knots headwind
+                const headwindCorrection = 1 - (headwind / 9) * 0.1;
+                const correctionFactor = Math.max(headwindCorrection, 0.5); // Safety minimum
+                correctedGroundRoll = Math.round(performance.groundRoll * correctionFactor);
+                correctedObstacle50ft = Math.round(performance.obstacle50ft * correctionFactor);
+            } else if (aircraftType === 'P2006T') {
+                // P2006T: decrease distances 8ft per knot of headwind
+                correctedGroundRoll = Math.max(performance.groundRoll - (headwind * 8), performance.groundRoll * 0.5);
+                correctedObstacle50ft = Math.max(performance.obstacle50ft - (headwind * 8), performance.obstacle50ft * 0.5);
+                correctedGroundRoll = Math.round(correctedGroundRoll);
+                correctedObstacle50ft = Math.round(correctedObstacle50ft);
+            }
+            
+            // Update display fields
+            if (aircraftType === 'P2006T' && performance.selectedWeight) {
+                document.querySelector('[data-field="takeoffGR"]').textContent = `${correctedGroundRoll} ft (${performance.selectedWeight} lbs)`;
+                document.querySelector('[data-field="takeoffDist50"]').textContent = `${correctedObstacle50ft} ft (${performance.selectedWeight} lbs)`;
+            } else {
+                document.querySelector('[data-field="takeoffGR"]').textContent = `${correctedGroundRoll} ft`;
+                document.querySelector('[data-field="takeoffDist50"]').textContent = `${correctedObstacle50ft} ft`;
+            }
+            
+            // Update left panel input fields
+            document.getElementById('takeoffGR').value = correctedGroundRoll;
+            document.getElementById('fiftyFtObst').value = correctedObstacle50ft;
+        }
+
+        function updateLandingPerformance() {
+            const aircraftType = document.getElementById('aircraftType').value;
+            if (aircraftType !== 'C-152' && aircraftType !== 'P2006T') {
+                // Clear performance data for unsupported aircraft
+                document.querySelector('[data-field="landingGR"]').textContent = '';
+                document.querySelector('[data-field="landingDist50"]').textContent = '';
+                // Clear left panel fields
+                document.getElementById('landingGR').value = '';
+                document.getElementById('landingDist50').value = '';
+                return;
+            }
+
+            // Get temperature and pressure altitude from weather inputs
+            const temperature = parseFloat(document.getElementById('temperature').value) || 15; // Default to 15°C (59°F)
+            const pressureAltitude = parseFloat(document.getElementById('pressureAltitude').value) || 0; // Default to sea level
+
+            // Calculate base landing performance based on aircraft type
+            let performance;
+            if (aircraftType === 'C-152') {
+                performance = calculateLandingPerformance(temperature, pressureAltitude);
+            } else if (aircraftType === 'P2006T') {
+                // Get estimated landing weight for P2006T weight-based landing performance
+                const landingWeightElement = document.querySelector('.data-table tbody tr:nth-child(12) td:nth-child(2)');
+                const landingWeight = parseFloat(landingWeightElement?.textContent) || 2844;
+                // P2006T data is now in Celsius, no conversion needed
+                performance = calculateP2006TLandingPerformance(temperature, pressureAltitude, landingWeight);
+            }
+            
+            // Apply headwind correction based on aircraft type
+            const headwind = parseFloat(document.getElementById('headwind').value) || 0;
+            let correctedGroundRoll, correctedObstacle50ft;
+            
+            if (aircraftType === 'C-152') {
+                // C-152: decrease distances 10% for each 9 knots headwind
+                const headwindCorrection = 1 - (headwind / 9) * 0.1;
+                const correctionFactor = Math.max(headwindCorrection, 0.5); // Safety minimum
+                correctedGroundRoll = Math.round(performance.groundRoll * correctionFactor);
+                correctedObstacle50ft = Math.round(performance.obstacle50ft * correctionFactor);
+            } else if (aircraftType === 'P2006T') {
+                // P2006T: decrease distances 16ft per knot of headwind
+                correctedGroundRoll = Math.max(performance.groundRoll - (headwind * 16), performance.groundRoll * 0.5);
+                correctedObstacle50ft = Math.max(performance.obstacle50ft - (headwind * 16), performance.obstacle50ft * 0.5);
+                correctedGroundRoll = Math.round(correctedGroundRoll);
+                correctedObstacle50ft = Math.round(correctedObstacle50ft);
+            }
+            
+            // Update display fields
+            if (aircraftType === 'P2006T' && performance.selectedWeight) {
+                document.querySelector('[data-field="landingGR"]').textContent = `${correctedGroundRoll} ft (${performance.selectedWeight} lbs)`;
+                document.querySelector('[data-field="landingDist50"]').textContent = `${correctedObstacle50ft} ft (${performance.selectedWeight} lbs)`;
+            } else {
+                document.querySelector('[data-field="landingGR"]').textContent = `${correctedGroundRoll} ft`;
+                document.querySelector('[data-field="landingDist50"]').textContent = `${correctedObstacle50ft} ft`;
+            }
+            
+            // Update left panel input fields
+            document.getElementById('landingGR').value = correctedGroundRoll;
+            document.getElementById('landingDist50').value = correctedObstacle50ft;
+        }
+
+        function updateCGLimitsDisplay() {
+            const aircraftType = document.getElementById('aircraftType').value;
+            if (!aircraftType || !aircraftSpecs[aircraftType]) return;
+            
+            const specs = aircraftSpecs[aircraftType];
+            const limitsPanel = document.querySelector('.right-panel .panel-title');
+            if (!limitsPanel || limitsPanel.textContent !== 'Limits') return;
+            
+            const infoItems = limitsPanel.parentElement.querySelectorAll('.info-item');
+            
+            // Get current weights
+            const zeroFuelWeight = parseFloat(document.querySelector('.data-table tbody tr:nth-child(6) td:nth-child(2)').textContent) || 0;
+            const takeoffWeight = parseFloat(document.querySelector('.data-table tbody tr:nth-child(10) td:nth-child(2)').textContent) || 0;
+            const landingWeight = parseFloat(document.querySelector('.data-table tbody tr:nth-child(12) td:nth-child(2)').textContent) || 0;
+            
+            infoItems.forEach(item => {
+                const label = item.querySelector('.info-label').textContent;
+                const valueSpan = item.querySelector('.info-value');
+                
+                switch(label) {
+                    case 'T/O CG fwd/aft':
+                        if (takeoffWeight > 0) {
+                            const fwdLimit = calculateCGForwardLimit(takeoffWeight, aircraftType);
+                            valueSpan.textContent = fwdLimit ? fwdLimit.toFixed(2) + '/' + specs.aftLimit : '/' + specs.aftLimit;
+                        }
+                        break;
+                    case 'LDG CG fwd/aft':
+                        if (landingWeight > 0) {
+                            const fwdLimit = calculateCGForwardLimit(landingWeight, aircraftType);
+                            valueSpan.textContent = fwdLimit ? fwdLimit.toFixed(2) + '/' + specs.aftLimit : '/' + specs.aftLimit;
+                        }
+                        break;
+                    case 'Zero Fuel CG fwd/aft':
+                        if (zeroFuelWeight > 0) {
+                            const fwdLimit = calculateCGForwardLimit(zeroFuelWeight, aircraftType);
+                            valueSpan.textContent = fwdLimit ? fwdLimit.toFixed(2) + '/' + specs.aftLimit : '/' + specs.aftLimit;
+                        }
+                        break;
+                }
+            });
+            
+            // Update CG chart
+            drawCGChart();
+        }
+        
+        function drawCGChart() {
+            // Draw on desktop canvas only (mobile uses same canvas now)
+            const canvas = document.getElementById('cgChart');
+            
+            if (!canvas) {
+                console.log('CG Chart canvas not found');
+                return;
+            }
+            
+            // Ensure canvas is visible and has dimensions
+            if (canvas.offsetWidth === 0 || canvas.offsetHeight === 0) {
+                console.log('CG Chart canvas has no dimensions, retrying...');
+                setTimeout(() => drawCGChart(), 100);
+                return;
+            }
+            
+            drawCGChartOnCanvas(canvas);
+        }
+        
+        function drawCGChartOnCanvas(canvas) {
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const aircraftType = document.getElementById('aircraftType').value;
+            
+            // Enable high DPI rendering for crisp lines
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            
+            // Set actual canvas size in memory (scaled up for high DPI)
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            
+            // Scale the drawing context so everything draws at the correct size
+            ctx.scale(dpr, dpr);
+            
+            // Set canvas CSS size to maintain proper display size
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (aircraftType !== 'C-152' && aircraftType !== 'P2006T') {
+                // Show message for other aircraft types
+                ctx.fillStyle = '#cccccc';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('CG Chart available for C-152 and P2006T only', canvas.width/2, canvas.height/2);
+                return;
+            }
+            
+            // Chart dimensions and scaling (use rect dimensions for proper scaling)
+            const margin = 40;
+            const chartWidth = rect.width - 2 * margin;
+            const chartHeight = rect.height - 2 * margin;
+            
+            // Set chart parameters based on aircraft type
+            let cgMin, cgMax, weightMin, weightMax, cgUnit;
+            
+            if (aircraftType === 'C-152') {
+                // C-152: CG range 30-37 inches, Weight range 1000-1800 lbs
+                cgMin = 30; cgMax = 37;
+                weightMin = 1000; weightMax = 1800;
+                cgUnit = 'inches';
+            } else if (aircraftType === 'P2006T') {
+                // P2006T: MAC range 14-32%, Weight range 1653-2844 lbs
+                cgMin = 14; cgMax = 32;
+                weightMin = 1653; weightMax = 2844;
+                cgUnit = '% MAC';
+            }
+            
+            // Helper functions for coordinate conversion
+            const cgToX = (cg) => margin + ((cg - cgMin) / (cgMax - cgMin)) * chartWidth;
+            const weightToY = (weight) => margin + ((weightMax - weight) / (weightMax - weightMin)) * chartHeight;
+            
+            // Draw grid
+            ctx.strokeStyle = '#404040';
+            ctx.lineWidth = 0.3;
+            
+            // Set grid increments based on aircraft type
+            let majorCGIncrement, minorCGIncrement, majorWeightIncrement, minorWeightIncrement;
+            
+            if (aircraftType === 'C-152') {
+                majorCGIncrement = 1;     // Every 1 inch
+                minorCGIncrement = 0.2;   // Every 0.2 inches
+                majorWeightIncrement = 200; // Every 200 lbs
+                minorWeightIncrement = 50;  // Every 50 lbs
+            } else if (aircraftType === 'P2006T') {
+                majorCGIncrement = 2;     // Every 2% MAC
+                minorCGIncrement = 1;     // Every 1% MAC
+                majorWeightIncrement = 200; // Every 200 lbs
+                minorWeightIncrement = 50;  // Every 50 lbs
+            }
+            
+            // Major vertical grid lines (CG)
+            for (let cg = cgMin; cg <= cgMax; cg += majorCGIncrement) {
+                const x = cgToX(cg);
+                ctx.strokeStyle = '#505050';
+                ctx.lineWidth = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(x, margin);
+                ctx.lineTo(x, canvas.height - margin);
+                ctx.stroke();
+            }
+            
+            // Minor vertical grid lines (CG)
+            ctx.strokeStyle = '#303030';
+            ctx.lineWidth = 0.2;
+            for (let cg = cgMin; cg <= cgMax; cg += minorCGIncrement) {
+                if (cg % majorCGIncrement !== 0) { // Skip major grid lines
+                    const x = cgToX(cg);
+                    ctx.beginPath();
+                    ctx.moveTo(x, margin);
+                    ctx.lineTo(x, canvas.height - margin);
+                    ctx.stroke();
+                }
+            }
+            
+            // Major horizontal grid lines (Weight)
+            for (let weight = weightMin; weight <= weightMax; weight += majorWeightIncrement) {
+                const y = weightToY(weight);
+                ctx.strokeStyle = '#505050';
+                ctx.lineWidth = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(margin, y);
+                ctx.lineTo(canvas.width - margin, y);
+                ctx.stroke();
+            }
+            
+            // Minor horizontal grid lines (Weight)
+            ctx.strokeStyle = '#303030';
+            ctx.lineWidth = 0.2;
+            for (let weight = weightMin; weight <= weightMax; weight += minorWeightIncrement) {
+                if (weight % majorWeightIncrement !== 0) { // Skip major grid lines
+                    const y = weightToY(weight);
+                    ctx.beginPath();
+                    ctx.moveTo(margin, y);
+                    ctx.lineTo(canvas.width - margin, y);
+                    ctx.stroke();
+                }
+            }
+            
+            // Draw CG envelope based on aircraft type
+            ctx.strokeStyle = '#2196F3'; // Blue color to match reference
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            if (aircraftType === 'C-152') {
+                // C-152 CG envelope using correct POH data: 31,1000 31,1350 32.6,1670 36.5,1670 36.5,1000
+                ctx.moveTo(cgToX(31.0), weightToY(1000));
+                ctx.lineTo(cgToX(31.0), weightToY(1350));
+                ctx.lineTo(cgToX(32.6), weightToY(1670));
+                ctx.lineTo(cgToX(36.5), weightToY(1670));
+                ctx.lineTo(cgToX(36.5), weightToY(1000));
+                ctx.lineTo(cgToX(31.0), weightToY(1000));
+                
+                ctx.stroke();
+                
+                // Fill the envelope area with blue tint
+                ctx.fillStyle = 'rgba(33, 150, 243, 0.1)';
+                ctx.fill();
+                
+                // Draw STC envelope extension as dashed line
+                // STC path: 32.6,1670 -> 33,1710 -> 35.4,1710 -> 36.5,1670
+                ctx.strokeStyle = '#2196F3'; // Same blue color
+                ctx.lineWidth = 2;
+                ctx.setLineDash([8, 4]); // Dashed line pattern
+                ctx.beginPath();
+                
+                ctx.moveTo(cgToX(32.6), weightToY(1670));
+                ctx.lineTo(cgToX(33.0), weightToY(1710));
+                ctx.lineTo(cgToX(35.4), weightToY(1710));
+                ctx.lineTo(cgToX(36.5), weightToY(1670));
+                
+                ctx.stroke();
+                ctx.setLineDash([]); // Reset to solid line
+                
+            } else if (aircraftType === 'P2006T') {
+                // P2006T CG envelope based on the chart image
+                // Forward limit: 16.5% MAC up to 2712 lb, then straight line to 19.5% MAC at 2844 lb
+                // Aft limit: 31% MAC for all weights
+                
+                ctx.moveTo(cgToX(16.5), weightToY(1653)); // Bottom left (min weight, forward limit)
+                ctx.lineTo(cgToX(16.5), weightToY(2712)); // Forward limit up to 2712 lb
+                ctx.lineTo(cgToX(19.5), weightToY(2844)); // Forward limit at max weight
+                ctx.lineTo(cgToX(31.0), weightToY(2844)); // Top right (max weight, aft limit)
+                ctx.lineTo(cgToX(31.0), weightToY(1653)); // Bottom right (min weight, aft limit)
+                ctx.lineTo(cgToX(16.5), weightToY(1653)); // Close the envelope
+                
+                ctx.stroke();
+                
+                // Fill the envelope area with blue tint
+                ctx.fillStyle = 'rgba(33, 150, 243, 0.1)';
+                ctx.fill();
+                
+                // Draw MTOW limit lines
+                ctx.strokeStyle = '#FF5722'; // Orange/red color for MTOW lines
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 3]); // Dashed line pattern
+                
+                // MTOW 2844 lb line (already at top of envelope)
+                ctx.beginPath();
+                ctx.moveTo(cgToX(cgMin), weightToY(2844));
+                ctx.lineTo(cgToX(cgMax), weightToY(2844));
+                ctx.stroke();
+                
+                // MTOW 2712 lb line
+                ctx.beginPath();
+                ctx.moveTo(cgToX(cgMin), weightToY(2712));
+                ctx.lineTo(cgToX(cgMax), weightToY(2712));
+                ctx.stroke();
+                
+                // MTOW 2601 lb line
+                ctx.beginPath();
+                ctx.moveTo(cgToX(cgMin), weightToY(2601));
+                ctx.lineTo(cgToX(cgMax), weightToY(2601));
+                ctx.stroke();
+                
+                ctx.setLineDash([]); // Reset to solid line
+            }
+            
+            // Draw axes labels
+            ctx.fillStyle = '#cccccc';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            
+            // X-axis labels (CG)
+            for (let cg = cgMin; cg <= cgMax; cg += majorCGIncrement) {
+                const x = cgToX(cg);
+                ctx.fillText(cg.toString(), x, rect.height - 10);
+            }
+            
+            // Y-axis labels (Weight)
+            ctx.textAlign = 'right';
+            for (let weight = weightMin; weight <= weightMax; weight += majorWeightIncrement) {
+                const y = weightToY(weight);
+                ctx.fillText(weight.toString(), margin - 10, y + 4);
+            }
+            
+            // Add MTOW labels for P2006T
+            if (aircraftType === 'P2006T') {
+                ctx.fillStyle = '#FF5722'; // Orange/red color for MTOW labels
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'left';
+                
+                // MTOW 2844 lb label
+                ctx.fillText('MTOW/MLW-1290 kg / 2844 lb (MOD2006/416)', cgToX(cgMin) + 5, weightToY(2844) - 5);
+                
+                // MTOW 2712 lb label
+                ctx.fillText('MTOW/MLW-1230 kg / 2712 lb (MOD2006/015)', cgToX(cgMin) + 5, weightToY(2712) - 5);
+                
+                // MTOW 2601 lb label
+                ctx.fillText('MTOW/MLW-1180 kg / 2601 lb', cgToX(cgMin) + 5, weightToY(2601) - 5);
+            }
+            
+            // Axis titles with aircraft-specific labels
+            ctx.textAlign = 'center';
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#aaaaaa';
+            
+            const xAxisTitle = aircraftType === 'P2006T' ? 'Xc (% M.A.C.)' : 'Airplane C.G. Location-Inches Aft of Datum';
+            ctx.fillText(xAxisTitle, rect.width/2, rect.height - 2);
+            
+            ctx.save();
+            ctx.translate(8, rect.height/2);
+            ctx.rotate(-Math.PI/2);
+            const yAxisTitle = aircraftType === 'P2006T' ? 'Weight (lb)' : 'Loaded Airplane Weight-Pounds';
+            ctx.fillText(yAxisTitle, 0, 0);
+            ctx.restore();
+            
+            // Plot current aircraft positions
+            plotCurrentPositions(ctx, cgToX, weightToY, rect, margin);
+        }
+        
+        function extractMACPercentage(armText) {
+            // Extract MAC percentage from text like "1.10 (25.1%)"
+            const match = armText.match(/\((\d+\.?\d*)\%\)/);
+            return match ? parseFloat(match[1]) : 0;
+        }
+        
+        function plotCurrentPositions(ctx, cgToX, weightToY, rect, margin) {
+            const aircraftType = document.getElementById('aircraftType').value;
+            if (aircraftType !== 'C-152' && aircraftType !== 'P2006T') return;
+            
+            // Get current weights and CG values (ARM for C-152, MAC% for P2006T)
+            const zeroFuelWeight = parseFloat(document.querySelector('.data-table tbody tr:nth-child(6) td:nth-child(2)').textContent) || 0;
+            const takeoffWeight = parseFloat(document.querySelector('.data-table tbody tr:nth-child(10) td:nth-child(2)').textContent) || 0;
+            const landingWeight = parseFloat(document.querySelector('.data-table tbody tr:nth-child(12) td:nth-child(2)').textContent) || 0;
+            
+            // Extract CG values based on aircraft type
+            let zeroFuelCG, takeoffCG, landingCG;
+            
+            if (aircraftType === 'P2006T') {
+                // For P2006T, extract MAC percentage from ARM cell text like "1.10 (25.1%)"
+                const zeroFuelArmText = document.querySelector('.data-table tbody tr:nth-child(6) td:nth-child(3)').textContent || '';
+                const takeoffArmText = document.querySelector('.data-table tbody tr:nth-child(10) td:nth-child(3)').textContent || '';
+                const landingArmText = document.querySelector('.data-table tbody tr:nth-child(12) td:nth-child(3)').textContent || '';
+                
+                zeroFuelCG = extractMACPercentage(zeroFuelArmText);
+                takeoffCG = extractMACPercentage(takeoffArmText);
+                landingCG = extractMACPercentage(landingArmText);
+            } else {
+                // For C-152, use ARM values directly
+                zeroFuelCG = parseFloat(document.querySelector('.data-table tbody tr:nth-child(6) td:nth-child(3)').textContent) || 0;
+                takeoffCG = parseFloat(document.querySelector('.data-table tbody tr:nth-child(10) td:nth-child(3)').textContent) || 0;
+                landingCG = parseFloat(document.querySelector('.data-table tbody tr:nth-child(12) td:nth-child(3)').textContent) || 0;
+            }
+            
+            // Plot actual CG positions for Zero Fuel Weight, T/O Weight, and Est Landing Weight
+            const plotPoint = (weight, cg, color, label) => {
+                if (weight > 0 && cg > 0) {
+                    // Plot point
+                    ctx.fillStyle = color;
+                    ctx.beginPath();
+                    ctx.arc(cgToX(cg), weightToY(weight), 6, 0, 2 * Math.PI);
+                    ctx.fill();
+                    
+                    // Add white border
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    // Add label
+                    ctx.fillStyle = color;
+                    ctx.font = '10px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(label, cgToX(cg), weightToY(weight) - 12);
+                }
+            };
+            
+            // Plot Zero Fuel Weight point
+            if (zeroFuelWeight > 0 && zeroFuelCG > 0) {
+                plotPoint(zeroFuelWeight, zeroFuelCG, '#4CAF50', 'ZFW'); // Green
+            }
+            
+            // Plot T/O Weight point  
+            if (takeoffWeight > 0 && takeoffCG > 0) {
+                plotPoint(takeoffWeight, takeoffCG, '#FF9800', 'T/O'); // Orange
+            }
+            
+            // Plot Est Landing Weight point
+            if (landingWeight > 0 && landingCG > 0) {
+                plotPoint(landingWeight, landingCG, '#9C27B0', 'LDG'); // Purple
+            }
+        }
+
+        // Time calculator functionality
+        function updateTimes() {
+            const now = new Date();
+            
+            // Local time and date
+            const localTime = now.toLocaleTimeString('en-US', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            const localDate = now.toLocaleDateString('en-US', {
+                month: '2-digit',
+                day: '2-digit',
+                year: 'numeric'
+            });
+            
+            // UTC/Zulu time and date
+            const zuluTime = now.toLocaleTimeString('en-US', { 
+                timeZone: 'UTC',
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            const zuluDate = now.toLocaleDateString('en-US', {
+                timeZone: 'UTC',
+                month: '2-digit',
+                day: '2-digit',
+                year: 'numeric'
+            });
+            
+            // Update displays - both desktop and mobile
+            const localTimeEl = document.getElementById('localTime');
+            const localTimeMobileEl = document.getElementById('localTime-mobile');
+            const localDateEl = document.getElementById('localDate');
+            const localDateMobileEl = document.getElementById('localDate-mobile');
+            const zuluTimeEl = document.getElementById('zuluTime');
+            const zuluTimeMobileEl = document.getElementById('zuluTime-mobile');
+            const zuluDateEl = document.getElementById('zuluDate');
+            const zuluDateMobileEl = document.getElementById('zuluDate-mobile');
+            
+            if (localTimeEl) localTimeEl.textContent = localTime;
+            if (localTimeMobileEl) localTimeMobileEl.textContent = localTime;
+            if (localDateEl) localDateEl.textContent = localDate;
+            if (localDateMobileEl) localDateMobileEl.textContent = localDate;
+            if (zuluTimeEl) zuluTimeEl.textContent = zuluTime + 'Z';
+            if (zuluTimeMobileEl) zuluTimeMobileEl.textContent = zuluTime + 'Z';
+            if (zuluDateEl) zuluDateEl.textContent = zuluDate;
+            if (zuluDateMobileEl) zuluDateMobileEl.textContent = zuluDate;
+        }
+
+        // Update times immediately and then every second
+        updateTimes();
+        setInterval(updateTimes, 1000);
+
+        // Function to update weight & balance calculations
+        function updateWeightBalanceCalculations() {
+            const aircraftType = document.getElementById('aircraftType').value;
+            
+            // Update Basic Empty Weight from left panel inputs (regardless of aircraft type)
+            const weight = parseFloat(document.getElementById('weight').value) || 0;
+            const arm = parseFloat(document.getElementById('arm').value) || 0;
+            const moment = parseFloat(document.getElementById('moment').value) || 0;
+            
+            const basicEmptyWeightCell = document.querySelector('.data-table tbody tr:nth-child(1) td:nth-child(2)');
+            const basicEmptyArmCell = document.querySelector('.data-table tbody tr:nth-child(1) td:nth-child(3)');
+            const basicEmptyMomentCell = document.querySelector('.data-table tbody tr:nth-child(1) td:nth-child(4)');
+            
+            if (basicEmptyWeightCell) {
+                basicEmptyWeightCell.textContent = weight || '';
+                console.log('Set Basic Empty Weight to:', weight);
+            }
+            if (basicEmptyArmCell) {
+                basicEmptyArmCell.textContent = arm || '';
+                console.log('Set Basic Empty Arm to:', arm);
+            }
+            if (basicEmptyMomentCell) {
+                basicEmptyMomentCell.textContent = moment || '';
+                console.log('Set Basic Empty Moment to:', moment, 'Cell found:', !!basicEmptyMomentCell);
+            }
+            
+            console.log('Setting Basic Empty Weight moment in table to:', moment);
+            console.log('Moment input values - desktop:', document.getElementById('moment').value);
+            
+            // Calculate Front Seats weight (My Weight + Instructor Weight)
+            const myWeight = parseFloat(document.getElementById('myWeight').value) || 0;
+            const instructorWeight = parseFloat(document.getElementById('instructorWeight').value) || 0;
+            const frontSeatWeight = myWeight + instructorWeight;
+            
+            const frontSeatWeightCell = document.querySelector('.data-table tbody tr:nth-child(2) td:nth-child(2)');
+            if (frontSeatWeightCell) frontSeatWeightCell.textContent = frontSeatWeight || '';
+            
+            // Handle baggage weight calculations based on aircraft type
+            const myBag = parseFloat(document.getElementById('myBag').value) || 0;
+            const instructorBag = parseFloat(document.getElementById('instructorBag').value) || 0;
+            const baggage1Input = parseFloat(document.getElementById('baggage1').value) || 0;
+            const baggage2Input = parseFloat(document.getElementById('baggage2').value) || 0;
+            
+            if (aircraftType === 'P2006T') {
+                // P2006T: My Bag + Instructor Bag go to rear seats, baggage inputs go to baggage compartments
+                const rearSeatWeightCell = document.querySelector('.data-table tbody tr:nth-child(3) td:nth-child(2)'); // Rear Seats
+                const baggage1WeightCell = document.querySelector('.data-table tbody tr:nth-child(4) td:nth-child(2)'); // Baggage 1
+                const baggage2WeightCell = document.querySelector('.data-table tbody tr:nth-child(5) td:nth-child(2)'); // Baggage 2
+                
+                const rearSeatWeight = myBag + instructorBag;
+                if (rearSeatWeightCell) rearSeatWeightCell.textContent = rearSeatWeight || '';
+                if (baggage1WeightCell) baggage1WeightCell.textContent = baggage1Input || '';
+                if (baggage2WeightCell) baggage2WeightCell.textContent = baggage2Input || '';
+                
+                console.log('P2006T baggage - Rear seats:', rearSeatWeight, 'Baggage 1:', baggage1Input, 'Baggage 2:', baggage2Input);
+            } else if (aircraftType === 'C-152') {
+                // C-152: My Bag + Instructor Bag + Baggage 1 input go to baggage 1 (no rear seats, no baggage 2)
+                const baggage1WeightCell = document.querySelector('.data-table tbody tr:nth-child(4) td:nth-child(2)'); // Baggage 1
+                const baggage1Weight = myBag + instructorBag + baggage1Input;
+                if (baggage1WeightCell) baggage1WeightCell.textContent = baggage1Weight || '';
+                
+                console.log('C-152 baggage - Baggage 1 total:', baggage1Weight, '(My Bag:', myBag, '+ Instructor Bag:', instructorBag, '+ Baggage 1 input:', baggage1Input, ')');
+            } else {
+                // Other aircraft: Default behavior - My Bag + Instructor Bag go to baggage 1
+                const baggage1WeightCell = document.querySelector('.data-table tbody tr:nth-child(4) td:nth-child(2)'); // Baggage 1
+                const baggage1Weight = myBag + instructorBag + baggage1Input;
+                if (baggage1WeightCell) baggage1WeightCell.textContent = baggage1Weight || '';
+                
+                const baggage2WeightCell = document.querySelector('.data-table tbody tr:nth-child(5) td:nth-child(2)'); // Baggage 2
+                if (baggage2WeightCell) baggage2WeightCell.textContent = baggage2Input || '';
+            }
+            
+            if (!aircraftType || !aircraftSpecs[aircraftType]) return;
+            
+            const specs = aircraftSpecs[aircraftType];
+            const fuel = parseFloat(document.getElementById('fuel').value) || 0;
+            const time = parseFloat(document.getElementById('time').value) || 0;
+            
+            // Calculate fuel weight - P2006T has dual tanks so multiply by 2
+            let fuelWeight;
+            if (aircraftType === 'P2006T') {
+                fuelWeight = fuel * 2 * specs.fuelWeightMultiplier; // Dual tanks: fuel input x 2 x 6 lbs/gal
+                console.log('P2006T fuel calculation:', fuel, 'gal x 2 tanks x', specs.fuelWeightMultiplier, 'lbs/gal =', fuelWeight, 'lbs');
+            } else {
+                fuelWeight = fuel * specs.fuelWeightMultiplier; // Single tank: fuel input x 6 lbs/gal
+            }
+            const fuelWeightCell = document.querySelector('.data-table tbody tr:nth-child(7) td:nth-child(2)'); // Fuel weight (row 7)
+            if (fuelWeightCell) fuelWeightCell.textContent = fuelWeight || '';
+            
+            // Calculate estimated fuel burn - P2006T has dual tanks so multiply by 2
+            // Adding 25% safety margin: calculate base burn then add 25%
+            console.log('Fuel burn calculation - Aircraft type:', aircraftType, 'Time:', time, 'Fuel burn rate:', specs.fuelBurnRate);
+            let baseFuelBurn;
+            if (aircraftType === 'P2006T') {
+                baseFuelBurn = time * specs.fuelBurnRate * 2 * specs.fuelWeightMultiplier * -1; // Dual tanks
+                console.log('P2006T fuel burn calculation:', time, 'hrs x', specs.fuelBurnRate, 'gal/hr x 2 tanks x', specs.fuelWeightMultiplier, 'lbs/gal x -1 =', baseFuelBurn, 'lbs');
+            } else {
+                baseFuelBurn = time * specs.fuelBurnRate * specs.fuelWeightMultiplier * -1; // Single tank
+                console.log('Other aircraft fuel burn calculation:', time, 'hrs x', specs.fuelBurnRate, 'gal/hr x', specs.fuelWeightMultiplier, 'lbs/gal x -1 =', baseFuelBurn, 'lbs');
+            }
+            const estFuelBurn = baseFuelBurn + (baseFuelBurn * 0.25);
+            console.log('Final fuel burn with 25% safety margin:', baseFuelBurn, '+ 25% =', estFuelBurn);
+            const estFuelBurnCell = document.querySelector('.data-table tbody tr:nth-child(11) td:nth-child(2)'); // Est. Fuel Burn weight (row 11)
+            if (estFuelBurnCell) estFuelBurnCell.textContent = Math.round(estFuelBurn) || '';
+            
+            // Calculate Zero Fuel Weight (sum of basic empty weight + front seats + baggage)
+            const basicEmptyWeight = parseFloat(document.querySelector('.data-table tbody tr:nth-child(1) td:nth-child(2)').textContent) || 0;
+            const frontSeatWeightFromTable = parseFloat(document.querySelector('.data-table tbody tr:nth-child(2) td:nth-child(2)').textContent) || 0;
+            const rearSeatWeight = parseFloat(document.querySelector('.data-table tbody tr:nth-child(3) td:nth-child(2)').textContent) || 0;
+            const baggage1WeightFromTable = parseFloat(document.querySelector('.data-table tbody tr:nth-child(4) td:nth-child(2)').textContent) || 0;
+            
+            const zeroFuelWeight = basicEmptyWeight + frontSeatWeightFromTable + rearSeatWeight + baggage1WeightFromTable;
+            const zeroFuelWeightCell = document.querySelector('.data-table tbody tr:nth-child(6) td:nth-child(2)'); // Zero Fuel Weight (row 6)
+            if (zeroFuelWeightCell && zeroFuelWeight > 0) {
+                zeroFuelWeightCell.textContent = zeroFuelWeight;
+            }
+            
+            // Calculate moments for individual rows first
+            calculateMoments();
+            
+            // Small delay to ensure moments are calculated before reading them
+            setTimeout(() => {
+                // Calculate Zero Fuel Weight moment (sum of Basic Empty Weight + Front Seats + Baggage moments)
+                // Use the moment from left panel input (flight school data) for Basic Empty Weight
+                const basicEmptyMoment = parseFloat(document.getElementById('moment').value) || 0;
+                const frontSeatMoment = parseFloat(document.querySelector('.data-table tbody tr:nth-child(2) td:nth-child(4)').textContent) || 0;
+                const rearSeatMoment = parseFloat(document.querySelector('.data-table tbody tr:nth-child(3) td:nth-child(4)').textContent) || 0;
+                const baggage1Moment = parseFloat(document.querySelector('.data-table tbody tr:nth-child(4) td:nth-child(4)').textContent) || 0;
+                
+                // Debug logging
+                console.log('Basic Empty Moment:', basicEmptyMoment);
+                console.log('Front Seat Moment:', frontSeatMoment);
+                console.log('Rear Seat Moment:', rearSeatMoment);
+                console.log('Baggage 1 Moment:', baggage1Moment);
+                
+                // Check if Ground Fuel Use is interfering
+                const grndFuelUseMomentCheck = parseFloat(document.querySelector('.data-table tbody tr:nth-child(9) td:nth-child(4)').textContent) || 0;
+                console.log('Ground Fuel Use Moment (should not be in ZFW calc):', grndFuelUseMomentCheck);
+                
+                // Calculate Zero Fuel Weight moment - include rear seats for P2006T, exclude for C-152
+                let zeroFuelMomentCalculated;
+                if (aircraftType === 'C-152') {
+                    zeroFuelMomentCalculated = basicEmptyMoment + frontSeatMoment + baggage1Moment; // C-152: no rear seats
+                    console.log('C-152 ZFW moment calculation:', basicEmptyMoment, '+', frontSeatMoment, '+', baggage1Moment, '=', zeroFuelMomentCalculated);
+                } else {
+                    zeroFuelMomentCalculated = basicEmptyMoment + frontSeatMoment + rearSeatMoment + baggage1Moment; // Include rear seats
+                    console.log('P2006T ZFW moment calculation:', basicEmptyMoment, '+', frontSeatMoment, '+', rearSeatMoment, '+', baggage1Moment, '=', zeroFuelMomentCalculated);
+                }
+                console.log('Final Zero Fuel Moment Calculated:', zeroFuelMomentCalculated);
+                
+                const zeroFuelMomentCell = document.querySelector('.data-table tbody tr:nth-child(6) td:nth-child(4)'); // Zero Fuel Weight moment (row 6)
+                if (zeroFuelMomentCell) {
+                    zeroFuelMomentCell.textContent = zeroFuelMomentCalculated.toFixed(1);
+                }
+                
+                // Calculate Zero Fuel Weight arm (moment / weight)
+                const zeroFuelWeight = parseFloat(document.querySelector('.data-table tbody tr:nth-child(6) td:nth-child(2)').textContent) || 0;
+                if (zeroFuelWeight > 0) {
+                    const zeroFuelArm = zeroFuelMomentCalculated / zeroFuelWeight;
+                    const zeroFuelArmCell = document.querySelector('.data-table tbody tr:nth-child(6) td:nth-child(3)'); // Zero Fuel Weight arm (row 6)
+                    if (zeroFuelArmCell) {
+                        if (aircraftType === 'P2006T' && specs.macConstant) {
+                            const zeroFuelMAC = (zeroFuelArm / specs.macConstant) * 100;
+                            zeroFuelArmCell.textContent = `${zeroFuelArm.toFixed(2)} (${zeroFuelMAC.toFixed(1)}%)`;
+                            console.log(`Zero Fuel ARM with MAC: ${zeroFuelArm.toFixed(2)} (${zeroFuelMAC.toFixed(1)}%)`);
+                        } else {
+                            zeroFuelArmCell.textContent = zeroFuelArm.toFixed(2);
+                        }
+                    }
+                }
+                
+                // Calculate Ramp Weight (Zero Fuel Weight + Fuel)
+                const rampWeight = zeroFuelWeight + fuelWeight;
+                const rampWeightCell = document.querySelector('.data-table tbody tr:nth-child(8) td:nth-child(2)'); // Ramp Weight (row 8)
+                if (rampWeightCell && rampWeight > 0) {
+                    rampWeightCell.textContent = rampWeight;
+                }
+                
+                // Calculate Ramp Weight moment (Zero Fuel Weight moment + Fuel moment)
+                const zeroFuelMomentFromTable = zeroFuelMomentCalculated; // Use our calculated value, not table value
+                const fuelMoment = parseFloat(document.querySelector('.data-table tbody tr:nth-child(7) td:nth-child(4)').textContent) || 0;
+                const rampMoment = zeroFuelMomentFromTable + fuelMoment;
+                console.log('Ramp Weight moment calculation:', zeroFuelMomentFromTable, '+', fuelMoment, '=', rampMoment);
+                const rampMomentCell = document.querySelector('.data-table tbody tr:nth-child(8) td:nth-child(4)'); // Ramp Weight moment (row 8)
+                if (rampMomentCell && rampMoment !== 0) {
+                    rampMomentCell.textContent = rampMoment.toFixed(1);
+                }
+                
+                // Calculate Ramp Weight arm (moment / weight)
+                if (rampWeight > 0 && rampMoment !== 0) {
+                    const rampArm = rampMoment / rampWeight;
+                    const rampArmCell = document.querySelector('.data-table tbody tr:nth-child(8) td:nth-child(3)'); // Ramp Weight arm (row 8)
+                    if (rampArmCell) {
+                        rampArmCell.textContent = rampArm.toFixed(2);
+                    }
+                }
+                
+                // Calculate T/O Weight (Ramp Weight + Grnd Fuel Use)
+                const grndFuelUse = parseFloat(document.querySelector('.data-table tbody tr:nth-child(9) td:nth-child(2)').textContent) || 0;
+                const takeoffWeight = rampWeight + grndFuelUse;
+                const takeoffWeightCell = document.querySelector('.data-table tbody tr:nth-child(10) td:nth-child(2)'); // T/O Weight (row 10)
+                if (takeoffWeightCell && takeoffWeight > 0) {
+                    takeoffWeightCell.textContent = takeoffWeight;
+                }
+                
+                // Calculate T/O Weight moment (Ramp Weight moment + Grnd Fuel Use moment)
+                const grndFuelUseMoment = parseFloat(document.querySelector('.data-table tbody tr:nth-child(9) td:nth-child(4)').textContent) || 0;
+                const takeoffMoment = rampMoment + grndFuelUseMoment;
+                console.log('T/O Weight moment calculation:', rampMoment, '+', grndFuelUseMoment, '=', takeoffMoment);
+                const takeoffMomentCell = document.querySelector('.data-table tbody tr:nth-child(10) td:nth-child(4)'); // T/O Weight moment (row 10)
+                if (takeoffMomentCell && takeoffMoment !== 0) {
+                    takeoffMomentCell.textContent = takeoffMoment.toFixed(1);
+                }
+                
+                // Calculate T/O Weight arm (moment / weight)
+                if (takeoffWeight > 0 && takeoffMoment !== 0) {
+                    const takeoffArm = takeoffMoment / takeoffWeight;
+                    const takeoffArmCell = document.querySelector('.data-table tbody tr:nth-child(10) td:nth-child(3)'); // T/O Weight arm (row 10)
+                    if (takeoffArmCell) {
+                        if (aircraftType === 'P2006T' && specs.macConstant) {
+                            const takeoffMAC = (takeoffArm / specs.macConstant) * 100;
+                            takeoffArmCell.textContent = `${takeoffArm.toFixed(2)} (${takeoffMAC.toFixed(1)}%)`;
+                            console.log(`T/O ARM with MAC: ${takeoffArm.toFixed(2)} (${takeoffMAC.toFixed(1)}%)`);
+                        } else {
+                            takeoffArmCell.textContent = takeoffArm.toFixed(2);
+                        }
+                    }
+                }
+                
+                // Calculate Est Landing Weight (T/O Weight + Est Fuel Burn)
+                const estLandingWeight = takeoffWeight + estFuelBurn;
+                const estLandingWeightCell = document.querySelector('.data-table tbody tr:nth-child(12) td:nth-child(2)'); // Est Landing Weight (row 12)
+                if (estLandingWeightCell && estLandingWeight > 0) {
+                    estLandingWeightCell.textContent = Math.round(estLandingWeight);
+                }
+                
+                // Calculate Est Landing Weight moment (T/O Weight moment + Est Fuel Burn moment)
+                const estFuelBurnMoment = parseFloat(document.querySelector('.data-table tbody tr:nth-child(11) td:nth-child(4)').textContent) || 0;
+                const estLandingMoment = takeoffMoment + estFuelBurnMoment;
+                const estLandingMomentCell = document.querySelector('.data-table tbody tr:nth-child(12) td:nth-child(4)'); // Est Landing Weight moment (row 12)
+                if (estLandingMomentCell && estLandingMoment !== 0) {
+                    estLandingMomentCell.textContent = estLandingMoment.toFixed(1);
+                }
+                
+                // Calculate Est Landing Weight arm (moment / weight)
+                if (estLandingWeight > 0 && estLandingMoment !== 0) {
+                    const estLandingArm = estLandingMoment / estLandingWeight;
+                    const estLandingArmCell = document.querySelector('.data-table tbody tr:nth-child(12) td:nth-child(3)'); // Est Landing Weight arm (row 12)
+                    if (estLandingArmCell) {
+                        if (aircraftType === 'P2006T' && specs.macConstant) {
+                            const estLandingMAC = (estLandingArm / specs.macConstant) * 100;
+                            estLandingArmCell.textContent = `${estLandingArm.toFixed(2)} (${estLandingMAC.toFixed(1)}%)`;
+                            console.log(`Est Landing ARM with MAC: ${estLandingArm.toFixed(2)} (${estLandingMAC.toFixed(1)}%)`);
+                        } else {
+                            estLandingArmCell.textContent = estLandingArm.toFixed(2);
+                        }
+                    }
+                }
+                
+                // Calculate moments for all rows
+                calculateMoments();
+                
+                // Update CG limits display
+                updateCGLimitsDisplay();
+            }, 10);
+            
+            // Calculate moments for all rows
+            calculateMoments();
+            
+            // MAC percentages are now displayed directly in ARM column for P2006T
+        }
+        
+        
+        function calculateMoments() {
+            console.log('calculateMoments() called');
+            const rows = document.querySelectorAll('.data-table tbody tr');
+            rows.forEach((row, index) => {
+                const weightCell = row.cells[1];
+                const armCell = row.cells[2];
+                const momentCell = row.cells[3];
+                
+                const weight = parseFloat(weightCell.textContent) || 0;
+                const arm = parseFloat(armCell.textContent) || 0;
+                
+                console.log(`Row ${index}: weight=${weight}, arm=${arm}, weightText="${weightCell.textContent}", armText="${armCell.textContent}"`);
+                
+                // Skip Basic Empty Weight row (index 0) - use input from left panel
+                // Skip Zero Fuel Weight row (index 5) - use custom calculation
+                // Skip Ramp Weight row (index 7) - use custom calculation
+                // Skip T/O Weight row (index 9) - use custom calculation
+                // Skip Est Landing Weight row (index 11) - use custom calculation
+                if (index === 0 || index === 5 || index === 7 || index === 9 || index === 11) {
+                    console.log(`Skipping row ${index} (custom calculation)`);
+                    return;
+                }
+                
+                if (weight && arm) {
+                    const moment = (weight * arm).toFixed(1);
+                    momentCell.textContent = moment;
+                    console.log(`Row ${index}: calculated moment = ${moment}`);
+                } else {
+                    console.log(`Row ${index}: skipped (weight=${weight}, arm=${arm})`);
+                }
+            });
+        }
+
+        // Function to update all displays based on input values
+        function updateDisplays() {
+            // Weather inputs to weather displays
+            const weatherObs = document.getElementById('weatherObs').value;
+            const windDirection = document.getElementById('windDirection').value;
+            const windSpeed = document.getElementById('windSpeed').value;
+            const visibility = document.getElementById('visibility').value;
+            const weather = document.getElementById('weather').value;
+            const temperature = document.getElementById('temperature').value;
+            const dewpoint = document.getElementById('dewpoint').value;
+            const altimeter = document.getElementById('altimeter').value;
+            const fieldElevation = document.getElementById('fieldElevation').value;
+
+            // Update weather displays
+            if (weatherObs) {
+                document.querySelector('[data-field="wxObs"]').textContent = weatherObs + 'Z';
+            }
+            
+            if (windDirection && windSpeed) {
+                document.querySelector('[data-field="surfaceWind"]').textContent = `${windDirection}° At ${windSpeed} Kts`;
+            }
+            
+            if (visibility && weather) {
+                document.querySelector('[data-field="visWeather"]').textContent = `${visibility}SM /${weather}`;
+            }
+            
+            if (temperature && dewpoint) {
+                document.querySelector('[data-field="tempDewPt"]').textContent = `${temperature}° / ${dewpoint}°`;
+            }
+            
+            if (altimeter) {
+                document.querySelector('[data-field="altimeterSetting"]').textContent = altimeter;
+            }
+            
+            if (fieldElevation) {
+                document.querySelector('[data-field="airportElevation"]').textContent = fieldElevation + ' ft';
+            }
+
+            // Calculate pressure altitude if we have altimeter and field elevation
+            let pressureAlt = null;
+            if (altimeter && fieldElevation) {
+                pressureAlt = Math.round((29.92 - parseFloat(altimeter)) * 1000 + parseInt(fieldElevation));
+                document.querySelector('[data-field="pressureAltitude"]').textContent = pressureAlt + ' ft';
+                // Update left panel input
+                document.getElementById('pressureAltitude').value = pressureAlt;
+            }
+
+            // Calculate density altitude if we have pressure altitude and temperature
+            let densityAlt = null;
+            if (altimeter && fieldElevation && temperature) {
+                const pressureAltCalc = (29.92 - parseFloat(altimeter)) * 1000 + parseInt(fieldElevation);
+                const standardTemp = 15 - (parseInt(fieldElevation) / 1000) * 2;
+                densityAlt = Math.round(pressureAltCalc + (120 * (parseInt(temperature) - standardTemp)));
+                document.querySelector('[data-field="densityAltitude"]').textContent = densityAlt + ' ft';
+                // Update left panel input
+                document.getElementById('densityAltitude').value = densityAlt;
+            }
+
+            // Auto-select runway heading based on wind direction
+            let runwayHeadingInput = document.getElementById('runwayHeading').value;
+            if (windDirection && !runwayHeadingInput) {
+                // Default runway selection based on wind direction
+                const windDir = parseInt(windDirection);
+                if (windDir >= 315 || windDir < 45) {
+                    // Wind from north (315-45°) -> use runway 36
+                    runwayHeadingInput = '36';
+                    document.getElementById('runwayHeading').value = '36';
+                } else if (windDir >= 135 && windDir < 225) {
+                    // Wind from south (135-225°) -> use runway 18
+                    runwayHeadingInput = '18';
+                    document.getElementById('runwayHeading').value = '18';
+                } else {
+                    // Default to runway 36 for other wind directions
+                    runwayHeadingInput = '36';
+                    document.getElementById('runwayHeading').value = '36';
+                }
+            }
+
+            // Calculate crosswind and headwind if we have wind data and runway heading
+            let headwind = null;
+            let crosswind = null;
+            
+            if (windDirection && windSpeed && runwayHeadingInput) {
+                // Extract numeric runway heading, ignoring L/R designations
+                let runwayHeading;
+                if (typeof runwayHeadingInput === 'string') {
+                    // Handle runway designations like "18L", "36R", etc.
+                    const numericPart = runwayHeadingInput.replace(/[LR]/gi, '');
+                    runwayHeading = parseInt(numericPart) * 10; // Convert runway number to heading
+                } else {
+                    runwayHeading = parseInt(runwayHeadingInput);
+                }
+                
+                const windAngleDiff = Math.abs(parseInt(windDirection) - runwayHeading);
+                const adjustedAngleDiff = windAngleDiff > 180 ? 360 - windAngleDiff : windAngleDiff;
+                
+                headwind = Math.abs(parseInt(windSpeed) * Math.cos(adjustedAngleDiff * Math.PI / 180));
+                crosswind = Math.abs(parseInt(windSpeed) * Math.sin(adjustedAngleDiff * Math.PI / 180));
+                
+                document.querySelector('[data-field="headwind"]').textContent = headwind.toFixed(1) + ' kts';
+                document.querySelector('[data-field="crosswind"]').textContent = crosswind.toFixed(1) + ' kts';
+                
+                // Update left panel inputs
+                document.getElementById('headwind').value = headwind.toFixed(1);
+                document.getElementById('crosswind').value = crosswind.toFixed(1);
+            }
+
+            // Performance data
+            const expectedRunway = document.getElementById('runwayHeading').value;
+            const runwayLength = document.getElementById('runwayLength').value;
+            const takeoffGR = document.getElementById('takeoffGR').value;
+            const landingGR = document.getElementById('landingGR').value;
+            const fiftyFtObst = document.getElementById('fiftyFtObst').value;
+
+            if (expectedRunway) {
+                // Convert heading to runway designation (simplified)
+                let runwayDesignation = '';
+                if (expectedRunway == 180) runwayDesignation = '18L';
+                else if (expectedRunway == 360 || expectedRunway == 0) runwayDesignation = '36R';
+                else runwayDesignation = Math.round(expectedRunway / 10).toString().padStart(2, '0');
+                
+                document.querySelector('[data-field="expectedRunway"]').textContent = runwayDesignation;
+            }
+
+            if (runwayLength) {
+                document.querySelector('[data-field="runwayLength"]').textContent = runwayLength + ' ft';
+            }
+
+            // Update takeoff and landing performance calculations for C-152
+            updateTakeoffPerformance();
+            updateLandingPerformance();
+
+            // Maintenance data
+            const hr50 = document.getElementById('hr50').value;
+            const hr100 = document.getElementById('hr100').value;
+            const ad1 = document.getElementById('ad1').value;
+            const ad2 = document.getElementById('ad2').value;
+            const annual = document.getElementById('annual').value;
+            const regist = document.getElementById('regist').value;
+
+            let timeToNextMx = '';
+            if (hr50) timeToNextMx += `50Hr/${hr50} `;
+            if (hr100) timeToNextMx += `100Hr/${hr100} `;
+            if (ad1) timeToNextMx += `AD/${ad1}`;
+            
+            let daysToNextMx = '';
+            if (ad2) daysToNextMx += `AD/${ad2} `;
+            if (annual) daysToNextMx += `Annual/${annual} `;
+            if (regist) daysToNextMx += `Regist/${regist}`;
+
+            if (timeToNextMx) {
+                document.querySelector('[data-field="timeToNextMx"]').textContent = timeToNextMx.trim();
+            }
+            if (daysToNextMx) {
+                document.querySelector('[data-field="daysToNextMx"]').textContent = daysToNextMx.trim();
+            }
+        }
+
+        // Consolidated initialization function
+        function initializeApplication() {
+            console.log('Initializing application...');
+            
+            // Initialize mobile interface
+            initializeMobileInterface();
+            
+            // Initialize input field event listeners
+            initializeInputFields();
+            
+            // Load saved data and trigger initial calculations
+            loadPersistedData();
+            
+            // Initialize charts for both desktop and mobile
+            setTimeout(() => {
+                updateCGLimitsDisplay();
+                // Force chart redraw on window resize (mobile orientation changes)
+                window.addEventListener('resize', () => {
+                    setTimeout(updateCGLimitsDisplay, 100);
+                });
+            }, 100);
+            
+            console.log('Application initialization complete');
+        }
+        
+        function initializeInputFields() {
+            const inputFields = document.querySelectorAll('.input-field');
+            console.log('Found input fields:', inputFields.length);
+            
+            // Convert NodeList to Array for easier manipulation
+            const inputFieldsArray = Array.from(inputFields);
+            
+            inputFields.forEach((field, index) => {
+                field.addEventListener('input', function() {
+                    updateDisplays();
+                    updateWeightBalanceCalculations();
+                });
+                
+                // Add paste event listener to trigger calculations
+                field.addEventListener('paste', function() {
+                    // Use setTimeout to ensure pasted value is processed
+                    setTimeout(() => {
+                        updateDisplays();
+                        updateWeightBalanceCalculations();
+                    }, 10);
+                });
+                
+                // Add Enter key navigation to move to next field
+                field.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        const nextIndex = index + 1;
+                        if (nextIndex < inputFieldsArray.length) {
+                            inputFieldsArray[nextIndex].focus();
+                        } else {
+                            // If at the last field, go back to the first
+                            inputFieldsArray[0].focus();
+                        }
+                    }
+                });
+            });
+            
+            // Add specific listeners for fuel and time inputs
+            const fuelInput = document.getElementById('fuel');
+            const timeInput = document.getElementById('time');
+            
+            if (fuelInput) {
+                fuelInput.addEventListener('input', updateWeightBalanceCalculations);
+                console.log('Fuel input listener added');
+            } else {
+                console.error('Fuel input not found');
+            }
+            
+            if (timeInput) {
+                timeInput.addEventListener('input', updateWeightBalanceCalculations);
+                console.log('Time input listener added');
+            } else {
+                console.error('Time input not found');
+            }
+            
+            // Add comprehensive listeners for all inputs that affect calculations
+            const performanceInputs = [
+                'temperature', 'pressureAltitude', 'headwind', 'crosswind',
+                'windDirection', 'windSpeed', 'altimeter', 'fieldElevation',
+                'runwayHeading', 'runwayLength'
+            ];
+            
+            const weatherInputs = [
+                'visibility', 'weather', 'temperature', 'dewpoint', 'altimeter',
+                'fieldElevation', 'windDirection', 'windSpeed', 'runwayHeading'
+            ];
+            
+            // Function to trigger all updates
+            function triggerAllUpdates() {
+                updateDisplays();
+                updateTakeoffPerformance();
+                updateLandingPerformance();
+            }
+            
+            // Add listeners for performance-affecting inputs
+            performanceInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.addEventListener('input', triggerAllUpdates);
+                    input.addEventListener('change', triggerAllUpdates);
+                    console.log(`Performance listener added for ${inputId}`);
+                }
+            });
+            
+            // Add listeners for weather inputs that trigger display updates
+            weatherInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                
+                if (input) {
+                    input.addEventListener('input', triggerAllUpdates);
+                    input.addEventListener('change', triggerAllUpdates);
+                    console.log(`Weather listener added for ${inputId}`);
+                }
+            });
+            
+            // Mobile sync no longer needed - mobile uses same desktop elements
+            
+            // Initial update
+            console.log('Running initial updates...');
+            updateDisplays();
+            updateWeightBalanceCalculations();
+            
+            console.log('Initialization complete');
+            
+            // Load user profile on page load
+            loadUserProfile(true); // true = silent load (no status message)
+            
+            // Initialize aircraft management
+            updateSavedAircraftDropdowns();
+            updateTailNumberDropdowns();
+            loadDefaultAircraft();
+        }
+        
+        function initializeMobileInterface() {
+            console.log('Initializing mobile interface...');
+            
+            // Debug: Check if mobile elements exist
+            const mobileTabsContainer = document.querySelector('.mobile-tabs');
+            const bottomNav = document.querySelector('.bottom-nav');
+            const navButtons = document.querySelectorAll('.nav-button');
+            
+            console.log('Mobile tabs container found:', !!mobileTabsContainer);
+            console.log('Bottom nav found:', !!bottomNav);
+            console.log('Nav buttons found:', navButtons.length);
+            
+            // Ensure Data tab is active by default on mobile
+            if (window.innerWidth <= 768) {
+                console.log('Mobile detected, setting up default tab...');
+                
+                if (mobileTabsContainer) {
+                    mobileTabsContainer.classList.add('show-data');
+                    console.log('Added show-data class to mobile tabs container');
+                }
+                
+                // Set active nav button
+                navButtons.forEach(button => {
+                    button.classList.remove('active');
+                    if (button.getAttribute('data-tab') === 'data') {
+                        button.classList.add('active');
+                    }
+                });
+            }
+        }
+        
+        function loadPersistedData() {
+            console.log('Loading persisted data...');
+            
+            // Load user profile silently
+            loadUserProfile(true);
+            
+            // Initialize aircraft management
+            updateSavedAircraftDropdowns();
+            updateTailNumberDropdowns();
+            updateAircraftManager(); // Ensure mobile aircraft list is updated
+            loadDefaultAircraft();
+            
+            // Sync desktop and mobile fields
+            syncDesktopMobileFields();
+            
+            // Trigger initial calculations
+            setTimeout(() => {
+                updateDisplays();
+                updateWeightBalanceCalculations();
+                updateTakeoffPerformance();
+                updateLandingPerformance();
+            }, 200);
+        }
+        
+        function syncDesktopMobileFields() {
+            console.log('Syncing desktop and mobile fields...');
+            
+            // List of fields that need synchronization
+            const syncFields = [
+                'aircraftType', 'tailNumber', 'weight', 'arm', 'moment',
+                'userWeight', 'userBagWeight', 'instructorWeight', 'instructorBagWeight',
+                'baggage1Weight', 'baggage2Weight', 'fuel', 'time',
+                'temperature', 'pressureAltitude', 'headwind', 'crosswind',
+                'windDirection', 'windSpeed', 'altimeter', 'fieldElevation',
+                'runwayHeading', 'runwayLength', 'visibility', 'weather', 'dewpoint'
+            ];
+            
+            syncFields.forEach(fieldId => {
+                const desktopField = document.getElementById(fieldId);
+                const mobileField = document.getElementById(fieldId + '-mobile');
+                
+                if (desktopField && mobileField) {
+                    // If desktop has value but mobile doesn't, copy to mobile
+                    if (desktopField.value && !mobileField.value) {
+                        mobileField.value = desktopField.value;
+                    }
+                    // If mobile has value but desktop doesn't, copy to desktop
+                    else if (mobileField.value && !desktopField.value) {
+                        desktopField.value = mobileField.value;
+                    }
+                }
+            });
+        }
+        
+        // Replace the old DOMContentLoaded listener
+        document.addEventListener('DOMContentLoaded', initializeApplication);
+        
+// User Profile Management Functions
+function saveUserProfile() {
+    const userWeight = document.getElementById('userWeight').value;
+    const userBagWeight = document.getElementById('userBagWeight').value;
+    const defaultAircraft = document.getElementById('defaultAircraft').value;
+            
+    if (!userWeight && !userBagWeight && !defaultAircraft) {
+        showSettingsStatus('Please enter at least one value to save.', 'error');
+        return;
+    }
+            
+    const userProfile = {
+        weight: userWeight,
+        bagWeight: userBagWeight,
+        defaultAircraft: defaultAircraft,
+        savedDate: new Date().toISOString()
+    };
+            
+    try {
+        localStorage.setItem('wb_user_profile', JSON.stringify(userProfile));
+        showSettingsStatus('Profile saved successfully! ', 'success');
+                
+        // Auto-populate current form fields
+        populateMyWeightFields();
+                
+        // Set default aircraft if specified
+        if (defaultAircraft) {
+            const aircraftSelects = document.querySelectorAll('#aircraftType, #aircraftType-mobile');
+            aircraftSelects.forEach(select => {
+                if (select) select.value = defaultAircraft;
+            });
+            // updateAircraftSpecifications(); // Function not needed - calculations handled by updateWeightBalanceCalculations
+        }
+                
+    } catch (error) {
+        showSettingsStatus('Error saving profile: ' + error.message, 'error');
+    }
+}
+            
+function loadUserProfile(silent = false) {
+    try {
+        const savedProfile = localStorage.getItem('wb_user_profile');
+        if (savedProfile) {
+            const profile = JSON.parse(savedProfile);
+                    
+            // Populate settings form
+            if (profile.weight) document.getElementById('userWeight').value = profile.weight;
+            if (profile.bagWeight) document.getElementById('userBagWeight').value = profile.bagWeight;
+            if (profile.defaultAircraft) document.getElementById('defaultAircraft').value = profile.defaultAircraft;
+                    
+            // Auto-populate data fields
+            populateMyWeightFields();
+                    
+            // Set default aircraft
+            if (profile.defaultAircraft) {
+                const aircraftSelects = document.querySelectorAll('#aircraftType, #aircraftType-mobile');
+                aircraftSelects.forEach(select => {
+                    if (select) select.value = profile.defaultAircraft;
+                });
+                // updateAircraftSpecifications(); // Function not needed - calculations handled by updateWeightBalanceCalculations
+            }
+                    
+            if (!silent) {
+                const savedDate = new Date(profile.savedDate).toLocaleDateString();
+                showSettingsStatus(`Profile loaded! (Saved: ${savedDate}) `, 'success');
+            }
+        } else {
+            if (!silent) {
+                showSettingsStatus('No saved profile found.', 'info');
+            }
+        }
+    } catch (error) {
+        if (!silent) {
+            showSettingsStatus('Error loading profile: ' + error.message, 'error');
+        }
+    }
+}
+            
+function clearUserProfile() {
+    if (confirm('Are you sure you want to clear all saved profile data? This cannot be undone.')) {
+        try {
+            localStorage.removeItem('wb_user_profile');
+                    
+            // Clear settings form
+            document.getElementById('userWeight').value = '';
+            document.getElementById('userBagWeight').value = '';
+            document.getElementById('defaultAircraft').value = '';
+                    
+            showSettingsStatus('Profile data cleared successfully! ', 'success');
+        } catch (error) {
+            showSettingsStatus('Error clearing profile: ' + error.message, 'error');
+        }
+    }
+}
+            
+function populateMyWeightFields() {
+    try {
+        const savedProfile = localStorage.getItem('wb_user_profile');
+        if (savedProfile) {
+            const profile = JSON.parse(savedProfile);
+                    
+            // Calculate total weight (user + bag)
+            const userWeight = parseFloat(profile.weight) || 0;
+            const bagWeight = parseFloat(profile.bagWeight) || 0;
+            const totalWeight = userWeight + bagWeight;
+                    
+            if (totalWeight > 0) {
+                // Populate desktop fields
+                const myWeightField = document.getElementById('myWeight');
+                const myBagField = document.getElementById('myBag');
+                        
+                if (myWeightField && userWeight > 0) myWeightField.value = userWeight;
+                if (myBagField && bagWeight > 0) myBagField.value = bagWeight;
+                        
+                // Populate mobile fields
+                const myWeightMobileField = document.getElementById('myWeight-mobile');
+                const myBagMobileField = document.getElementById('myBag-mobile');
+                        
+                if (myWeightMobileField && userWeight > 0) myWeightMobileField.value = userWeight;
+                if (myBagMobileField && bagWeight > 0) myBagMobileField.value = bagWeight;
+                        
+                // Trigger calculations update
+                updateWeightBalanceCalculations();
+            }
+        }
+    } catch (error) {
+        console.error('Error populating weight fields:', error);
+    }
+}
+            
+function showSettingsStatus(message, type) {
+    const statusDiv = document.getElementById('settingsStatus');
+    if (statusDiv) {
+        statusDiv.textContent = message;
+        statusDiv.style.display = 'block';
+                
+        // Set colors based on type
+        switch(type) {
+            case 'success':
+                statusDiv.style.backgroundColor = '#4CAF50';
+                statusDiv.style.color = 'white';
+                break;
+            case 'error':
+                statusDiv.style.backgroundColor = '#f44336';
+                statusDiv.style.color = 'white';
+                break;
+            case 'info':
+                statusDiv.style.backgroundColor = '#2196F3';
+                statusDiv.style.color = 'white';
+                break;
+            default:
+                statusDiv.style.backgroundColor = '#666';
+                statusDiv.style.color = 'white';
+        }
+                
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            statusDiv.style.display = 'none';
+        }, 3000);
+    }
+}
+
+// Aircraft Management Functions
+function saveCurrentAircraft() {
+    const aircraftType = document.getElementById('aircraftType').value || document.getElementById('aircraftType-mobile').value;
+    
+    // Handle tail number field (now using datalist)
+    const tailNumberField = document.getElementById('tailNumber') || document.querySelector('input[list="tailNumberList"]');
+    const tailNumberMobileField = document.getElementById('tailNumber-mobile') || document.querySelector('input[list="tailNumberListMobile"]');
+    const tailNumber = (tailNumberField ? tailNumberField.value : '') || (tailNumberMobileField ? tailNumberMobileField.value : '');
+    
+    const weight = document.getElementById('weight').value || document.getElementById('weight-mobile').value;
+    const arm = document.getElementById('arm').value || document.getElementById('arm-mobile').value;
+    const moment = document.getElementById('moment').value || document.getElementById('moment-mobile').value;
+    
+    console.log('Saving aircraft with values:', {
+        aircraftType,
+        tailNumber,
+        weight,
+        arm,
+        moment
+    });
+    
+    if (!aircraftType || !tailNumber) {
+        showSettingsStatus('Please select aircraft type and enter tail number before saving.', 'error');
+        return;
+    }
+    
+    // Auto-generate aircraft name: N[tailnumber] - [aircrafttype]
+    const formattedTailNumber = tailNumber.startsWith('N') ? tailNumber : `N${tailNumber}`;
+    const aircraftName = `${formattedTailNumber} - ${aircraftType}`;
+    
+    const aircraftProfile = {
+        name: aircraftName,
+        aircraftType: aircraftType,
+        tailNumber: tailNumber,
+        weight: weight || '',
+        arm: arm || '',
+        moment: moment || '',
+        savedDate: new Date().toISOString()
+    };
+    
+    try {
+        const savedAircraft = JSON.parse(localStorage.getItem('wb_saved_aircraft') || '{}');
+        savedAircraft[aircraftName] = aircraftProfile;
+        localStorage.setItem('wb_saved_aircraft', JSON.stringify(savedAircraft));
+        
+        // Show popup message
+        showAircraftSavedPopup(aircraftName);
+        updateSavedAircraftDropdowns();
+        updateAircraftManager();
+        updateTailNumberDropdowns();
+    } catch (error) {
+        showSettingsStatus('Error saving aircraft: ' + error.message, 'error');
+    }
+}
+
+function loadSavedAircraft(aircraftName) {
+    console.log('loadSavedAircraft called with:', aircraftName);
+    if (!aircraftName) {
+        console.log('No aircraft name provided');
+        return;
+    }
+
+    try {
+        const savedAircraft = JSON.parse(localStorage.getItem('wb_saved_aircraft') || '{}');
+        console.log('Saved aircraft data:', savedAircraft);
+        const aircraft = savedAircraft[aircraftName];
+        console.log('Selected aircraft data:', aircraft);
+
+        if (aircraft) {
+            console.log('Loading aircraft fields...');
+            
+            // Populate desktop fields
+            const aircraftTypeField = document.getElementById('aircraftType');
+            if (aircraftTypeField) {
+                aircraftTypeField.value = aircraft.aircraftType;
+                console.log('Set aircraftType to:', aircraft.aircraftType);
+            } else {
+                console.log('aircraftType field not found');
+            }
+            
+            // Handle tail number field (now using datalist)
+            const tailNumberField = document.getElementById('tailNumber') || document.querySelector('input[list="tailNumberList"]');
+            if (tailNumberField) {
+                tailNumberField.value = aircraft.tailNumber;
+                console.log('Set tailNumber to:', aircraft.tailNumber);
+            } else {
+                console.log('tailNumber field not found');
+            }
+            
+            const weightField = document.getElementById('weight');
+            if (weightField) {
+                weightField.value = aircraft.weight;
+                console.log('Set weight to:', aircraft.weight);
+            } else {
+                console.log('weight field not found');
+            }
+            
+            const armField = document.getElementById('arm');
+            if (armField) {
+                armField.value = aircraft.arm;
+                console.log('Set arm to:', aircraft.arm);
+            } else {
+                console.log('arm field not found');
+            }
+            
+            const momentField = document.getElementById('moment');
+            if (momentField) {
+                momentField.value = aircraft.moment;
+                console.log('Set moment to:', aircraft.moment);
+            } else {
+                console.log('moment field not found');
+            }
+
+            // Populate mobile fields
+            const aircraftTypeMobileField = document.getElementById('aircraftType-mobile');
+            if (aircraftTypeMobileField) {
+                aircraftTypeMobileField.value = aircraft.aircraftType;
+                console.log('Set aircraftType-mobile to:', aircraft.aircraftType);
+            }
+            
+            // Handle mobile tail number field (now using datalist)
+            const tailNumberMobileField = document.getElementById('tailNumber-mobile') || document.querySelector('input[list="tailNumberListMobile"]');
+            if (tailNumberMobileField) {
+                tailNumberMobileField.value = aircraft.tailNumber;
+                console.log('Set tailNumber-mobile to:', aircraft.tailNumber);
+            }
+            
+            const weightMobileField = document.getElementById('weight-mobile');
+            if (weightMobileField) {
+                weightMobileField.value = aircraft.weight;
+                console.log('Set weight-mobile to:', aircraft.weight);
+            }
+            
+            const armMobileField = document.getElementById('arm-mobile');
+            if (armMobileField) {
+                armMobileField.value = aircraft.arm;
+                console.log('Set arm-mobile to:', aircraft.arm);
+            }
+            
+            const momentMobileField = document.getElementById('moment-mobile');
+            if (momentMobileField) {
+                momentMobileField.value = aircraft.moment;
+                console.log('Set moment-mobile to:', aircraft.moment);
+            }
+
+            console.log('Calling updateAircraftSpecifications...');
+            // Update aircraft specifications and calculations
+            if (typeof updateAircraftSpecifications === 'function') {
+                // updateAircraftSpecifications(); // Function not needed - calculations handled by updateWeightBalanceCalculations
+            } else {
+                console.log('updateAircraftSpecifications not needed - using updateWeightBalanceCalculations instead');
+            }
+            
+            console.log('Calling updateWeightBalanceCalculations...');
+            if (typeof updateWeightBalanceCalculations === 'function') {
+                updateWeightBalanceCalculations();
+            } else {
+                console.error('updateWeightBalanceCalculations is not defined');
+            }
+            
+            // Update tail number displays in calculator headers
+            const tailNumberDisplay = document.getElementById('tailNumberDisplay');
+            const tailNumberDisplayMobile = document.getElementById('tailNumberDisplay-mobile');
+            const formattedTailNumber = aircraft.tailNumber.startsWith('N') ? aircraft.tailNumber : `N${aircraft.tailNumber}`;
+            
+            if (tailNumberDisplay) {
+                tailNumberDisplay.textContent = formattedTailNumber;
+                console.log('Updated desktop tail number display to:', formattedTailNumber);
+            }
+            if (tailNumberDisplayMobile) {
+                tailNumberDisplayMobile.textContent = formattedTailNumber;
+                console.log('Updated mobile tail number display to:', formattedTailNumber);
+            }
+            
+            // Update aircraft type displays
+            const aircraftTypeDisplay = document.getElementById('aircraftTypeDisplay');
+            const aircraftTypeDisplayMobile = document.getElementById('aircraftTypeDisplay-mobile');
+            
+            if (aircraftTypeDisplay) {
+                aircraftTypeDisplay.textContent = aircraft.aircraftType;
+                console.log('Updated desktop aircraft type display to:', aircraft.aircraftType);
+            }
+            if (aircraftTypeDisplayMobile) {
+                aircraftTypeDisplayMobile.textContent = aircraft.aircraftType;
+                console.log('Updated mobile aircraft type display to:', aircraft.aircraftType);
+            }
+
+            console.log('Calling showSettingsStatus...');
+            if (typeof showSettingsStatus === 'function') {
+                showSettingsStatus(`Aircraft "${aircraftName}" loaded successfully! 📂`, 'success');
+            } else {
+                console.error('showSettingsStatus is not defined');
+            }
+        } else {
+            console.log('Aircraft not found in saved data');
+        }
+    } catch (error) {
+        console.error('Error in loadSavedAircraft:', error);
+        if (typeof showSettingsStatus === 'function') {
+            showSettingsStatus('Error loading aircraft: ' + error.message, 'error');
+        } else {
+            console.error('showSettingsStatus is not defined, cannot show error message');
+        }
+    }
+}
+
+function updateSavedAircraftDropdowns() {
+    try {
+        const savedAircraft = JSON.parse(localStorage.getItem('wb_saved_aircraft') || '{}');
+        const aircraftNames = Object.keys(savedAircraft);
+        
+        // Update default aircraft dropdown in settings
+        const defaultDropdown = document.getElementById('defaultAircraft');
+        if (defaultDropdown) {
+            const currentValue = defaultDropdown.value;
+            defaultDropdown.innerHTML = '<option value="">No Default Selected</option>';
+            aircraftNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                defaultDropdown.appendChild(option);
+            });
+            defaultDropdown.value = currentValue; // Restore selection
+        }
+    } catch (error) {
+        console.error('Error updating aircraft dropdowns:', error);
+    }
+}
+
+function showAircraftManager() {
+    const desktopManager = document.getElementById('aircraftManager');
+    const mobileManager = document.getElementById('aircraftManager-mobile');
+    
+    if (desktopManager) {
+        desktopManager.style.display = 'block';
+    }
+    if (mobileManager) {
+        mobileManager.style.display = 'block';
+    }
+    
+    updateAircraftManager();
+}
+
+function hideAircraftManager() {
+    const desktopManager = document.getElementById('aircraftManager');
+    const mobileManager = document.getElementById('aircraftManager-mobile');
+    
+    if (desktopManager) {
+        desktopManager.style.display = 'none';
+    }
+    if (mobileManager) {
+        mobileManager.style.display = 'none';
+    }
+}
+
+function updateAircraftManager() {
+    try {
+        const savedAircraft = JSON.parse(localStorage.getItem('wb_saved_aircraft') || '{}');
+        const desktopAircraftList = document.getElementById('aircraftList');
+        const mobileAircraftList = document.getElementById('aircraftList-mobile');
+
+        function createAircraftListContent() {
+            if (Object.keys(savedAircraft).length === 0) {
+                return '<div style="color: #ccc; text-align: center; padding: 20px;">No saved aircraft yet. Use "Save Current Aircraft" to add one.</div>';
+            }
+
+            let content = '';
+            Object.entries(savedAircraft).forEach(([name, aircraft]) => {
+                content += `
+                    <div style="background-color: #3a3a3a; border-radius: 6px; padding: 10px; margin-bottom: 8px; border: 1px solid #555;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: bold; color: #fff; margin-bottom: 4px;">${name}</div>
+                                <div style="font-size: 12px; color: #ccc;">
+                                    ${aircraft.aircraftType} • ${aircraft.tailNumber}
+                                    ${aircraft.weight ? ` • ${aircraft.weight} lbs` : ''}
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button onclick="loadSavedAircraft('${name}')" style="background-color: #4CAF50; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                    Load
+                                </button>
+                                <button onclick="setDefaultAircraft('${name}')" style="background-color: #2196F3; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                    Default
+                                </button>
+                                <button onclick="deleteAircraft('${name}')" style="background-color: #f44336; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            return content;
+        }
+
+        const listContent = createAircraftListContent();
+        
+        if (desktopAircraftList) {
+            desktopAircraftList.innerHTML = listContent;
+        }
+        if (mobileAircraftList) {
+            mobileAircraftList.innerHTML = listContent;
+        }
+    } catch (error) {
+        console.error('Error updating aircraft manager:', error);
+    }
+}
+
+function setDefaultAircraft(aircraftName) {
+    document.getElementById('defaultAircraft').value = aircraftName;
+    showSettingsStatus(`"${aircraftName}" set as default aircraft! ⭐`, 'success');
+}
+
+function deleteAircraft(aircraftName) {
+    if (confirm(`Are you sure you want to delete "${aircraftName}"? This cannot be undone.`)) {
+        try {
+            const savedAircraft = JSON.parse(localStorage.getItem('wb_saved_aircraft') || '{}');
+            delete savedAircraft[aircraftName];
+            localStorage.setItem('wb_saved_aircraft', JSON.stringify(savedAircraft));
+
+            // Clear default if it was the deleted aircraft
+            if (document.getElementById('defaultAircraft').value === aircraftName) {
+                document.getElementById('defaultAircraft').value = '';
+            }
+
+            updateSavedAircraftDropdowns();
+            updateAircraftManager();
+            showSettingsStatus(`Aircraft "${aircraftName}" deleted successfully! 🗑️`, 'success');
+        } catch (error) {
+            showSettingsStatus('Error deleting aircraft: ' + error.message, 'error');
+        }
+    }
+}
+
+function loadDefaultAircraft() {
+    const defaultAircraft = document.getElementById('defaultAircraft').value;
+    if (defaultAircraft) {
+        loadSavedAircraft(defaultAircraft);
+    }
+}
+
+function showAircraftSavedPopup(aircraftName) {
+    // Create popup element
+    const popup = document.createElement('div');
+    popup.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #4CAF50;
+        color: white;
+        padding: 20px 30px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        z-index: 10000;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        text-align: center;
+    `;
+    popup.innerHTML = `✈️ Aircraft Saved!<br><span style="font-size: 14px; font-weight: normal;">${aircraftName}</span>`;
+    
+    document.body.appendChild(popup);
+    
+    // Auto-remove after 2 seconds
+    setTimeout(() => {
+        if (popup.parentNode) {
+            popup.parentNode.removeChild(popup);
+        }
+    }, 2000);
+}
+
+function updateTailNumberDropdowns() {
+    try {
+        const savedAircraft = JSON.parse(localStorage.getItem('wb_saved_aircraft') || '{}');
+        const aircraftNames = Object.keys(savedAircraft);
+        
+        // Only convert to dropdown if there are saved aircraft
+        if (aircraftNames.length === 0) return;
+        
+        // Update desktop tail number field
+        const desktopTailField = document.getElementById('tailNumber');
+        if (desktopTailField && desktopTailField.tagName === 'INPUT') {
+            // Create a wrapper div for the input + dropdown combo
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'relative';
+            wrapper.style.width = '120px';
+            wrapper.style.display = 'flex';
+            
+            // Keep the original input
+            const input = desktopTailField.cloneNode(true);
+            input.setAttribute('list', 'tailNumberList');
+            
+            // Ensure the input maintains its event listeners
+            input.addEventListener('input', function() {
+                updateDisplays();
+                updateWeightBalanceCalculations();
+            });
+            
+            // Create datalist for suggestions
+            const datalist = document.createElement('datalist');
+            datalist.id = 'tailNumberList';
+            
+            aircraftNames.forEach(name => {
+                const aircraft = savedAircraft[name];
+                const option = document.createElement('option');
+                option.value = aircraft.tailNumber;
+                option.textContent = name;
+                option.setAttribute('data-aircraft', name);
+                datalist.appendChild(option);
+            });
+            
+            // Add event listeners to load aircraft when selecting from datalist
+            function handleAircraftSelection() {
+                const selectedOption = Array.from(datalist.options).find(opt => opt.value === this.value);
+                if (selectedOption) {
+                    const aircraftName = selectedOption.getAttribute('data-aircraft');
+                    if (aircraftName) {
+                        console.log('Loading aircraft:', aircraftName);
+                        loadSavedAircraft(aircraftName);
+                    }
+                }
+            }
+            
+            input.addEventListener('input', handleAircraftSelection);
+            input.addEventListener('change', handleAircraftSelection);
+            input.addEventListener('blur', handleAircraftSelection);
+            
+            // Ensure the input maintains its event listeners
+            input.addEventListener('input', function() {
+                updateDisplays();
+                updateWeightBalanceCalculations();
+            });
+            
+            wrapper.appendChild(input);
+            wrapper.appendChild(datalist);
+            desktopTailField.parentNode.replaceChild(wrapper, desktopTailField);
+        }
+        
+        // Update mobile tail number field
+        const mobileTailField = document.getElementById('tailNumber-mobile');
+        if (mobileTailField && mobileTailField.tagName === 'INPUT') {
+            // Create a wrapper div for the input + dropdown combo
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'relative';
+            wrapper.style.width = '120px';
+            wrapper.style.display = 'flex';
+            
+            // Keep the original input
+            const input = mobileTailField.cloneNode(true);
+            input.setAttribute('list', 'tailNumberListMobile');
+            
+            // Ensure the input maintains its event listeners
+            input.addEventListener('input', function() {
+                updateDisplays();
+                updateWeightBalanceCalculations();
+            });
+            
+            // Create datalist for suggestions
+            const datalist = document.createElement('datalist');
+            datalist.id = 'tailNumberListMobile';
+            
+            aircraftNames.forEach(name => {
+                const aircraft = savedAircraft[name];
+                const option = document.createElement('option');
+                option.value = aircraft.tailNumber;
+                option.textContent = name;
+                option.setAttribute('data-aircraft', name);
+                datalist.appendChild(option);
+            });
+            
+            // Add event listeners to load aircraft when selecting from datalist (mobile)
+            function handleMobileAircraftSelection() {
+                const selectedOption = Array.from(datalist.options).find(opt => opt.value === this.value);
+                if (selectedOption) {
+                    const aircraftName = selectedOption.getAttribute('data-aircraft');
+                    if (aircraftName) {
+                        console.log('Loading aircraft (mobile):', aircraftName);
+                        loadSavedAircraft(aircraftName);
+                    }
+                }
+            }
+            
+            input.addEventListener('input', handleMobileAircraftSelection);
+            input.addEventListener('change', handleMobileAircraftSelection);
+            input.addEventListener('blur', handleMobileAircraftSelection);
+            
+            wrapper.appendChild(input);
+            wrapper.appendChild(datalist);
+            mobileTailField.parentNode.replaceChild(wrapper, mobileTailField);
+        }
+    } catch (error) {
+        console.error('Error updating tail number dropdowns:', error);
+    }
+}
+</script>
+</body>
+</html>
