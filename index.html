@@ -892,42 +892,64 @@
             @media (max-width: 768px) {
                 .risk-panel {
                     margin-bottom: 15px;
-                    padding: 12px;
+                    padding: 8px;
                 }
                 
                 .risk-panel-title {
                     font-size: 16px;
-                    margin-bottom: 10px;
+                    margin-bottom: 8px;
+                    text-align: center;
                 }
                 
                 .risk-label {
-                    font-size: 13px;
-                    min-width: 120px;
+                    font-size: 12px;
+                    min-width: 100px;
+                    flex-shrink: 0;
                 }
                 
                 .risk-btn {
-                    min-width: 45px;
-                    height: 32px;
-                    font-size: 10px;
-                    padding: 3px 4px;
+                    min-width: 40px;
+                    height: 28px;
+                    font-size: 9px;
+                    padding: 2px 3px;
+                    margin: 0 1px;
                 }
                 
                 .risk-total {
-                    min-width: 35px;
-                    font-size: 14px;
+                    min-width: 30px;
+                    font-size: 12px;
+                    flex-shrink: 0;
+                }
+                
+                .risk-numbers {
+                    gap: 2px;
                 }
                 
                 .risk-numbers span {
-                    font-size: 12px;
+                    font-size: 11px;
+                    text-align: center;
                 }
                 
                 .risk-row {
-                    margin-bottom: 10px;
-                    padding: 6px 0;
+                    margin-bottom: 8px;
+                    padding: 4px 0;
+                }
+                
+                .risk-buttons {
+                    gap: 2px;
+                }
+                
+                .risk-row.stacked .risk-label {
+                    margin-bottom: 6px;
+                    text-align: left;
                 }
                 
                 .risk-row.stacked .risk-buttons {
-                    margin-left: 120px; /* Adjusted for mobile label width */
+                    margin-left: 100px; /* Adjusted for mobile label width */
+                }
+                
+                .risk-row.stacked .risk-content {
+                    gap: 0;
                 }
             }
 
@@ -4451,31 +4473,29 @@
         function initializeMobileInterface() {
             console.log('Initializing mobile interface...');
             
-            // Debug: Check if mobile elements exist
-            const mobileTabsContainer = document.querySelector('.mobile-tabs');
-            const bottomNav = document.querySelector('.bottom-nav');
-            const navButtons = document.querySelectorAll('.nav-button');
-            
-            console.log('Mobile tabs container found:', !!mobileTabsContainer);
-            console.log('Bottom nav found:', !!bottomNav);
-            console.log('Nav buttons found:', navButtons.length);
-            
-            // Ensure Data tab is active by default on mobile
+            // Ensure Data column is shown by default on mobile
             if (window.innerWidth <= 768) {
-                console.log('Mobile detected, setting up default tab...');
+                console.log('Mobile detected, setting up default column...');
                 
-                if (mobileTabsContainer) {
-                    mobileTabsContainer.classList.add('show-data');
-                    console.log('Added show-data class to mobile tabs container');
+                const desktopLayout = document.querySelector('.desktop-layout');
+                if (desktopLayout) {
+                    // Remove any existing mobile classes
+                    desktopLayout.classList.remove('mobile-show-left', 'mobile-show-right', 'mobile-show-risk', 'mobile-show-settings');
+                    // Set to show Data column (left panel) by default
+                    desktopLayout.classList.add('mobile-show-left');
+                    console.log('Set mobile to show Data column by default');
                 }
                 
-                // Set active nav button
+                // Set Data nav button as active
+                const navButtons = document.querySelectorAll('.mobile-nav-btn');
                 navButtons.forEach(button => {
                     button.classList.remove('active');
-                    if (button.getAttribute('data-tab') === 'data') {
-                        button.classList.add('active');
-                    }
                 });
+                const dataButton = document.querySelector('.mobile-nav-btn[onclick="showMobileColumn(\'left\')"]');
+                if (dataButton) {
+                    dataButton.classList.add('active');
+                    console.log('Set Data button as active');
+                }
             }
         }
         
