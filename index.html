@@ -488,8 +488,15 @@
             text-align: left;
         }
 
+        .risk-row.stacked .risk-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .risk-row.stacked .risk-buttons {
-            justify-self: stretch;
+            margin-left: 160px; /* Same as risk-label min-width to maintain alignment */
+            flex: 1;
         }
 
         .risk-label {
@@ -848,6 +855,12 @@
                 top: 0;
                 left: 0;
                 z-index: 10;
+                width: 100vw !important;
+                height: 100%;
+                overflow-y: auto;
+                overflow-x: hidden;
+                padding: 10px;
+                box-sizing: border-box;
             }
 
             .desktop-layout.mobile-show-risk .left-panel,
@@ -868,6 +881,49 @@
             .desktop-layout.mobile-show-settings .right-column,
             .desktop-layout.mobile-show-settings .risk-column {
                 display: none !important;
+            }
+
+            /* Mobile Risk Assessment Panel Adjustments */
+            @media (max-width: 768px) {
+                .risk-panel {
+                    margin-bottom: 15px;
+                    padding: 12px;
+                }
+                
+                .risk-panel-title {
+                    font-size: 16px;
+                    margin-bottom: 10px;
+                }
+                
+                .risk-label {
+                    font-size: 13px;
+                    min-width: 120px;
+                }
+                
+                .risk-btn {
+                    min-width: 45px;
+                    height: 32px;
+                    font-size: 10px;
+                    padding: 3px 4px;
+                }
+                
+                .risk-total {
+                    min-width: 35px;
+                    font-size: 14px;
+                }
+                
+                .risk-numbers span {
+                    font-size: 12px;
+                }
+                
+                .risk-row {
+                    margin-bottom: 10px;
+                    padding: 6px 0;
+                }
+                
+                .risk-row.stacked .risk-buttons {
+                    margin-left: 120px; /* Adjusted for mobile label width */
+                }
             }
 
             /* Hide column resizers on mobile */
@@ -1760,14 +1816,16 @@
             
             <div class="risk-row stacked">
                 <div class="risk-label">T/O or LDG Over 50' Obstacle</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('aircraft-obstacle', 1)" data-value="1">No</button>
-                    <button class="risk-btn" disabled data-value="2"></button>
-                    <button class="risk-btn" disabled data-value="3"></button>
-                    <button class="risk-btn" onclick="selectRisk('aircraft-obstacle', 4)" data-value="4">Yes</button>
-                    <button class="risk-btn" disabled data-value="5"></button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('aircraft-obstacle', 1)" data-value="1">No</button>
+                        <button class="risk-btn" disabled data-value="2"></button>
+                        <button class="risk-btn" disabled data-value="3"></button>
+                        <button class="risk-btn" onclick="selectRisk('aircraft-obstacle', 4)" data-value="4">Yes</button>
+                        <button class="risk-btn" disabled data-value="5"></button>
+                    </div>
+                    <div class="risk-total" id="aircraft-obstacle-total">0</div>
                 </div>
-                <div class="risk-total" id="aircraft-obstacle-total">0</div>
             </div>
             
             <div class="risk-row">
@@ -1948,14 +2006,16 @@
             
             <div class="risk-row stacked">
                 <div class="risk-label">Illness/Emergency w/ friend/family</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('ext-emergency', 1)" data-value="1">no</button>
-                    <button class="risk-btn" disabled data-value="2"></button>
-                    <button class="risk-btn" disabled data-value="3"></button>
-                    <button class="risk-btn" onclick="selectRisk('ext-emergency', 4)" data-value="4">yes</button>
-                    <button class="risk-btn" disabled data-value="5"></button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('ext-emergency', 1)" data-value="1">no</button>
+                        <button class="risk-btn" disabled data-value="2"></button>
+                        <button class="risk-btn" disabled data-value="3"></button>
+                        <button class="risk-btn" onclick="selectRisk('ext-emergency', 4)" data-value="4">yes</button>
+                        <button class="risk-btn" disabled data-value="5"></button>
+                    </div>
+                    <div class="risk-total" id="ext-emergency-total">0</div>
                 </div>
-                <div class="risk-total" id="ext-emergency-total">0</div>
             </div>
             
             <div class="risk-row">
