@@ -1985,28 +1985,32 @@
                 <div class="risk-total">Total</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Recent death of friend/family</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('ext-death', 1)" data-value="1">no</button>
-                    <button class="risk-btn" disabled data-value="2"></button>
-                    <button class="risk-btn" disabled data-value="3"></button>
-                    <button class="risk-btn" disabled data-value="4"></button>
-                    <button class="risk-btn" onclick="selectRisk('ext-death', 5)" data-value="5">yes</button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('ext-death', 1)" data-value="1">no</button>
+                        <button class="risk-btn" disabled data-value="2"></button>
+                        <button class="risk-btn" disabled data-value="3"></button>
+                        <button class="risk-btn" disabled data-value="4"></button>
+                        <button class="risk-btn" onclick="selectRisk('ext-death', 5)" data-value="5">yes</button>
+                    </div>
+                    <div class="risk-total" id="ext-death-total">0</div>
                 </div>
-                <div class="risk-total" id="ext-death-total">0</div>
             </div>
             
-            <div class="risk-row">
+            <div class="risk-row stacked">
                 <div class="risk-label">Pressure to complete mission</div>
-                <div class="risk-buttons">
-                    <button class="risk-btn" onclick="selectRisk('ext-pressure', 1)" data-value="1">no</button>
-                    <button class="risk-btn" disabled data-value="2"></button>
-                    <button class="risk-btn" onclick="selectRisk('ext-pressure', 3)" data-value="3">yes</button>
-                    <button class="risk-btn" disabled data-value="4"></button>
-                    <button class="risk-btn" disabled data-value="5"></button>
+                <div class="risk-content">
+                    <div class="risk-buttons">
+                        <button class="risk-btn" onclick="selectRisk('ext-pressure', 1)" data-value="1">no</button>
+                        <button class="risk-btn" disabled data-value="2"></button>
+                        <button class="risk-btn" onclick="selectRisk('ext-pressure', 3)" data-value="3">yes</button>
+                        <button class="risk-btn" disabled data-value="4"></button>
+                        <button class="risk-btn" disabled data-value="5"></button>
+                    </div>
+                    <div class="risk-total" id="ext-pressure-total">0</div>
                 </div>
-                <div class="risk-total" id="ext-pressure-total">0</div>
             </div>
             
             <div class="risk-row stacked">
