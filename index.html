@@ -456,10 +456,17 @@
         }
 
         .risk-numbers {
-            display: flex;
-            gap: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 4px;
+            flex: 1;
             font-weight: bold;
             color: #ccc;
+        }
+
+        .risk-numbers span {
+            text-align: center;
+            font-size: 14px;
         }
 
         .risk-row {
@@ -478,15 +485,15 @@
         }
 
         .risk-buttons {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
             gap: 4px;
             flex: 1;
-            justify-content: space-between;
             align-items: center;
         }
 
         .risk-btn {
-            min-width: 75px;
+            min-width: 60px;
             height: 34px;
             border: 1px solid #555;
             border-radius: 6px;
@@ -499,11 +506,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 4px 8px;
+            padding: 4px 6px;
             text-align: center;
             white-space: nowrap;
-            flex: 1;
-            max-width: 85px;
         }
 
         .risk-btn:disabled {
@@ -922,10 +927,11 @@
 
             .desktop-layout {
                 display: flex;
-                width: 100vw;
+                width: 100%;
                 height: 100vh;
                 overflow: hidden;
                 position: relative;
+                max-width: 100vw;
             }
 
             .column-resizer {
