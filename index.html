@@ -1197,7 +1197,7 @@
                     <option value="C-152">C-152</option>
                     <option value="C-172">C-172</option>
                     <option value="P2006T">P2006T</option>
-                    <option value="P2010">P2010</option>
+                    <option value="CUSTOM">Custom Aircraft</option>
                 </select>
             </div>
         </div>
@@ -2172,6 +2172,7 @@
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
                 <button onclick="saveCurrentAircraft()" style="background-color: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px;">✈️ Save Current Aircraft</button>
                 <button onclick="showAircraftManager()" style="background-color: #FF9800; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px;">📋 Manage Aircraft</button>
+                <button onclick="showCustomAircraftBuilder()" style="background-color: #9C27B0; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px;">🛠️ Custom Aircraft</button>
             </div>
             
             <!-- Aircraft Manager Modal -->
@@ -2181,6 +2182,197 @@
                     <button onclick="hideAircraftManager()" style="background: none; border: none; color: #ccc; font-size: 18px; cursor: pointer;">×</button>
                 </div>
                 <div id="aircraftList"></div>
+            </div>
+            
+            <!-- Custom Aircraft Builder Modal -->
+            <div id="customAircraftBuilder" style="display: none; background-color: #3a3a3a; border-radius: 8px; padding: 20px; margin-top: 10px; border: 1px solid #555; max-height: 70vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h4 style="color: #e0e0e0; margin: 0;">Custom Aircraft Builder</h4>
+                    <button onclick="hideCustomAircraftBuilder()" style="background: none; border: none; color: #ccc; font-size: 18px; cursor: pointer;">×</button>
+                </div>
+                
+                <!-- Basic Aircraft Info -->
+                <div style="margin-bottom: 20px;">
+                    <h5 style="color: #4CAF50; margin-bottom: 10px;">Basic Information</h5>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Aircraft Name</label>
+                            <input type="text" id="customAircraftName" placeholder="e.g., My Custom Cessna" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Model/Type</label>
+                            <input type="text" id="customAircraftModel" placeholder="e.g., C-172N" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Weight & Balance Configuration -->
+                <div style="margin-bottom: 20px;">
+                    <h5 style="color: #4CAF50; margin-bottom: 10px;">Weight & Balance Configuration</h5>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Empty Weight (lbs)</label>
+                            <input type="number" id="customEmptyWeight" placeholder="1500" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Empty Weight Arm (in)</label>
+                            <input type="number" step="0.1" id="customEmptyArm" placeholder="39.5" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Max Gross Weight (lbs)</label>
+                            <input type="number" id="customMaxWeight" placeholder="2400" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                    </div>
+                    
+                    <!-- CG Limits -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Forward CG Limit (in)</label>
+                            <input type="number" step="0.1" id="customForwardCG" placeholder="35.0" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Aft CG Limit (in)</label>
+                            <input type="number" step="0.1" id="customAftCG" placeholder="47.3" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Pilot/Front Seats Arm (in)</label>
+                            <input type="number" step="0.1" id="customPilotArm" placeholder="37.0" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Rear Seats Arm (in)</label>
+                            <input type="number" step="0.1" id="customRearArm" placeholder="73.0" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                    </div>
+                    
+                    <!-- Baggage Configuration -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Baggage Area 1 Arm (in)</label>
+                            <input type="number" step="0.1" id="customBaggage1Arm" placeholder="95.0" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Baggage Area 1 Max (lbs)</label>
+                            <input type="number" id="customBaggage1Max" placeholder="120" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Baggage Area 2 Arm (in)</label>
+                            <input type="number" step="0.1" id="customBaggage2Arm" placeholder="123.0" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px; margin-bottom: 15px;">
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Baggage Area 2 Max (lbs)</label>
+                            <input type="number" id="customBaggage2Max" placeholder="50" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div></div>
+                    </div>
+                </div>
+                
+                <!-- Fuel Configuration -->
+                <div style="margin-bottom: 20px;">
+                    <h5 style="color: #4CAF50; margin-bottom: 10px;">Fuel Configuration</h5>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Number of Fuel Tanks</label>
+                            <select id="customFuelTanks" onchange="updateCustomFuelTanks()" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                                <option value="1">1 Tank</option>
+                                <option value="2" selected>2 Tanks</option>
+                                <option value="3">3 Tanks</option>
+                                <option value="4">4 Tanks</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Fuel Weight (lbs/gal)</label>
+                            <input type="number" step="0.1" id="customFuelWeight" value="6.0" placeholder="6.0" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                    </div>
+                    <div id="customFuelTankInputs"></div>
+                </div>
+                
+                <!-- V-Speeds Configuration -->
+                <div style="margin-bottom: 20px;">
+                    <h5 style="color: #4CAF50; margin-bottom: 10px;">V-Speeds Configuration</h5>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Vs0 (kts)</label>
+                            <input type="number" id="customVs0" placeholder="40" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Vs1 (kts)</label>
+                            <input type="number" id="customVs1" placeholder="48" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Vr (kts)</label>
+                            <input type="number" id="customVr" placeholder="55" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Vx (kts)</label>
+                            <input type="number" id="customVx" placeholder="62" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Vy (kts)</label>
+                            <input type="number" id="customVy" placeholder="79" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Va (kts)</label>
+                            <input type="number" id="customVa" placeholder="105" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Vno (kts)</label>
+                            <input type="number" id="customVno" placeholder="129" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Vne (kts)</label>
+                            <input type="number" id="customVne" placeholder="163" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Vfe (kts)</label>
+                            <input type="number" id="customVfe" placeholder="85" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Vmc (kts)</label>
+                            <input type="number" id="customVmc" placeholder="56" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Vyse (kts)</label>
+                            <input type="number" id="customVyse" placeholder="88" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Cruise Speed (kts)</label>
+                            <input type="number" id="customCruiseSpeed" placeholder="122" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Performance Data (Optional) -->
+                <div style="margin-bottom: 20px;">
+                    <h5 style="color: #4CAF50; margin-bottom: 10px;">Performance Data (Optional)</h5>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Service Ceiling (ft)</label>
+                            <input type="number" id="customServiceCeiling" placeholder="14200" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Rate of Climb (fpm)</label>
+                            <input type="number" id="customRateOfClimb" placeholder="715" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Fuel Capacity (gal)</label>
+                            <input type="number" id="customFuelCapacity" placeholder="56" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; padding-top: 15px; border-top: 1px solid #555;">
+                    <button onclick="clearCustomAircraftForm()" style="background-color: #757575; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px;">Clear Form</button>
+                    <button onclick="loadCustomAircraftTemplate()" style="background-color: #2196F3; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px;">Load Template</button>
+                    <button onclick="saveCustomAircraft()" style="background-color: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px;">💾 Save Custom Aircraft</button>
+                </div>
             </div>
         </div>
 
@@ -5098,9 +5290,302 @@ function deleteAircraft(aircraftName) {
 }
 
 function loadDefaultAircraft() {
-    const defaultAircraft = document.getElementById('defaultAircraft').value;
-    if (defaultAircraft) {
-        loadSavedAircraft(defaultAircraft);
+    loadSavedAircraft('N12345 - C-172');
+}
+
+// Custom Aircraft Builder Functions
+function showCustomAircraftBuilder() {
+    document.getElementById('customAircraftBuilder').style.display = 'block';
+    updateCustomFuelTanks(); // Initialize fuel tank inputs
+}
+
+function hideCustomAircraftBuilder() {
+    document.getElementById('customAircraftBuilder').style.display = 'none';
+}
+
+function updateCustomFuelTanks() {
+    const numTanks = parseInt(document.getElementById('customFuelTanks').value);
+    const container = document.getElementById('customFuelTankInputs');
+    
+    let html = '';
+    for (let i = 1; i <= numTanks; i++) {
+        html += `
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <div>
+                    <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Tank ${i} Capacity (gal)</label>
+                    <input type="number" id="customTank${i}Capacity" placeholder="28" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                </div>
+                <div>
+                    <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Tank ${i} Arm (in)</label>
+                    <input type="number" step="0.1" id="customTank${i}Arm" placeholder="48.0" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                </div>
+                <div>
+                    <label style="color: #ccc; font-size: 12px; display: block; margin-bottom: 5px;">Tank ${i} Unusable (gal)</label>
+                    <input type="number" step="0.1" id="customTank${i}Unusable" placeholder="0" style="width: 100%; padding: 8px; border: 1px solid #555; border-radius: 4px; background-color: #2a2a2a; color: #e0e0e0; font-size: 14px;">
+                </div>
+            </div>
+        `;
+    }
+    container.innerHTML = html;
+}
+
+function clearCustomAircraftForm() {
+    // Clear all form fields
+    const inputs = document.querySelectorAll('#customAircraftBuilder input');
+    inputs.forEach(input => {
+        if (input.type === 'number') {
+            input.value = '';
+        } else {
+            input.value = '';
+        }
+    });
+    
+    // Reset fuel tanks to default
+    document.getElementById('customFuelTanks').value = '2';
+    document.getElementById('customFuelWeight').value = '6.0';
+    updateCustomFuelTanks();
+}
+
+function loadCustomAircraftTemplate() {
+    // Load C-172 template as example
+    document.getElementById('customAircraftName').value = 'Custom C-172';
+    document.getElementById('customAircraftModel').value = 'C-172N';
+    document.getElementById('customEmptyWeight').value = '1500';
+    document.getElementById('customEmptyArm').value = '39.5';
+    document.getElementById('customMaxWeight').value = '2400';
+    document.getElementById('customForwardCG').value = '35.0';
+    document.getElementById('customAftCG').value = '47.3';
+    document.getElementById('customPilotArm').value = '37.0';
+    document.getElementById('customRearArm').value = '73.0';
+    document.getElementById('customBaggage1Arm').value = '95.0';
+    document.getElementById('customBaggage1Max').value = '120';
+    document.getElementById('customBaggage2Arm').value = '123.0';
+    document.getElementById('customBaggage2Max').value = '50';
+    
+    // Fuel configuration
+    document.getElementById('customFuelTanks').value = '2';
+    document.getElementById('customFuelWeight').value = '6.0';
+    updateCustomFuelTanks();
+    
+    // Set tank values after update
+    setTimeout(() => {
+        document.getElementById('customTank1Capacity').value = '28';
+        document.getElementById('customTank1Arm').value = '48.0';
+        document.getElementById('customTank1Unusable').value = '0';
+        document.getElementById('customTank2Capacity').value = '28';
+        document.getElementById('customTank2Arm').value = '48.0';
+        document.getElementById('customTank2Unusable').value = '0';
+    }, 100);
+    
+    // V-speeds
+    document.getElementById('customVs0').value = '40';
+    document.getElementById('customVs1').value = '48';
+    document.getElementById('customVr').value = '55';
+    document.getElementById('customVx').value = '62';
+    document.getElementById('customVy').value = '79';
+    document.getElementById('customVa').value = '105';
+    document.getElementById('customVno').value = '129';
+    document.getElementById('customVne').value = '163';
+    document.getElementById('customVfe').value = '85';
+    document.getElementById('customVmc').value = '';
+    document.getElementById('customVyse').value = '';
+    document.getElementById('customCruiseSpeed').value = '122';
+    
+    // Performance data
+    document.getElementById('customServiceCeiling').value = '14200';
+    document.getElementById('customRateOfClimb').value = '715';
+    document.getElementById('customFuelCapacity').value = '56';
+}
+
+function saveCustomAircraft() {
+        const aircraftName = document.getElementById('customAircraftName').value;
+        const aircraftModel = document.getElementById('customAircraftModel').value;
+        
+        if (!aircraftName || !aircraftModel) {
+            alert('Please enter aircraft name and model/type.');
+            return;
+        }
+        
+        // Collect all configuration data
+        const customAircraft = {
+            name: aircraftName,
+            model: aircraftModel,
+            type: 'CUSTOM',
+            emptyWeight: parseFloat(document.getElementById('customEmptyWeight').value) || 0,
+            emptyArm: parseFloat(document.getElementById('customEmptyArm').value) || 0,
+            maxWeight: parseFloat(document.getElementById('customMaxWeight').value) || 0,
+            forwardCG: parseFloat(document.getElementById('customForwardCG').value) || 0,
+            aftCG: parseFloat(document.getElementById('customAftCG').value) || 0,
+            pilotArm: parseFloat(document.getElementById('customPilotArm').value) || 0,
+            rearArm: parseFloat(document.getElementById('customRearArm').value) || 0,
+            baggage1Arm: parseFloat(document.getElementById('customBaggage1Arm').value) || 0,
+            baggage1Max: parseFloat(document.getElementById('customBaggage1Max').value) || 0,
+            baggage2Arm: parseFloat(document.getElementById('customBaggage2Arm').value) || 0,
+            baggage2Max: parseFloat(document.getElementById('customBaggage2Max').value) || 0,
+            fuelWeight: parseFloat(document.getElementById('customFuelWeight').value) || 6.0,
+            fuelCapacity: parseFloat(document.getElementById('customFuelCapacity').value) || 0,
+            
+            // Collect fuel tank data
+            fuelTanks: [],
+            
+            // V-speeds
+            vspeeds: {
+                vs0: parseInt(document.getElementById('customVs0').value) || 0,
+                vs1: parseInt(document.getElementById('customVs1').value) || 0,
+                vr: parseInt(document.getElementById('customVr').value) || 0,
+                vx: parseInt(document.getElementById('customVx').value) || 0,
+                vy: parseInt(document.getElementById('customVy').value) || 0,
+                va: parseInt(document.getElementById('customVa').value) || 0,
+                vno: parseInt(document.getElementById('customVno').value) || 0,
+                vne: parseInt(document.getElementById('customVne').value) || 0,
+                vfe: parseInt(document.getElementById('customVfe').value) || 0,
+                vmc: parseInt(document.getElementById('customVmc').value) || 0,
+                vyse: parseInt(document.getElementById('customVyse').value) || 0,
+                cruise: parseInt(document.getElementById('customCruiseSpeed').value) || 0
+            },
+            
+            // Performance data
+            performance: {
+                serviceCeiling: parseInt(document.getElementById('customServiceCeiling').value) || 0,
+                rateOfClimb: parseInt(document.getElementById('customRateOfClimb').value) || 0
+            },
+            
+            savedDate: new Date().toISOString()
+        };
+        
+        // Collect fuel tank data
+        const numTanks = parseInt(document.getElementById('customFuelTanks').value);
+        for (let i = 1; i <= numTanks; i++) {
+            const capacity = parseFloat(document.getElementById(`customTank${i}Capacity`).value) || 0;
+            const arm = parseFloat(document.getElementById(`customTank${i}Arm`).value) || 0;
+            const unusable = parseFloat(document.getElementById(`customTank${i}Unusable`).value) || 0;
+            
+            customAircraft.fuelTanks.push({
+                capacity: capacity,
+                arm: arm,
+                unusable: unusable
+            });
+        }
+        
+        try {
+            // Save to localStorage
+            const savedCustomAircraft = JSON.parse(localStorage.getItem('wb_custom_aircraft') || '{}');
+            savedCustomAircraft[aircraftName] = customAircraft;
+            localStorage.setItem('wb_custom_aircraft', JSON.stringify(savedCustomAircraft));
+            
+            // Add to aircraft specs for immediate use
+            aircraftSpecs[`CUSTOM_${aircraftName.replace(/\s+/g, '_')}`] = {
+                emptyWeight: customAircraft.emptyWeight,
+                emptyArm: customAircraft.emptyArm,
+                maxWeight: customAircraft.maxWeight,
+                forwardCG: customAircraft.forwardCG,
+                aftCG: customAircraft.aftCG,
+                pilotArm: customAircraft.pilotArm,
+                rearArm: customAircraft.rearArm,
+                baggage1Arm: customAircraft.baggage1Arm,
+                baggage1Max: customAircraft.baggage1Max,
+                baggage2Arm: customAircraft.baggage2Arm,
+                baggage2Max: customAircraft.baggage2Max,
+                fuelArm: customAircraft.fuelTanks.length > 0 ? customAircraft.fuelTanks[0].arm : 48.0,
+                fuelWeight: customAircraft.fuelWeight,
+                vspeeds: customAircraft.vspeeds,
+                performance: customAircraft.performance,
+                fuelTanks: customAircraft.fuelTanks,
+                isCustom: true
+            };
+            
+            // Update aircraft type dropdown to include custom aircraft
+            updateAircraftTypeDropdown();
+            
+            alert(`Custom aircraft "${aircraftName}" saved successfully!`);
+            hideCustomAircraftBuilder();
+            
+        } catch (error) {
+            alert('Error saving custom aircraft: ' + error.message);
+        }
+    }
+
+function updateAircraftTypeDropdown() {
+        const customAircraft = JSON.parse(localStorage.getItem('wb_custom_aircraft') || '{}');
+        const dropdowns = document.querySelectorAll('#aircraftType, #aircraftType-mobile');
+        
+        dropdowns.forEach(dropdown => {
+            // Remove existing custom options
+            const options = dropdown.querySelectorAll('option[data-custom="true"]');
+            options.forEach(option => option.remove());
+            
+            // Add custom aircraft options
+            Object.keys(customAircraft).forEach(name => {
+                const option = document.createElement('option');
+                option.value = `CUSTOM_${name.replace(/\s+/g, '_')}`;
+                option.textContent = `${name} (Custom)`;
+                option.setAttribute('data-custom', 'true');
+                dropdown.appendChild(option);
+            });
+        });
+    }
+
+function loadCustomAircraft(customKey) {
+        const customAircraft = JSON.parse(localStorage.getItem('wb_custom_aircraft') || '{}');
+        const aircraftName = customKey.replace('CUSTOM_', '').replace(/_/g, ' ');
+        const aircraft = customAircraft[aircraftName];
+        
+        if (aircraft) {
+            // Populate the calculator with custom aircraft data
+            document.getElementById('emptyWeight').value = aircraft.emptyWeight;
+            document.getElementById('emptyArm').value = aircraft.emptyArm;
+            
+            // Update displays
+            updateWeightBalanceCalculations();
+            
+            // Show custom aircraft info in performance section
+            displayCustomAircraftInfo(aircraft);
+        }
+    }
+
+function displayCustomAircraftInfo(aircraft) {
+        // Update performance displays with custom aircraft data
+        const performanceSection = document.querySelector('.info-grid');
+        if (performanceSection && aircraft.vspeeds) {
+            // Create custom performance display
+            let customInfo = '<div style="background-color: #3a3a3a; padding: 15px; border-radius: 8px; margin-top: 10px;">';
+            customInfo += `<h4 style="color: #4CAF50; margin-bottom: 10px;">${aircraft.name} - Custom Aircraft</h4>`;
+            customInfo += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">';
+            
+            // V-speeds column
+            customInfo += '<div><h5 style="color: #e0e0e0; margin-bottom: 8px;">V-Speeds</h5>';
+            if (aircraft.vspeeds.vs0) customInfo += `<div style="color: #ccc; font-size: 12px;">Vs0: ${aircraft.vspeeds.vs0} kts</div>`;
+            if (aircraft.vspeeds.vs1) customInfo += `<div style="color: #ccc; font-size: 12px;">Vs1: ${aircraft.vspeeds.vs1} kts</div>`;
+            if (aircraft.vspeeds.vr) customInfo += `<div style="color: #ccc; font-size: 12px;">Vr: ${aircraft.vspeeds.vr} kts</div>`;
+            if (aircraft.vspeeds.vx) customInfo += `<div style="color: #ccc; font-size: 12px;">Vx: ${aircraft.vspeeds.vx} kts</div>`;
+            if (aircraft.vspeeds.vy) customInfo += `<div style="color: #ccc; font-size: 12px;">Vy: ${aircraft.vspeeds.vy} kts</div>`;
+            if (aircraft.vspeeds.va) customInfo += `<div style="color: #ccc; font-size: 12px;">Va: ${aircraft.vspeeds.va} kts</div>`;
+            if (aircraft.vspeeds.vno) customInfo += `<div style="color: #ccc; font-size: 12px;">Vno: ${aircraft.vspeeds.vno} kts</div>`;
+            if (aircraft.vspeeds.vne) customInfo += `<div style="color: #ccc; font-size: 12px;">Vne: ${aircraft.vspeeds.vne} kts</div>`;
+            customInfo += '</div>';
+            
+            // Limits column
+            customInfo += '<div><h5 style="color: #e0e0e0; margin-bottom: 8px;">Limits</h5>';
+            customInfo += `<div style="color: #ccc; font-size: 12px;">Max Weight: ${aircraft.maxWeight} lbs</div>`;
+            customInfo += `<div style="color: #ccc; font-size: 12px;">Forward CG: ${aircraft.forwardCG} in</div>`;
+            customInfo += `<div style="color: #ccc; font-size: 12px;">Aft CG: ${aircraft.aftCG} in</div>`;
+            if (aircraft.performance.serviceCeiling) customInfo += `<div style="color: #ccc; font-size: 12px;">Service Ceiling: ${aircraft.performance.serviceCeiling} ft</div>`;
+            if (aircraft.performance.rateOfClimb) customInfo += `<div style="color: #ccc; font-size: 12px;">Rate of Climb: ${aircraft.performance.rateOfClimb} fpm</div>`;
+            customInfo += '</div>';
+            
+            customInfo += '</div></div>';
+            
+            // Insert after existing performance data
+            const existingCustomInfo = document.getElementById('customAircraftInfo');
+            if (existingCustomInfo) {
+                existingCustomInfo.remove();
+            }
+            
+            const customDiv = document.createElement('div');
+            customDiv.id = 'customAircraftInfo';
+            customDiv.innerHTML = customInfo;
+            performanceSection.appendChild(customDiv);
+        }
     }
 }
 
