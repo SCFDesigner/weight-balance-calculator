@@ -473,7 +473,7 @@
         .risk-label {
             font-size: 14px;
             color: #e0e0e0;
-            min-width: 140px;
+            min-width: 160px;
             flex-shrink: 0;
         }
 
@@ -486,22 +486,23 @@
         }
 
         .risk-btn {
-            min-width: 50px;
-            height: 30px;
+            min-width: 65px;
+            height: 32px;
             border: 1px solid #555;
             border-radius: 6px;
             background-color: #4a4a4a;
             color: #ccc;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2px 4px;
+            padding: 3px 6px;
             text-align: center;
             white-space: nowrap;
+            flex: 1;
         }
 
         .risk-btn:disabled {
@@ -967,8 +968,8 @@
             }
 
             .risk-column {
-                width: 380px !important;
-                min-width: 380px !important;
+                width: 450px !important;
+                min-width: 450px !important;
                 flex-shrink: 0 !important;
             }
 
@@ -1980,7 +1981,7 @@
     <div class="column-resizer" data-resize="risk-settings"></div>
 
     <!-- Settings Panel (Column D) -->
-    <div class="settings-panel" style="width: 350px; padding: 20px; background-color: #2a2a2a; overflow-y: auto; height: 100vh; border-left: 1px solid #555;">
+    <div class="settings-panel" style="padding: 20px; background-color: #2a2a2a; overflow-y: auto; height: 100vh; border-left: 1px solid #555;">
         <h2 style="color: #4CAF50; margin-bottom: 20px; font-size: 18px;">Settings</h2>
         
         <!-- User Profile Section -->
@@ -2291,9 +2292,19 @@
                     const newLeftWidth = startWidthLeft + deltaX;
                     const newRightWidth = startWidthRight - deltaX;
                     
-                    // Set minimum widths
-                    const minWidth = 200;
-                    if (newLeftWidth >= minWidth && newRightWidth >= minWidth) {
+                    // Set minimum widths based on column type
+                    let minWidthLeft = 200;
+                    let minWidthRight = 200;
+                    
+                    // Risk Assessment column needs more space
+                    if (rightColumn && rightColumn.classList.contains('risk-column')) {
+                        minWidthRight = 400;
+                    }
+                    if (leftColumn && leftColumn.classList.contains('risk-column')) {
+                        minWidthLeft = 400;
+                    }
+                    
+                    if (newLeftWidth >= minWidthLeft && newRightWidth >= minWidthRight) {
                         leftColumn.style.width = newLeftWidth + 'px';
                         leftColumn.style.minWidth = newLeftWidth + 'px';
                         rightColumn.style.width = newRightWidth + 'px';
