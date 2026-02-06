@@ -486,8 +486,8 @@
         }
 
         .risk-btn {
-            min-width: 65px;
-            height: 32px;
+            min-width: 75px;
+            height: 34px;
             border: 1px solid #555;
             border-radius: 6px;
             background-color: #4a4a4a;
@@ -499,10 +499,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 3px 6px;
+            padding: 4px 8px;
             text-align: center;
             white-space: nowrap;
             flex: 1;
+            max-width: 85px;
         }
 
         .risk-btn:disabled {
@@ -550,8 +551,9 @@
         .risk-total {
             font-weight: bold;
             color: #4CAF50;
-            min-width: 40px;
+            min-width: 50px;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .grand-total {
@@ -955,28 +957,28 @@
             }
 
             .left-panel {
-                width: 340px !important;
-                min-width: 340px !important;
-                flex-shrink: 0 !important;
+                width: 340px;
+                min-width: 340px;
+                flex-shrink: 0;
             }
 
             .right-column {
-                flex: 1 !important;
-                min-width: 350px !important;
-                max-width: 500px !important;
-                width: auto !important;
+                flex: 1;
+                min-width: 350px;
+                max-width: 500px;
+                width: auto;
             }
 
             .risk-column {
-                width: 450px !important;
-                min-width: 450px !important;
-                flex-shrink: 0 !important;
+                width: 520px;
+                min-width: 520px;
+                flex-shrink: 0;
             }
 
             .settings-panel {
-                width: 280px !important;
-                min-width: 280px !important;
-                flex-shrink: 0 !important;
+                width: 340px;
+                min-width: 340px;
+                flex-shrink: 0;
             }
 
             /* When settings are hidden, expand right column */
@@ -2298,10 +2300,18 @@
                     
                     // Risk Assessment column needs more space
                     if (rightColumn && rightColumn.classList.contains('risk-column')) {
-                        minWidthRight = 400;
+                        minWidthRight = 480;
                     }
                     if (leftColumn && leftColumn.classList.contains('risk-column')) {
-                        minWidthLeft = 400;
+                        minWidthLeft = 480;
+                    }
+                    
+                    // Settings panel should match left panel
+                    if (rightColumn && rightColumn.classList.contains('settings-panel')) {
+                        minWidthRight = 300;
+                    }
+                    if (leftColumn && leftColumn.classList.contains('settings-panel')) {
+                        minWidthLeft = 300;
                     }
                     
                     if (newLeftWidth >= minWidthLeft && newRightWidth >= minWidthRight) {
