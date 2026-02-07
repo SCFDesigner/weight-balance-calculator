@@ -109,6 +109,7 @@
             width: 110px;
             -webkit-appearance: textfield;
             -moz-appearance: textfield;
+            appearance: textfield;
         }
 
         .input-field::-webkit-outer-spin-button,
@@ -279,6 +280,23 @@
         }
 
         .select-field {
+            background-color: #4a4a4a;
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #ffffff;
+            font-size: 14px;
+            min-width: 110px;
+            max-width: 110px;
+            width: 110px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='m6 9 6 6 6 6-6'/%3e%3cpath d='m18 15-6-6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+            padding-right: 36px;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -2253,14 +2271,6 @@
                 <!-- Weight & Balance Limits Section -->
                 <div class="input-section">
                     <div class="input-group">
-                        <label class="input-label">Empty Weight (lbs)</label>
-                        <input type="number" class="input-field" id="customEmptyWeight" placeholder="1500" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">Empty Weight Arm (in)</label>
-                        <input type="number" class="input-field" id="customEmptyArm" placeholder="39.5" step="0.1">
-                    </div>
-                    <div class="input-group">
                         <label class="input-label">Forward CG Limit (in)</label>
                         <input type="number" class="input-field" id="customForwardCG" placeholder="35.0" step="0.1">
                     </div>
@@ -2279,14 +2289,6 @@
                     <div class="input-group">
                         <label class="input-label">Max Crosswind (kts)</label>
                         <input type="number" class="input-field" id="customMaxCrosswind" placeholder="15" step="1">
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">Baggage 1 Max Weight (lbs)</label>
-                        <input type="number" class="input-field" id="customBaggage1Max" placeholder="120" step="0.1">
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">Baggage 2 Max Weight (lbs)</label>
-                        <input type="number" class="input-field" id="customBaggage2Max" placeholder="50" step="0.1">
                     </div>
                 </div>
                 <!-- V-Speeds Section -->
@@ -2872,6 +2874,9 @@
             console.log('populateAircraftSpecificValues called with:', aircraftType);
             const specs = aircraftSpecs[aircraftType];
             console.log('Aircraft specs:', specs);
+            if (!specs) {
+                return;
+            }
             
             // Clear all arms first
             const allArmCells = document.querySelectorAll('.data-table tbody tr td:nth-child(3)');
@@ -2923,7 +2928,8 @@
             
             // Handle rear seat row for different aircraft types
             if (rearSeatRow) {
-                if (aircraftType === 'C-152') {
+                const isTwoSeatAircraft = aircraftType === 'C-152' || specs.seats === 2;
+                if (isTwoSeatAircraft) {
                     rearSeatRow.style.backgroundColor = '#2a2a2a';
                     rearSeatRow.style.opacity = '0.5';
                     const rearSeatCells = rearSeatRow.querySelectorAll('td');
@@ -2950,7 +2956,8 @@
             // Handle baggage 2 row for C-152 (block it out)
             const baggage2Row = document.querySelector('.data-table tbody tr:nth-child(5)'); // Baggage 2 row (back to row 5)
             if (baggage2Row) {
-                if (aircraftType === 'C-152') {
+                const isTwoSeatAircraft = aircraftType === 'C-152' || specs.seats === 2;
+                if (isTwoSeatAircraft) {
                     baggage2Row.style.backgroundColor = '#2a2a2a';
                     baggage2Row.style.opacity = '0.5';
                     const baggage2Cells = baggage2Row.querySelectorAll('td');
@@ -5387,15 +5394,11 @@ function loadCustomAircraftTemplate() {
     updateCustomFuelTanks();
     
     // Weight & Balance Limits
-    document.getElementById('customEmptyWeight').value = '1500';
-    document.getElementById('customEmptyArm').value = '39.5';
     document.getElementById('customForwardCG').value = '35.0';
     document.getElementById('customAftCG').value = '47.3';
     document.getElementById('customMaxWeight').value = '2400';
     document.getElementById('customMaxLandingWeight').value = '2400';
     document.getElementById('customMaxCrosswind').value = '15';
-    document.getElementById('customBaggage1Max').value = '120';
-    document.getElementById('customBaggage2Max').value = '50';
     
     // Set tank values after update
     setTimeout(() => {
@@ -5441,17 +5444,13 @@ function saveCustomAircraft() {
         name: aircraftName,
         model: aircraftModel,
         type: 'CUSTOM',
-        emptyWeight: parseFloat(document.getElementById('customEmptyWeight').value) || 0,
-        emptyArm: parseFloat(document.getElementById('customEmptyArm').value) || 0,
         maxWeight: parseFloat(document.getElementById('customMaxWeight').value) || 0,
         forwardCG: parseFloat(document.getElementById('customForwardCG').value) || 0,
         aftCG: parseFloat(document.getElementById('customAftCG').value) || 0,
         pilotArm: parseFloat(document.getElementById('customPilotArm').value) || 0,
         rearArm: parseFloat(document.getElementById('customRearArm').value) || 0,
         baggage1Arm: parseFloat(document.getElementById('customBaggage1Arm').value) || 0,
-        baggage1Max: parseFloat(document.getElementById('customBaggage1Max').value) || 0,
         baggage2Arm: parseFloat(document.getElementById('customBaggage2Arm').value) || 0,
-        baggage2Max: parseFloat(document.getElementById('customBaggage2Max').value) || 0,
         seats: parseInt(document.getElementById('customSeats').value) || 4,
         fuelArm: parseFloat(document.getElementById('customFuelArm').value) || 0,
         fuelWeight: parseFloat(document.getElementById('customFuelWeight').value) || 6.0,
@@ -5511,19 +5510,18 @@ function saveCustomAircraft() {
         
         // Add to aircraft specs for immediate use
         aircraftSpecs[`CUSTOM_${aircraftName.replace(/\s+/g, '_')}`] = {
-            emptyWeight: customAircraft.emptyWeight,
-            emptyArm: customAircraft.emptyArm,
             maxWeight: customAircraft.maxWeight,
             forwardCG: customAircraft.forwardCG,
             aftCG: customAircraft.aftCG,
-            pilotArm: customAircraft.pilotArm,
-            rearArm: customAircraft.rearArm,
+            seats: customAircraft.seats,
+            frontSeatArm: customAircraft.pilotArm,
+            rearSeatArm: customAircraft.seats === 2 ? null : customAircraft.rearArm,
             baggage1Arm: customAircraft.baggage1Arm,
-            baggage1Max: customAircraft.baggage1Max,
             baggage2Arm: customAircraft.baggage2Arm,
-            baggage2Max: customAircraft.baggage2Max,
-            fuelArm: customAircraft.fuelTanks.length > 0 ? customAircraft.fuelTanks[0].arm : 48.0,
+            fuelArm: customAircraft.fuelArm || (customAircraft.fuelTanks.length > 0 ? customAircraft.fuelTanks[0].arm : 48.0),
+            groundFuelUse: customAircraft.groundFuelUse,
             fuelWeight: customAircraft.fuelWeight,
+            fuelBurnRate: customAircraft.fuelBurnRate,
             vspeeds: customAircraft.vspeeds,
             performance: customAircraft.performance,
             fuelTanks: customAircraft.fuelTanks,
@@ -5567,15 +5565,33 @@ function loadCustomAircraft(customKey) {
     const aircraft = customAircraft[aircraftName];
     
     if (aircraft) {
-        // Populate the calculator with custom aircraft data
-        document.getElementById('emptyWeight').value = aircraft.emptyWeight;
-        document.getElementById('emptyArm').value = aircraft.emptyArm;
-        
-        // Update displays
-        updateWeightBalanceCalculations();
-        
-        // Show custom aircraft info in performance section
-        displayCustomAircraftInfo(aircraft);
+        // Add custom aircraft to aircraftSpecs for immediate use
+        aircraftSpecs[customKey] = {
+            name: aircraft.name,
+            maxWeight: aircraft.maxWeight,
+            forwardCG: aircraft.forwardCG,
+            aftCG: aircraft.aftCG,
+            seats: aircraft.seats,
+            frontSeatArm: aircraft.pilotArm,
+            rearSeatArm: aircraft.seats === 2 ? null : aircraft.rearArm,
+            baggage1Arm: aircraft.baggage1Arm,
+            baggage2Arm: aircraft.baggage2Arm,
+            fuelArm: aircraft.fuelArm || (aircraft.fuelTanks && aircraft.fuelTanks.length > 0 ? aircraft.fuelTanks[0].arm : 48.0),
+            fuelWeight: aircraft.fuelWeight,
+            fuelBurnRate: aircraft.fuelBurnRate,
+            groundFuelUse: aircraft.groundFuelUse,
+            fuelTanks: aircraft.fuelTanks,
+            vspeeds: aircraft.vspeeds,
+            performance: aircraft.performance
+        };
+
+        // Populate Column B / dependent panels for this aircraft
+        populateAircraftSpecificValues(customKey);
+        populateVSpeedsPanel(customKey);
+        drawCGChart();
+
+        // Hide the custom aircraft builder
+        hideCustomAircraftBuilder();
     }
 }
 
