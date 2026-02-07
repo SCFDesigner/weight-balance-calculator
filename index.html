@@ -1213,6 +1213,9 @@
                     <option value="CUSTOM">Custom Aircraft</option>
                 </select>
             </div>
+            <div class="input-group" style="margin-top: 10px;">
+                <button type="button" onclick="showCustomAircraftBuilder()" style="width: 100%; background-color: #9C27B0; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px;">🛠️ Custom Aircraft</button>
+            </div>
         </div>
 
         <!-- Section 1: Tail Number -->
@@ -2185,6 +2188,7 @@
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
                 <button onclick="saveCurrentAircraft()" style="background-color: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%;">✈️ Save Current Aircraft</button>
                 <button onclick="showAircraftManager()" style="background-color: #FF9800; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%;">📋 Manage Aircraft</button>
+                <button onclick="showCustomAircraftManager()" style="background-color: #607D8B; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%;">🧰 Manage Custom Aircraft</button>
                 <button onclick="showCustomAircraftBuilder()" style="background-color: #9C27B0; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%;">🛠️ Custom Aircraft</button>
             </div>
             
@@ -2196,6 +2200,14 @@
                 </div>
                 <div id="aircraftList"></div>
             </div>
+
+            <div id="customAircraftManager" style="display: none; background-color: #3a3a3a; border-radius: 8px; padding: 15px; margin-top: 10px; border: 1px solid #555;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h4 style="color: #e0e0e0; margin: 0;">Custom Aircraft</h4>
+                    <button onclick="hideCustomAircraftManager()" style="background: none; border: none; color: #ccc; font-size: 18px; cursor: pointer;">×</button>
+                </div>
+                <div id="customAircraftList"></div>
+            </div>
             
             <!-- Custom Aircraft Builder Modal -->
             <div id="customAircraftBuilder" style="display: none; background-color: #2a2a2a; border-radius: 8px; padding: 15px; margin-top: 10px; border: 1px solid #555; max-height: 80vh; overflow-y: auto;">
@@ -2203,6 +2215,7 @@
                     <h3 style="color: #4CAF50; margin: 0; font-size: 16px;">🛠️ Custom Aircraft Builder</h3>
                     <button onclick="hideCustomAircraftBuilder()" style="background: none; border: none; color: #ccc; font-size: 20px; cursor: pointer; padding: 0; line-height: 1;">&times;</button>
                 </div>
+                <input type="hidden" id="customAircraftOriginalName" value="">
                 
                 <!-- Basic Information Section -->
                 <div class="input-section">
@@ -3415,6 +3428,43 @@
 
         function populateVSpeedsPanel(aircraftType) {
             const vSpeedItems = document.querySelectorAll('.airspeed-item');
+            const specs = aircraftSpecs[aircraftType];
+
+            if (specs && specs.vspeeds) {
+                const vs = specs.vspeeds;
+                const customVSpeeds = [
+                    vs.vr ? `Vr - ${vs.vr}` : 'Vr',
+                    'Vxse',
+                    'Vle',
+                    'Vg',
+                    "Vr 50'",
+                    vs.vyse ? `Vyse - ${vs.vyse}` : 'Vyse',
+                    'Vlo',
+                    vs.vmc ? `Vmc - ${vs.vmc}` : 'Vmc',
+                    vs.vx ? `Vx - ${vs.vx}` : 'Vx',
+                    vs.vs0 ? `Vs0 - ${vs.vs0}` : 'Vs0',
+                    vs.va ? `Va - ${vs.va}` : 'Va',
+                    'Vapp Short',
+                    vs.vy ? `Vy - ${vs.vy}` : 'Vy',
+                    vs.vs1 ? `Vs1 - ${vs.vs1}` : 'Vs1',
+                    'Va Max',
+                    'Vapp Normal',
+                    vs.cruise ? `Vcc - ${vs.cruise}` : 'Vcc',
+                    vs.vfe ? `Vfe - ${vs.vfe}` : 'Vfe',
+                    vs.vne ? `Vne - ${vs.vne}` : 'Vne',
+                    'Vapp Flapless'
+                ];
+
+                vSpeedItems.forEach((item, index) => {
+                    if (index < customVSpeeds.length) {
+                        item.textContent = customVSpeeds[index];
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                return;
+            }
             
             if (aircraftType === 'C-152') {
                 // C-152 specific V-speeds
@@ -3485,13 +3535,13 @@
                 
                 switch(label) {
                     case 'Max T/O Weight':
-                        valueSpan.textContent = specs.maxTakeoffWeight ? specs.maxTakeoffWeight + ' lbs' : '';
+                        valueSpan.textContent = (specs.maxTakeoffWeight || specs.maxWeight) ? (specs.maxTakeoffWeight || specs.maxWeight) + ' lbs' : '';
                         break;
                     case 'Max LDG Weight':
                         valueSpan.textContent = specs.maxLandingWeight ? specs.maxLandingWeight + ' lbs' : '';
                         break;
                     case 'Demo Crosswind':
-                        valueSpan.textContent = specs.demoCrosswind ? specs.demoCrosswind + ' kt' : '';
+                        valueSpan.textContent = (specs.demoCrosswind || specs.maxCrosswind) ? (specs.demoCrosswind || specs.maxCrosswind) + ' kt' : '';
                         break;
                 }
             });
@@ -4839,6 +4889,132 @@ function saveUserProfile() {
         showSettingsStatus('Error saving profile: ' + error.message, 'error');
     }
 }
+
+function showCustomAircraftManager() {
+    const manager = document.getElementById('customAircraftManager');
+    if (!manager) return;
+    manager.style.display = 'block';
+    updateCustomAircraftManager();
+}
+
+function hideCustomAircraftManager() {
+    const manager = document.getElementById('customAircraftManager');
+    if (!manager) return;
+    manager.style.display = 'none';
+}
+
+function updateCustomAircraftManager() {
+    const list = document.getElementById('customAircraftList');
+    if (!list) return;
+
+    const customAircraft = JSON.parse(localStorage.getItem('wb_custom_aircraft') || '{}');
+    const names = Object.keys(customAircraft);
+
+    if (names.length === 0) {
+        list.innerHTML = '<div style="color: #ccc; font-size: 12px;">No custom aircraft saved.</div>';
+        return;
+    }
+
+    list.innerHTML = '';
+    names.forEach(name => {
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.alignItems = 'center';
+        row.style.justifyContent = 'space-between';
+        row.style.gap = '10px';
+        row.style.padding = '8px 0';
+        row.style.borderBottom = '1px solid #555';
+
+        const title = document.createElement('div');
+        title.style.color = '#e0e0e0';
+        title.style.fontSize = '13px';
+        title.textContent = name;
+
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.style.backgroundColor = '#4CAF50';
+        editBtn.style.color = 'white';
+        editBtn.style.border = 'none';
+        editBtn.style.padding = '8px 10px';
+        editBtn.style.borderRadius = '6px';
+        editBtn.style.cursor = 'pointer';
+        editBtn.style.fontSize = '12px';
+        editBtn.onclick = () => editCustomAircraft(name);
+
+        row.appendChild(title);
+        row.appendChild(editBtn);
+        list.appendChild(row);
+    });
+}
+
+function editCustomAircraft(aircraftName) {
+    const customAircraft = JSON.parse(localStorage.getItem('wb_custom_aircraft') || '{}');
+    const aircraft = customAircraft[aircraftName];
+    if (!aircraft) return;
+
+    showCustomAircraftBuilder();
+    document.getElementById('customAircraftOriginalName').value = aircraftName;
+
+    document.getElementById('customAircraftName').value = aircraft.name || aircraftName;
+    document.getElementById('customAircraftModel').value = aircraft.model || '';
+    document.getElementById('customSeats').value = String(aircraft.seats || 4);
+    updateSeatConfiguration();
+
+    document.getElementById('customPilotArm').value = aircraft.pilotArm || '';
+    document.getElementById('customRearArm').value = aircraft.rearArm || '';
+    document.getElementById('customBaggage1Arm').value = aircraft.baggage1Arm || '';
+    document.getElementById('customBaggage2Arm').value = aircraft.baggage2Arm || '';
+    document.getElementById('customFuelArm').value = aircraft.fuelArm || '';
+
+    document.getElementById('customFuelBurn').value = aircraft.fuelBurnRate || '';
+    document.getElementById('customFuelTanks').value = String((aircraft.fuelTanks && aircraft.fuelTanks.length) ? aircraft.fuelTanks.length : 2);
+    document.getElementById('customFuelWeight').value = aircraft.fuelWeight || '';
+    document.getElementById('customGroundFuelUse').value = aircraft.groundFuelUse || '';
+
+    document.getElementById('customForwardCG').value = aircraft.forwardCG || '';
+    document.getElementById('customAftCG').value = aircraft.aftCG || '';
+    document.getElementById('customMaxWeight').value = aircraft.maxWeight || '';
+    document.getElementById('customMaxLandingWeight').value = aircraft.maxLandingWeight || '';
+    document.getElementById('customMaxCrosswind').value = aircraft.maxCrosswind || '';
+
+    updateCustomFuelTanks();
+    setTimeout(() => {
+        if (aircraft.fuelTanks && aircraft.fuelTanks.length) {
+            aircraft.fuelTanks.forEach((tank, index) => {
+                const i = index + 1;
+                const cap = document.getElementById(`customTank${i}Capacity`);
+                const arm = document.getElementById(`customTank${i}Arm`);
+                const unus = document.getElementById(`customTank${i}Unusable`);
+                if (cap) cap.value = tank.capacity ?? '';
+                if (arm) arm.value = tank.arm ?? '';
+                if (unus) unus.value = tank.unusable ?? '';
+            });
+        }
+    }, 50);
+
+    if (aircraft.vspeeds) {
+        document.getElementById('customVs0').value = aircraft.vspeeds.vs0 || '';
+        document.getElementById('customVs1').value = aircraft.vspeeds.vs1 || '';
+        document.getElementById('customVr').value = aircraft.vspeeds.vr || '';
+        document.getElementById('customVx').value = aircraft.vspeeds.vx || '';
+        document.getElementById('customVy').value = aircraft.vspeeds.vy || '';
+        document.getElementById('customVa').value = aircraft.vspeeds.va || '';
+        document.getElementById('customVno').value = aircraft.vspeeds.vno || '';
+        document.getElementById('customVne').value = aircraft.vspeeds.vne || '';
+        document.getElementById('customVfe').value = aircraft.vspeeds.vfe || '';
+        document.getElementById('customVmc').value = aircraft.vspeeds.vmc || '';
+        document.getElementById('customVyse').value = aircraft.vspeeds.vyse || '';
+        document.getElementById('customCruiseSpeed').value = aircraft.vspeeds.cruise || '';
+    }
+
+    if (aircraft.performance) {
+        document.getElementById('customServiceCeiling').value = aircraft.performance.serviceCeiling || '';
+        document.getElementById('customRateOfClimb').value = aircraft.performance.rateOfClimb || '';
+        document.getElementById('customFuelCapacity').value = aircraft.fuelCapacity || '';
+    }
+
+    hideCustomAircraftManager();
+}
             
 function loadUserProfile(silent = false) {
     try {
@@ -5433,6 +5609,7 @@ function loadCustomAircraftTemplate() {
 function saveCustomAircraft() {
     const aircraftName = document.getElementById('customAircraftName').value;
     const aircraftModel = document.getElementById('customAircraftModel').value;
+    const originalName = document.getElementById('customAircraftOriginalName').value;
     
     if (!aircraftName || !aircraftModel) {
         alert('Please enter aircraft name and model/type.');
@@ -5505,14 +5682,19 @@ function saveCustomAircraft() {
     try {
         // Save to localStorage
         const savedCustomAircraft = JSON.parse(localStorage.getItem('wb_custom_aircraft') || '{}');
+        if (originalName && originalName !== aircraftName && savedCustomAircraft[originalName]) {
+            delete savedCustomAircraft[originalName];
+        }
         savedCustomAircraft[aircraftName] = customAircraft;
         localStorage.setItem('wb_custom_aircraft', JSON.stringify(savedCustomAircraft));
         
         // Add to aircraft specs for immediate use
         aircraftSpecs[`CUSTOM_${aircraftName.replace(/\s+/g, '_')}`] = {
             maxWeight: customAircraft.maxWeight,
+            maxTakeoffWeight: customAircraft.maxWeight,
             forwardCG: customAircraft.forwardCG,
             aftCG: customAircraft.aftCG,
+            maxLandingWeight: customAircraft.maxLandingWeight,
             seats: customAircraft.seats,
             frontSeatArm: customAircraft.pilotArm,
             rearSeatArm: customAircraft.seats === 2 ? null : customAircraft.rearArm,
@@ -5522,6 +5704,8 @@ function saveCustomAircraft() {
             groundFuelUse: customAircraft.groundFuelUse,
             fuelWeight: customAircraft.fuelWeight,
             fuelBurnRate: customAircraft.fuelBurnRate,
+            maxCrosswind: customAircraft.maxCrosswind,
+            demoCrosswind: customAircraft.maxCrosswind,
             vspeeds: customAircraft.vspeeds,
             performance: customAircraft.performance,
             fuelTanks: customAircraft.fuelTanks,
@@ -5530,6 +5714,7 @@ function saveCustomAircraft() {
         
         // Update aircraft type dropdown to include custom aircraft
         updateAircraftTypeDropdown();
+        document.getElementById('customAircraftOriginalName').value = '';
         
         alert(`Custom aircraft "${aircraftName}" saved successfully!`);
         hideCustomAircraftBuilder();
@@ -5569,8 +5754,10 @@ function loadCustomAircraft(customKey) {
         aircraftSpecs[customKey] = {
             name: aircraft.name,
             maxWeight: aircraft.maxWeight,
+            maxTakeoffWeight: aircraft.maxWeight,
             forwardCG: aircraft.forwardCG,
             aftCG: aircraft.aftCG,
+            maxLandingWeight: aircraft.maxLandingWeight,
             seats: aircraft.seats,
             frontSeatArm: aircraft.pilotArm,
             rearSeatArm: aircraft.seats === 2 ? null : aircraft.rearArm,
@@ -5580,6 +5767,8 @@ function loadCustomAircraft(customKey) {
             fuelWeight: aircraft.fuelWeight,
             fuelBurnRate: aircraft.fuelBurnRate,
             groundFuelUse: aircraft.groundFuelUse,
+            maxCrosswind: aircraft.maxCrosswind,
+            demoCrosswind: aircraft.maxCrosswind,
             fuelTanks: aircraft.fuelTanks,
             vspeeds: aircraft.vspeeds,
             performance: aircraft.performance
