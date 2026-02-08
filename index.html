@@ -406,6 +406,74 @@
             display: block;
         }
 
+        /* Brain Panel Styling */
+        .brain-panel {
+            width: 350px;
+            min-width: 350px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .mnemonic-item {
+            margin-bottom: 10px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .mnemonic-title {
+            padding: 12px 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+
+        .mnemonic-title:hover {
+            background-color: rgba(76, 175, 80, 0.2);
+        }
+
+        .expand-icon {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .mnemonic-detail {
+            padding: 15px;
+            background-color: #2a2a2a;
+            border-top: 1px solid #444;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .mnemonic-detail p {
+            margin: 8px 0;
+        }
+
+        .mnemonic-detail strong {
+            color: #4CAF50;
+        }
+
+        .mnemonic-detail hr {
+            border: none;
+            border-top: 1px solid #555;
+            margin: 15px 0;
+        }
+
+        .mnemonic-detail em {
+            color: #aaa;
+            font-style: italic;
+        }
+
         /* Settings Panel (Third Column) */
         .settings-panel {
             width: 350px;
@@ -668,15 +736,21 @@
             /* Hide all columns by default on mobile */
             .left-panel,
             .right-column,
-            .settings-panel {
+            .settings-panel,
+            .brain-panel {
                 display: none;
                 width: 100vw !important;
                 height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 5;
                 overflow-y: auto;
-                overflow-x: hidden;
-                padding: 10px;
-                box-sizing: border-box;
-                position: relative;
+            }
+
+            /* Show mobile navigation only on mobile */
+            .mobile-nav {
+                display: flex !important;
             }
 
             /* Compact mobile panel spacing */
@@ -918,6 +992,21 @@
                 display: none !important;
             }
 
+            .desktop-layout.mobile-show-brain .brain-panel {
+                display: block !important;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 10;
+            }
+
+            .desktop-layout.mobile-show-brain .left-panel,
+            .desktop-layout.mobile-show-brain .right-column,
+            .desktop-layout.mobile-show-brain .risk-column,
+            .desktop-layout.mobile-show-brain .settings-panel {
+                display: none !important;
+            }
+
             /* Mobile Risk Assessment Panel Adjustments */
             @media (max-width: 768px) {
                 .risk-panel {
@@ -1018,8 +1107,9 @@
                 padding: 8px;
             }
 
-            /* Hide settings toggle on mobile */
-            .settings-toggle {
+            /* Hide settings and brain toggle on mobile */
+            .settings-toggle,
+            .brain-toggle {
                 display: none !important;
             }
 
@@ -1078,19 +1168,17 @@
             }
         }
 
-        /* Desktop - hide mobile elements */
+        /* Desktop Layout (min-width: 769px) */
         @media (min-width: 769px) {
+            /* Hide mobile navigation on desktop */
             .mobile-nav {
-                display: none;
+                display: none !important;
             }
 
-            .desktop-layout {
-                display: flex;
-                width: 100%;
-                height: 100vh;
-                overflow: hidden;
-                position: relative;
-                max-width: 100vw;
+            /* Show floating toggle buttons on desktop */
+            .settings-toggle,
+            .brain-toggle {
+                display: flex !important;
             }
 
             .column-resizer {
@@ -1102,11 +1190,13 @@
                 transition: background-color 0.2s ease;
                 z-index: 10;
             }
+            
             /* Show all columns on desktop */
             .left-panel,
             .right-column,
             .risk-column,
-            .settings-panel {
+            .settings-panel,
+            .brain-panel {
                 display: block !important;
             }
 
@@ -1140,6 +1230,12 @@
                 max-width: 300px;
             }
 
+            .brain-panel {
+                flex: 0 0 16.67%;
+                min-width: 200px;
+                max-width: 300px;
+            }
+
             /* When settings are hidden, expand right column */
             .desktop-layout.settings-collapsed .settings-panel {
                 display: none !important;
@@ -1149,6 +1245,19 @@
                 flex: 1 !important;
                 max-width: none !important;
                 width: auto !important;
+            }
+
+            /* When brain is hidden, hide brain panel */
+            .desktop-layout.brain-collapsed .brain-panel {
+                display: none !important;
+            }
+
+            .brain-panel.brain-hidden {
+                display: none !important;
+            }
+
+            .brain-panel.brain-visible {
+                display: block !important;
             }
 
             /* Reset mobile classes for desktop */
@@ -2601,22 +2710,149 @@
         </div>
     </div>
 
+    <!-- Column Resizer between Settings Panel and Brain Column -->
+    <div class="column-resizer" data-resize="settings-brain"></div>
+
+    <!-- Brain Column (Column E) -->
+    <div class="brain-panel" style="padding: 20px; background-color: #2a2a2a; overflow-y: auto; height: 100vh; border-left: 1px solid #555; display: none;">
+        <h2 style="color: #4CAF50; margin-bottom: 20px; font-size: 18px;">🧠 Brain</h2>
+        
+        <!-- Mnemonics Section -->
+        <div class="input-section">
+            <button onclick="toggleMnemonics()" style="
+                background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%);
+                color: white;
+                border: 1px solid #4CAF50;
+                padding: 12px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: bold;
+                width: 100%;
+                margin-bottom: 15px;
+                box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+            ">📚 Mnemonics</button>
+            
+            <div id="mnemonicsContainer" style="display: none;">
+                <!-- Required Aircraft Documents -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('aircraft-docs')">
+                        <span>✈️ Required Aircraft Documents (ARROW)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="aircraft-docs" class="mnemonic-detail" style="display: none;">
+                        <p><strong>A</strong> – Airworthiness Certificate</p>
+                        <p><strong>R</strong> – Registration</p>
+                        <p><strong>R</strong> – Radio Operators License (International flights)</p>
+                        <p><strong>O</strong> – Operating Limitations</p>
+                        <p><strong>W</strong> – Weight and Balance Information</p>
+                    </div>
+                </div>
+
+                <!-- Required Pilot Documents -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('pilot-docs')">
+                        <span>👨‍✈️ Required Pilot Documents</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="pilot-docs" class="mnemonic-detail" style="display: none;">
+                        <p>• Valid Government Issued Photo I.D.</p>
+                        <p>• Current Pilot's Certificate</p>
+                        <p>• Current Medical Certificate</p>
+                        <p>• Logbook (student pilots only)</p>
+                    </div>
+                </div>
+
+                <!-- Pre-landing Check -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('gumps')">
+                        <span>🛬 Pre-landing Check (GUMPS)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="gumps" class="mnemonic-detail" style="display: none;">
+                        <p><strong>G</strong> – Gas (fuel pump on)</p>
+                        <p><strong>U</strong> – Undercarriage (Down and VERIFY 3-green)</p>
+                        <p><strong>M</strong> – Mixture (full rich)</p>
+                        <p><strong>P</strong> – Propeller (full forward)</p>
+                        <p><strong>P</strong> – Power (set)</p>
+                        <p><strong>P</strong> – Brake pressure (check for resistance)</p>
+                        <p><strong>S</strong> – Systems (engines instruments in the green)</p>
+                        <p><strong>S</strong> – Seatbelts (fastened)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     </div> <!-- Close desktop-layout div -->
 
     <!-- Floating Settings Toggle (Desktop Only) -->
-    <div class="settings-toggle" onclick="toggleSettingsPanel()">
-        🔧
+    <div class="settings-toggle" onclick="toggleSettingsPanel()" style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%);
+        border: 1px solid #4CAF50;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        z-index: 1000;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        ⚙️
     </div>
 
-    <!-- New Mobile Navigation -->
-    <div class="mobile-nav">
-        <button class="mobile-nav-btn active" onclick="showMobileColumn('left')">
-            <div class="nav-icon">✏️</div>
+    <!-- Floating Brain Toggle (Desktop Only) -->
+    <div class="brain-toggle" onclick="toggleBrainPanel()" style="
+        position: fixed;
+        top: 20px;
+        right: 80px;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%);
+        border: 1px solid #4CAF50;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        z-index: 1000;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        🧠
+    </div>
+
+    <!-- Mobile Navigation (Mobile Only) -->
+    <div class="mobile-nav" style="
+        display: flex;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        white-space: nowrap;
+    ">
+        <style>
+        .mobile-nav::-webkit-scrollbar {
+            display: none;
+        }
+        .mobile-nav-btn {
+            flex: 0 0 auto;
+            min-width: 80px;
+        }
+        </style>
+        <button class="mobile-nav-btn" onclick="showMobileColumn('left')">
+            <div class="nav-icon">📊</div>
             <div>Data</div>
         </button>
         <button class="mobile-nav-btn" onclick="showMobileColumn('right')">
-            <div class="nav-icon">✈️</div>
+            <div class="nav-icon">📈</div>
             <div>Charts</div>
         </button>
         <button class="mobile-nav-btn" onclick="showMobileColumn('risk')">
@@ -2626,6 +2862,10 @@
         <button class="mobile-nav-btn" onclick="showMobileColumn('settings')">
             <div class="nav-icon">⚙️</div>
             <div>Settings</div>
+        </button>
+        <button class="mobile-nav-btn" onclick="showMobileColumn('brain')">
+            <div class="nav-icon">🧠</div>
+            <div>Brain</div>
         </button>
     </div>
 
@@ -2653,7 +2893,7 @@
             }
             
             // Remove all mobile column classes
-            desktopLayout.classList.remove('mobile-show-left', 'mobile-show-right', 'mobile-show-risk', 'mobile-show-settings');
+            desktopLayout.classList.remove('mobile-show-left', 'mobile-show-right', 'mobile-show-risk', 'mobile-show-settings', 'mobile-show-brain');
             
             // Add appropriate mobile column class
             switch(column) {
@@ -2681,10 +2921,70 @@
                 case 'settings':
                     desktopLayout.classList.add('mobile-show-settings');
                     break;
+                case 'brain':
+                    desktopLayout.classList.add('mobile-show-brain');
+                    break;
             }
         }
 
-        // Toggle settings panel visibility (desktop only)
+        // Toggle brain panel visibility (desktop only)
+        function toggleBrainPanel() {
+            const brainPanel = document.querySelector('.brain-panel');
+            const desktopLayout = document.querySelector('.desktop-layout');
+            
+            if (!brainPanel || !desktopLayout) return;
+            
+            // Check if brain panel is currently visible
+            const isVisible = brainPanel.classList.contains('brain-visible') || 
+                             (window.getComputedStyle(brainPanel).display !== 'none');
+            
+            if (isVisible) {
+                // Hide the brain panel
+                brainPanel.classList.add('brain-hidden');
+                brainPanel.classList.remove('brain-visible');
+                desktopLayout.classList.add('brain-collapsed');
+            } else {
+                // Show the brain panel
+                brainPanel.classList.remove('brain-hidden');
+                brainPanel.classList.add('brain-visible');
+                desktopLayout.classList.remove('brain-collapsed');
+            }
+        }
+
+        // Toggle mnemonics container visibility
+        function toggleMnemonics() {
+            const container = document.getElementById('mnemonicsContainer');
+            const button = event.target;
+            
+            if (container.style.display === 'none' || container.style.display === '') {
+                container.style.display = 'block';
+                button.textContent = '📚 Hide Mnemonics';
+                button.style.background = 'linear-gradient(135deg, rgba(255, 87, 34, 0.3) 0%, rgba(255, 87, 34, 0.1) 100%)';
+                button.style.borderColor = '#FF5722';
+            } else {
+                container.style.display = 'none';
+                button.textContent = '📚 Mnemonics';
+                button.style.background = 'linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%)';
+                button.style.borderColor = '#4CAF50';
+            }
+        }
+
+        // Toggle individual mnemonic detail visibility
+        function toggleMnemonicDetail(id) {
+            const detail = document.getElementById(id);
+            const title = event.target.closest('.mnemonic-title');
+            const icon = title.querySelector('.expand-icon');
+            
+            if (detail.style.display === 'none' || detail.style.display === '') {
+                detail.style.display = 'block';
+                icon.textContent = '−';
+                title.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+            } else {
+                detail.style.display = 'none';
+                icon.textContent = '+';
+                title.style.backgroundColor = '';
+            }
+        }
         function toggleSettingsPanel() {
             const settingsPanel = document.querySelector('.settings-panel');
             const desktopLayout = document.querySelector('.desktop-layout');
