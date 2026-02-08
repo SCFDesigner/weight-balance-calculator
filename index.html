@@ -1595,14 +1595,15 @@
             <!-- CG Envelope Toggle Button -->
             <div style="margin-top: 15px; text-align: center;">
                 <button id="cgEnvelopeToggle" onclick="toggleCGEnvelope()" style="
-                    background-color: #4CAF50;
+                    background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%);
                     color: white;
-                    border: none;
+                    border: 1px solid #4CAF50;
                     padding: 8px 16px;
-                    border-radius: 4px;
+                    border-radius: 6px;
                     cursor: pointer;
                     font-size: 12px;
                     font-weight: bold;
+                    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
                 ">Show CG Envelope</button>
             </div>
             
@@ -1761,13 +1762,6 @@
             </div>
         </div>
 
-        <!-- CG Envelope Chart Panel -->
-        <div class="right-panel">
-            <div class="panel-title">Center of Gravity Limits</div>
-            <div class="cg-chart-container">
-                <canvas id="cgChart" width="800" height="500"></canvas>
-            </div>
-        </div>
     </div>
 
     <!-- Column Resizer between Right Column and Risk Column -->
@@ -4345,10 +4339,13 @@
             // Plot actual CG positions for Zero Fuel Weight, T/O Weight, and Est Landing Weight
             const plotPoint = (weight, cg, color, label) => {
                 if (weight > 0 && cg > 0) {
+                    const pointX = cgToX(cg);
+                    const pointY = weightToY(weight);
+                    
                     // Plot point
                     ctx.fillStyle = color;
                     ctx.beginPath();
-                    ctx.arc(cgToX(cg), weightToY(weight), 6, 0, 2 * Math.PI);
+                    ctx.arc(pointX, pointY, 6, 0, 2 * Math.PI);
                     ctx.fill();
                     
                     // Add white border
@@ -4356,11 +4353,29 @@
                     ctx.lineWidth = 2;
                     ctx.stroke();
                     
-                    // Add label
-                    ctx.fillStyle = color;
-                    ctx.font = '10px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(label, cgToX(cg), weightToY(weight) - 12);
+                    // For C-152, add dashed lines from CG points down to CG values
+                    if (aircraftType === 'C-152') {
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 1;
+                        ctx.setLineDash([3, 3]); // Small dashed line pattern
+                        ctx.beginPath();
+                        ctx.moveTo(pointX, pointY + 6); // Start from bottom of point
+                        ctx.lineTo(pointX, rect.height - margin + 10); // End just above the x-axis
+                        ctx.stroke();
+                        ctx.setLineDash([]); // Reset to solid line
+                        
+                        // Add label directly above the CG number on x-axis
+                        ctx.fillStyle = color;
+                        ctx.font = 'bold 10px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(label, pointX, rect.height - margin + 25); // Position above CG axis numbers
+                    } else {
+                        // For other aircraft, keep label near the point
+                        ctx.fillStyle = color;
+                        ctx.font = '10px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(label, pointX, pointY - 12);
+                    }
                 }
             };
             
@@ -4953,6 +4968,12 @@
             if (daysToNextMx) {
                 document.querySelector('[data-field="daysToNextMx"]').textContent = daysToNextMx.trim();
             }
+            
+            // Update CG chart if it's currently visible
+            const cgContainer = document.getElementById('cgChartContainer');
+            if (cgContainer && cgContainer.style.display !== 'none') {
+                drawCGChartInLimitsPanel();
+            }
         }
 
         // Consolidated initialization function
@@ -5134,9 +5155,17 @@
             
             // Initialize aircraft management
             updateSavedAircraftDropdowns();
-            updateTailNumberDropdowns();
-            updateAircraftManager(); // Ensure mobile aircraft list is updated
-            loadDefaultAircraft();
+            
+            // Trigger initial calculations and updates
+            updateWeightBalanceCalculations();
+            updateDisplays();
+            updatePerformanceCalculations();
+            
+            // Update CG chart if it's currently visible
+            const cgContainer = document.getElementById('cgChartContainer');
+            if (cgContainer && cgContainer.style.display !== 'none') {
+                drawCGChartInLimitsPanel();
+            }
             
             // Sync desktop and mobile fields
             syncDesktopMobileFields();
@@ -6484,7 +6513,9 @@ function toggleCGEnvelope() {
         // Show the CG envelope
         container.style.display = 'block';
         button.textContent = 'Hide CG Envelope';
-        button.style.backgroundColor = '#f44336'; // Red color when showing
+        button.style.background = 'linear-gradient(135deg, rgba(255, 87, 34, 0.3) 0%, rgba(255, 87, 34, 0.1) 100%)';
+        button.style.borderColor = '#FF5722';
+        button.style.boxShadow = '0 2px 4px rgba(255, 87, 34, 0.2)';
         
         // Draw the CG chart
         drawCGChartInLimitsPanel();
@@ -6492,7 +6523,9 @@ function toggleCGEnvelope() {
         // Hide the CG envelope
         container.style.display = 'none';
         button.textContent = 'Show CG Envelope';
-        button.style.backgroundColor = '#4CAF50'; // Green color when hidden
+        button.style.background = 'linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%)';
+        button.style.borderColor = '#4CAF50';
+        button.style.boxShadow = '0 2px 4px rgba(76, 175, 80, 0.2)';
     }
 }
 
