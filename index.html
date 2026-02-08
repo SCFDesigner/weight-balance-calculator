@@ -1591,6 +1591,31 @@
                     <span class="info-value"></span>
                 </div>
             </div>
+            
+            <!-- CG Envelope Toggle Button -->
+            <div style="margin-top: 15px; text-align: center;">
+                <button id="cgEnvelopeToggle" onclick="toggleCGEnvelope()" style="
+                    background-color: #4CAF50;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                    font-weight: bold;
+                ">Show CG Envelope</button>
+            </div>
+            
+            <!-- CG Chart Container (Initially Hidden) -->
+            <div id="cgChartContainer" style="display: none; margin-top: 15px;">
+                <canvas id="cgChart" width="300" height="200" style="
+                    border: 1px solid #444;
+                    border-radius: 4px;
+                    background-color: #1a1a1a;
+                    width: 100%;
+                    height: auto;
+                "></canvas>
+            </div>
         </div>
 
         <!-- METAR Panel -->
@@ -5163,8 +5188,9 @@ function saveUserProfile() {
     const userWeight = document.getElementById('userWeight').value;
     const userBagWeight = document.getElementById('userBagWeight').value;
     const defaultAircraft = document.getElementById('defaultAircraft').value;
+    const defaultAirport = document.getElementById('defaultAirport').value;
             
-    if (!userWeight && !userBagWeight && !defaultAircraft) {
+    if (!userWeight && !userBagWeight && !defaultAircraft && !defaultAirport) {
         showSettingsStatus('Please enter at least one value to save.', 'error');
         return;
     }
@@ -5173,6 +5199,7 @@ function saveUserProfile() {
         weight: userWeight,
         bagWeight: userBagWeight,
         defaultAircraft: defaultAircraft,
+        defaultAirport: defaultAirport,
         savedDate: new Date().toISOString()
     };
             
@@ -5377,6 +5404,7 @@ function loadUserProfile(silent = false) {
             if (profile.weight) document.getElementById('userWeight').value = profile.weight;
             if (profile.bagWeight) document.getElementById('userBagWeight').value = profile.bagWeight;
             if (profile.defaultAircraft) document.getElementById('defaultAircraft').value = profile.defaultAircraft;
+            if (profile.defaultAirport) document.getElementById('defaultAirport').value = profile.defaultAirport;
                     
             // Auto-populate data fields
             populateMyWeightFields();
@@ -5388,6 +5416,16 @@ function loadUserProfile(silent = false) {
                     if (select) select.value = profile.defaultAircraft;
                 });
                 // updateAircraftSpecifications(); // Function not needed - calculations handled by updateWeightBalanceCalculations
+            }
+            
+            // Set default airport and fetch its data
+            if (profile.defaultAirport) {
+                const airportInput = document.getElementById('airportCode');
+                if (airportInput) {
+                    airportInput.value = profile.defaultAirport;
+                    // Automatically fetch weather and elevation data for default airport
+                    fetchWeatherData(profile.defaultAirport);
+                }
             }
                     
             if (!silent) {
@@ -6435,6 +6473,36 @@ function addCGPoint() {
     `;
     
     container.appendChild(newRow);
+}
+
+// Toggle CG Envelope display in limits panel
+function toggleCGEnvelope() {
+    const container = document.getElementById('cgChartContainer');
+    const button = document.getElementById('cgEnvelopeToggle');
+    
+    if (container.style.display === 'none') {
+        // Show the CG envelope
+        container.style.display = 'block';
+        button.textContent = 'Hide CG Envelope';
+        button.style.backgroundColor = '#f44336'; // Red color when showing
+        
+        // Draw the CG chart
+        drawCGChartInLimitsPanel();
+    } else {
+        // Hide the CG envelope
+        container.style.display = 'none';
+        button.textContent = 'Show CG Envelope';
+        button.style.backgroundColor = '#4CAF50'; // Green color when hidden
+    }
+}
+
+// Draw CG chart in the limits panel
+function drawCGChartInLimitsPanel() {
+    const canvas = document.getElementById('cgChart');
+    if (!canvas) return;
+    
+    // Use the existing CG chart drawing function
+    drawCGChartOnCanvas(canvas);
 }
 
 function removeCGPoint(button) {
