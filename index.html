@@ -2456,6 +2456,23 @@
                     </div>
                     
                     <button type="button" onclick="addCGPoint()" style="width: 100%; background-color: #2196F3; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px;">+ Add Point</button>
+                    
+                    <!-- Axis Configuration -->
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #555;">
+                        <h5 style="color: #4CAF50; margin-bottom: 10px; font-size: 12px;">Chart Axis Configuration</h5>
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <div style="flex: 1;">
+                                <label class="input-label" style="font-size: 11px;">X-Axis Range (CG positions, comma-separated)</label>
+                                <input type="text" class="input-field" id="customXAxisRange" placeholder="10,20,30,40,50,60" style="font-size: 12px; padding: 6px;">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label class="input-label" style="font-size: 11px;">Y-Axis Range (Weights, comma-separated)</label>
+                                <input type="text" class="input-field" id="customYAxisRange" placeholder="1000,1100,1200,1300,1500,1600" style="font-size: 12px; padding: 6px;">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Performance Data Section -->
@@ -3902,12 +3919,12 @@
             // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            if (aircraftType !== 'C-152' && aircraftType !== 'P2006T') {
+            if (aircraftType !== 'C-152' && aircraftType !== 'P2006T' && !aircraftType.startsWith('CUSTOM_')) {
                 // Show message for other aircraft types
                 ctx.fillStyle = '#cccccc';
                 ctx.font = '16px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText('CG Chart available for C-152 and P2006T only', canvas.width/2, canvas.height/2);
+                ctx.fillText('CG Chart available for C-152, P2006T, and Custom Aircraft only', canvas.width/2, canvas.height/2);
                 return;
             }
             
@@ -3929,6 +3946,31 @@
                 cgMin = 14; cgMax = 32;
                 weightMin = 1653; weightMax = 2844;
                 cgUnit = '% MAC';
+            } else if (aircraftType.startsWith('CUSTOM_')) {
+                // Custom aircraft: Use custom axis ranges if available
+                const specs = aircraftSpecs[aircraftType];
+                cgUnit = 'CG';
+                
+                if (specs && specs.xAxisRange && specs.yAxisRange) {
+                    // Parse custom axis ranges
+                    const xValues = specs.xAxisRange.split(',').map(v => parseFloat(v.trim())).filter(v => !isNaN(v));
+                    const yValues = specs.yAxisRange.split(',').map(v => parseFloat(v.trim())).filter(v => !isNaN(v));
+                    
+                    if (xValues.length > 0 && yValues.length > 0) {
+                        cgMin = Math.min(...xValues);
+                        cgMax = Math.max(...xValues);
+                        weightMin = Math.min(...yValues);
+                        weightMax = Math.max(...yValues);
+                    } else {
+                        // Fallback to default ranges
+                        cgMin = 25; cgMax = 50;
+                        weightMin = 1000; weightMax = 2000;
+                    }
+                } else {
+                    // Default ranges for custom aircraft
+                    cgMin = 25; cgMax = 50;
+                    weightMin = 1000; weightMax = 2000;
+                }
             }
             
             // Helper functions for coordinate conversion
@@ -3952,6 +3994,15 @@
                 minorCGIncrement = 1;     // Every 1% MAC
                 majorWeightIncrement = 200; // Every 200 lbs
                 minorWeightIncrement = 50;  // Every 50 lbs
+            } else if (aircraftType.startsWith('CUSTOM_')) {
+                // Custom aircraft: Calculate reasonable increments based on range
+                const cgRange = cgMax - cgMin;
+                const weightRange = weightMax - weightMin;
+                
+                majorCGIncrement = Math.max(1, Math.round(cgRange / 10));
+                minorCGIncrement = majorCGIncrement / 5;
+                majorWeightIncrement = Math.max(50, Math.round(weightRange / 10 / 50) * 50);
+                minorWeightIncrement = majorWeightIncrement / 4;
             }
             
             // Major vertical grid lines (CG)
@@ -5178,6 +5229,14 @@ function editCustomAircraft(aircraftName) {
         });
     }
 
+    // Load axis ranges if they exist
+    if (aircraft.xAxisRange) {
+        document.getElementById('customXAxisRange').value = aircraft.xAxisRange;
+    }
+    if (aircraft.yAxisRange) {
+        document.getElementById('customYAxisRange').value = aircraft.yAxisRange;
+    }
+
     if (aircraft.performance) {
         document.getElementById('customServiceCeiling').value = aircraft.performance.serviceCeiling || '';
         document.getElementById('customRateOfClimb').value = aircraft.performance.rateOfClimb || '';
@@ -5651,6 +5710,11 @@ function loadDefaultAircraft() {
 
 // Custom Aircraft Builder Functions
 function showCustomAircraftBuilder() {
+    // On mobile, navigate to Column D (options page) first
+    if (window.innerWidth <= 768) {
+        showColumn('D');
+    }
+    
     document.getElementById('customAircraftBuilder').style.display = 'block';
     updateCustomFuelTanks(); // Initialize fuel tank inputs
 }
@@ -5811,6 +5875,10 @@ function loadCustomAircraftTemplate() {
         container.appendChild(newRow);
     });
     
+    // Set default axis ranges
+    document.getElementById('customXAxisRange').value = '25,30,35,40,45,50';
+    document.getElementById('customYAxisRange').value = '1000,1200,1400,1600,1800,2000';
+    
     // Performance data
     document.getElementById('customServiceCeiling').value = '14200';
     document.getElementById('customRateOfClimb').value = '715';
@@ -5877,6 +5945,10 @@ function saveCustomAircraft() {
         
         // CG Envelope points
         cgEnvelope: [],
+        
+        // Axis ranges
+        xAxisRange: document.getElementById('customXAxisRange').value || '',
+        yAxisRange: document.getElementById('customYAxisRange').value || '',
         
         // Performance data
         performance: {
@@ -6008,6 +6080,8 @@ function loadCustomAircraft(customKey) {
             fuelTanks: aircraft.fuelTanks,
             vspeeds: aircraft.vspeeds,
             cgEnvelope: aircraft.cgEnvelope || [],
+            xAxisRange: aircraft.xAxisRange || '',
+            yAxisRange: aircraft.yAxisRange || '',
             performance: aircraft.performance
         };
 
