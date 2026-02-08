@@ -143,17 +143,19 @@
         }
 
         .right-panel {
-            background-color: #3a3a3a;
+            background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 1px solid #444;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .tail-number-display {
             text-align: center;
             font-size: 24px;
             font-weight: bold;
+            font-family: 'Courier New', monospace;
             color: #ffffff;
             margin-bottom: 10px;
         }
@@ -161,8 +163,9 @@
         .calculator-title {
             text-align: center;
             font-size: 18px;
-            font-weight: 600;
-            color: #e0e0e0;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            color: #4CAF50;
             margin-bottom: 20px;
         }
 
@@ -197,8 +200,9 @@
         .panel-title {
             text-align: center;
             font-size: 16px;
-            font-weight: 600;
-            color: #ffffff;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            color: #4CAF50;
             margin-bottom: 15px;
         }
 
@@ -363,6 +367,7 @@
         .right-column {
             flex: 1;
             padding: 20px;
+            padding-bottom: 120px; /* Extra bottom padding for mobile nav clearance */
             background-color: #2a2a2a;
             overflow-y: auto;
             height: 100vh;
@@ -461,8 +466,9 @@
             color: #4CAF50;
             font-size: 18px;
             font-weight: bold;
-            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
             text-align: center;
+            margin-bottom: 15px;
         }
 
         .risk-header {
@@ -542,7 +548,7 @@
             height: 34px;
             border: 1px solid #555;
             border-radius: 6px;
-            background-color: #4a4a4a;
+            background: linear-gradient(135deg, #404040 0%, #2a2a2a 100%);
             color: #ccc;
             font-size: 11px;
             font-weight: bold;
@@ -554,10 +560,11 @@
             padding: 4px 6px;
             text-align: center;
             white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .risk-btn:disabled {
-            background-color: #2a2a2a;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
             color: #555;
             cursor: not-allowed;
             border-color: #333;
@@ -569,33 +576,38 @@
         }
 
         .risk-btn.selected-1 {
-            background-color: #4CAF50;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%);
             color: white;
-            border-color: #4CAF50;
+            border: 2px solid #4CAF50;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
         }
 
         .risk-btn.selected-2 {
-            background-color: #8BC34A;
+            background: linear-gradient(135deg, rgba(139, 195, 74, 0.3) 0%, rgba(139, 195, 74, 0.1) 100%);
             color: white;
-            border-color: #8BC34A;
+            border: 2px solid #8BC34A;
+            box-shadow: 0 4px 8px rgba(139, 195, 74, 0.3);
         }
 
         .risk-btn.selected-3 {
-            background-color: #FFC107;
-            color: black;
-            border-color: #FFC107;
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.3) 0%, rgba(255, 193, 7, 0.1) 100%);
+            color: white;
+            border: 2px solid #FFC107;
+            box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
         }
 
         .risk-btn.selected-4 {
-            background-color: #FF9800;
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.3) 0%, rgba(255, 152, 0, 0.1) 100%);
             color: white;
-            border-color: #FF9800;
+            border: 2px solid #FF9800;
+            box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
         }
 
         .risk-btn.selected-5 {
-            background-color: #FF5722;
+            background: linear-gradient(135deg, rgba(255, 87, 34, 0.3) 0%, rgba(255, 87, 34, 0.1) 100%);
             color: white;
-            border-color: #FF5722;
+            border: 2px solid #FF5722;
+            box-shadow: 0 4px 8px rgba(255, 87, 34, 0.3);
         }
 
         .risk-total {
@@ -1028,16 +1040,16 @@
             }
 
             .mobile-nav-btn.active {
-                background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+                background: rgba(76, 175, 80, 0.2);
                 color: white;
-                border-color: #4CAF50;
+                border: 2px solid #4CAF50;
                 box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
             }
 
             .mobile-nav-btn:hover {
-                background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+                background: rgba(76, 175, 80, 0.2);
                 color: white;
-                border-color: #4CAF50;
+                border: 2px solid #4CAF50;
                 transform: translateY(-1px);
                 box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
             }
@@ -1232,11 +1244,19 @@
     <!-- Desktop Layout -->
     <div class="desktop-layout" style="display: flex; width: 100%; height: 100vh;">
         <div class="left-panel">
-        <!-- Section 0: Aircraft Type -->
+        <!-- Airport Code Section -->
+        <div class="input-section">
+            <div class="input-group">
+                <label class="input-label">Airport Code</label>
+                <input type="text" class="input-field" id="airportCode" placeholder="KDFW" maxlength="4" style="text-transform: uppercase;" onchange="fetchWeatherData(this.value)">
+            </div>
+        </div>
+
+        <!-- Aircraft Type Section -->
         <div class="input-section">
             <div class="input-group">
                 <label class="input-label">Aircraft Type</label>
-                <select class="select-field" id="aircraftType">
+                <select class="select-field" id="aircraftType" onchange="populateAircraftSpecificValues(this.value)">
                     <option value="">Select Aircraft</option>
                     <option value="C-152">C-152</option>
                     <option value="C-172">C-172</option>
@@ -1248,16 +1268,15 @@
 
         <!-- Custom Aircraft Section -->
         <div class="input-section">
-            <h3 style="color: #e0e0e0; margin-bottom: 15px; font-size: 16px;">Custom Aircraft</h3>
             <div class="input-group">
-                <button type="button" onclick="showCustomAircraftBuilder()" style="width: 100%; background-color: #9C27B0; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px;">🛠️ Custom Aircraft</button>
+                <button type="button" onclick="showCustomAircraftBuilder()" style="width: 100%; background: rgba(76, 175, 80, 0.2); color: white; border: 2px solid #4CAF50; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);" onmouseover="this.style.background='rgba(76, 175, 80, 0.3)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(76, 175, 80, 0.3)';" onmouseout="this.style.background='rgba(76, 175, 80, 0.2)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(76, 175, 80, 0.2)';">🛠️ Custom Aircraft</button>
             </div>
         </div>
 
         <!-- Section 1: Tail Number -->
         <div class="input-section">
             <div class="input-group">
-                <label class="input-label"><a href="https://app.flightschedulepro.com/" target="_blank" style="color: #4CAF50; text-decoration: none;">Tail Number</a></label>
+                <label class="input-label"><a href="https://app.flightschedulepro.com/" target="_blank" style="color: #2196F3; text-decoration: none;">Tail Number</a></label>
                 <input type="text" class="input-field" id="tailNumber" placeholder="">
             </div>
         </div>
@@ -1574,9 +1593,16 @@
             </div>
         </div>
 
+        <!-- METAR Panel -->
+        <div class="right-panel" id="metarPanel">
+            <div id="metarDisplay" style="font-family: 'Courier New', monospace; font-size: 12px; color: #4CAF50; background-color: #1a1a1a; padding: 10px; border-radius: 6px; word-wrap: break-word; line-height: 1.4;">
+                No METAR data available
+            </div>
+        </div>
+
         <!-- Weather Panel -->
         <div class="right-panel">
-            <div class="panel-title">Weather</div>
+            <div class="panel-title">Current Conditions</div>
             <div class="info-grid">
                 <div class="info-item">
                     <span class="info-label">Aprt. Wx. Observation</span>
@@ -2205,15 +2231,19 @@
                 <input type="number" class="input-field" id="userBagWeight" placeholder="Enter bag weight">
             </div>
             <div class="input-group">
+                <label class="input-label">Default Airport</label>
+                <input type="text" class="input-field" id="defaultAirport" placeholder="KDFW" maxlength="4" style="text-transform: uppercase;">
+            </div>
+            <div class="input-group">
                 <label class="input-label">Default Aircraft</label>
                 <select class="select-field" id="defaultAircraft">
                     <option value="">No Default Selected</option>
                 </select>
             </div>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
-                <button onclick="saveUserProfile()" style="background-color: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%;">💾 Save Profile</button>
-                <button onclick="loadUserProfile()" style="background-color: #2196F3; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%;">📂 Load Profile</button>
-                <button onclick="clearUserProfile()" style="background-color: #f44336; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%;">🗑️ Clear Data</button>
+                <button onclick="saveUserProfile()" style="background: rgba(76, 175, 80, 0.2); color: white; border: 2px solid #4CAF50; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);" onmouseover="this.style.background='rgba(76, 175, 80, 0.3)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(76, 175, 80, 0.3)';" onmouseout="this.style.background='rgba(76, 175, 80, 0.2)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(76, 175, 80, 0.2)';">💾 Save Profile</button>
+                <button onclick="loadUserProfile()" style="background: rgba(33, 150, 243, 0.2); color: white; border: 2px solid #2196F3; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);" onmouseover="this.style.background='rgba(33, 150, 243, 0.3)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(33, 150, 243, 0.3)';" onmouseout="this.style.background='rgba(33, 150, 243, 0.2)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(33, 150, 243, 0.2)';">📂 Load Profile</button>
+                <button onclick="clearUserProfile()" style="background: rgba(244, 67, 54, 0.2); color: white; border: 2px solid #f44336; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(244, 67, 54, 0.2);" onmouseover="this.style.background='rgba(244, 67, 54, 0.3)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(244, 67, 54, 0.3)';" onmouseout="this.style.background='rgba(244, 67, 54, 0.2)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(244, 67, 54, 0.2)';">🗑️ Clear Data</button>
             </div>
             <div id="settingsStatus" style="margin-top: 10px; padding: 8px; border-radius: 4px; font-size: 12px; display: none;"></div>
         </div>
@@ -2222,9 +2252,10 @@
         <div class="input-section">
             <h3 style="color: #e0e0e0; margin-bottom: 15px; font-size: 16px;">Aircraft Management</h3>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
-                <button onclick="saveCurrentAircraft()" style="background-color: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%;">✈️ Save Current Aircraft</button>
-                <button onclick="showAircraftManager()" style="background-color: #FF9800; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%;">📋 Manage Aircraft</button>
-                <button onclick="showCustomAircraftManager()" style="background-color: #607D8B; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%;">🧰 Manage Custom Aircraft</button>
+                <button onclick="saveCurrentAircraft()" style="background: rgba(76, 175, 80, 0.2); color: white; border: 2px solid #4CAF50; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);" onmouseover="this.style.background='rgba(76, 175, 80, 0.3)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(76, 175, 80, 0.3)';" onmouseout="this.style.background='rgba(76, 175, 80, 0.2)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(76, 175, 80, 0.2)';">✈️ Save Current Aircraft</button>
+                <button onclick="showAircraftManager()" style="background: rgba(255, 152, 0, 0.2); color: white; border: 2px solid #FF9800; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);" onmouseover="this.style.background='rgba(255, 152, 0, 0.3)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(255, 152, 0, 0.3)';" onmouseout="this.style.background='rgba(255, 152, 0, 0.2)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(255, 152, 0, 0.2)';">📋 Manage Aircraft</button>
+                <button onclick="showCustomAircraftManager()" style="background: rgba(96, 125, 139, 0.2); color: white; border: 2px solid #607D8B; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(96, 125, 139, 0.2);" onmouseover="this.style.background='rgba(96, 125, 139, 0.3)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(96, 125, 139, 0.3)';" onmouseout="this.style.background='rgba(96, 125, 139, 0.2)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(96, 125, 139, 0.2)';">🧰 Manage Custom Aircraft</button>
+                <button onclick="showCustomAircraftBuilder()" style="background: rgba(76, 175, 80, 0.2); color: white; border: 2px solid #4CAF50; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; width: 100%; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);" onmouseover="this.style.background='rgba(76, 175, 80, 0.3)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(76, 175, 80, 0.3)';" onmouseout="this.style.background='rgba(76, 175, 80, 0.2)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(76, 175, 80, 0.2)';">🛠️ Custom Aircraft Builder</button>
             </div>
             
             <!-- Aircraft Manager Modal -->
@@ -4701,36 +4732,78 @@
 
             // Update weather displays
             if (weatherObs) {
-                document.querySelector('[data-field="wxObs"]').textContent = weatherObs + 'Z';
+                const wxObsElement = document.querySelector('[data-field="wxObs"]');
+                if (wxObsElement) {
+                    wxObsElement.textContent = weatherObs + 'Z';
+                }
             }
             
             if (windDirection && windSpeed) {
-                document.querySelector('[data-field="surfaceWind"]').textContent = `${windDirection}° At ${windSpeed} Kts`;
+                const windDirElement = document.querySelector('[data-field="windDirection"]');
+                const windSpeedElement = document.querySelector('[data-field="windSpeed"]');
+                if (windDirElement) {
+                    windDirElement.textContent = `${windDirection}°`;
+                }
+                if (windSpeedElement) {
+                    windSpeedElement.textContent = `${windSpeed} kts`;
+                }
             }
             
-            if (visibility && weather) {
-                document.querySelector('[data-field="visWeather"]').textContent = `${visibility}SM /${weather}`;
+            if (visibility) {
+                const visibilityElement = document.querySelector('[data-field="visibility"]');
+                if (visibilityElement) {
+                    visibilityElement.textContent = `${visibility} SM`;
+                }
             }
             
-            if (temperature && dewpoint) {
-                document.querySelector('[data-field="tempDewPt"]').textContent = `${temperature}° / ${dewpoint}°`;
+            if (weather) {
+                const weatherElement = document.querySelector('[data-field="weather"]');
+                if (weatherElement) {
+                    weatherElement.textContent = weather;
+                }
+            }
+            
+            if (temperature) {
+                const temperatureElement = document.querySelector('[data-field="temperature"]');
+                if (temperatureElement) {
+                    temperatureElement.textContent = `${temperature}°C`;
+                }
+            }
+            
+            if (dewpoint) {
+                const dewpointElement = document.querySelector('[data-field="dewpoint"]');
+                if (dewpointElement) {
+                    dewpointElement.textContent = `${dewpoint}°C`;
+                }
             }
             
             if (altimeter) {
-                document.querySelector('[data-field="altimeterSetting"]').textContent = altimeter;
+                const altimeterElement = document.querySelector('[data-field="altimeter"]');
+                if (altimeterElement) {
+                    altimeterElement.textContent = altimeter;
+                }
             }
             
             if (fieldElevation) {
-                document.querySelector('[data-field="airportElevation"]').textContent = fieldElevation + ' ft';
+                const fieldElevationElement = document.querySelector('[data-field="airportElevation"]');
+                if (fieldElevationElement) {
+                    fieldElevationElement.textContent = fieldElevation + ' ft';
+                }
             }
 
             // Calculate pressure altitude if we have altimeter and field elevation
             let pressureAlt = null;
             if (altimeter && fieldElevation) {
                 pressureAlt = Math.round((29.92 - parseFloat(altimeter)) * 1000 + parseInt(fieldElevation));
-                document.querySelector('[data-field="pressureAltitude"]').textContent = pressureAlt + ' ft';
+                const pressureAltElement = document.querySelector('[data-field="pressureAltitude"]');
+                if (pressureAltElement) {
+                    pressureAltElement.textContent = pressureAlt + ' ft';
+                }
                 // Update left panel input
-                document.getElementById('pressureAltitude').value = pressureAlt;
+                const pressureAltInput = document.getElementById('pressureAltitude');
+                if (pressureAltInput) {
+                    pressureAltInput.value = pressureAlt;
+                }
             }
 
             // Calculate density altitude if we have pressure altitude and temperature
@@ -4739,9 +4812,15 @@
                 const pressureAltCalc = (29.92 - parseFloat(altimeter)) * 1000 + parseInt(fieldElevation);
                 const standardTemp = 15 - (parseInt(fieldElevation) / 1000) * 2;
                 densityAlt = Math.round(pressureAltCalc + (120 * (parseInt(temperature) - standardTemp)));
-                document.querySelector('[data-field="densityAltitude"]').textContent = densityAlt + ' ft';
+                const densityAltElement = document.querySelector('[data-field="densityAltitude"]');
+                if (densityAltElement) {
+                    densityAltElement.textContent = densityAlt + ' ft';
+                }
                 // Update left panel input
-                document.getElementById('densityAltitude').value = densityAlt;
+                const densityAltInput = document.getElementById('densityAltitude');
+                if (densityAltInput) {
+                    densityAltInput.value = densityAlt;
+                }
             }
 
             // Auto-select runway heading based on wind direction
@@ -4785,12 +4864,26 @@
                 headwind = Math.abs(parseInt(windSpeed) * Math.cos(adjustedAngleDiff * Math.PI / 180));
                 crosswind = Math.abs(parseInt(windSpeed) * Math.sin(adjustedAngleDiff * Math.PI / 180));
                 
-                document.querySelector('[data-field="headwind"]').textContent = headwind.toFixed(1) + ' kts';
-                document.querySelector('[data-field="crosswind"]').textContent = crosswind.toFixed(1) + ' kts';
+                const headwindElement = document.querySelector('[data-field="headwind"]');
+                if (headwindElement) {
+                    headwindElement.textContent = headwind.toFixed(1) + ' kts';
+                }
+                
+                const crosswindElement = document.querySelector('[data-field="crosswind"]');
+                if (crosswindElement) {
+                    crosswindElement.textContent = crosswind.toFixed(1) + ' kts';
+                }
                 
                 // Update left panel inputs
-                document.getElementById('headwind').value = headwind.toFixed(1);
-                document.getElementById('crosswind').value = crosswind.toFixed(1);
+                const headwindInput = document.getElementById('headwind');
+                if (headwindInput) {
+                    headwindInput.value = headwind.toFixed(1);
+                }
+                
+                const crosswindInput = document.getElementById('crosswind');
+                if (crosswindInput) {
+                    crosswindInput.value = crosswind.toFixed(1);
+                }
             }
 
             // Performance data
@@ -4801,17 +4894,10 @@
             const fiftyFtObst = document.getElementById('fiftyFtObst').value;
 
             if (expectedRunway) {
-                // Convert heading to runway designation (simplified)
-                let runwayDesignation = '';
-                if (expectedRunway == 180) runwayDesignation = '18L';
-                else if (expectedRunway == 360 || expectedRunway == 0) runwayDesignation = '36R';
-                else runwayDesignation = Math.round(expectedRunway / 10).toString().padStart(2, '0');
-                
-                document.querySelector('[data-field="expectedRunway"]').textContent = runwayDesignation;
-            }
-
-            if (runwayLength) {
-                document.querySelector('[data-field="runwayLength"]').textContent = runwayLength + ' ft';
+                const expectedRunwayElement = document.querySelector('[data-field="expectedRunway"]');
+                if (expectedRunwayElement) {
+                    expectedRunwayElement.textContent = expectedRunway;
+                }
             }
 
             // Update takeoff and landing performance calculations for C-152
@@ -6358,6 +6444,700 @@ function removeCGPoint(button) {
     // Don't allow removing if it's the last row
     if (container.children.length > 1) {
         row.remove();
+    }
+}
+
+async function fetchWeatherData(airportCode) {
+    try {
+        const upperCode = airportCode.toUpperCase();
+        console.log(`Fetching weather data for: ${upperCode}`);
+        
+        // Fetch weather data and airport elevation in parallel
+        const weatherPromise = fetchWeatherFromAPIs(upperCode);
+        const elevationPromise = fetchAirportElevation(upperCode);
+        
+        // Wait for both requests to complete
+        const [weatherData, elevationData] = await Promise.all([weatherPromise, elevationPromise]);
+        
+        // Update weather displays
+        if (weatherData) {
+            updateWeatherPanel(weatherData);
+        } else {
+            updateWeatherPanel(null, 'Unable to fetch weather data for this airport');
+        }
+        
+        // Update elevation data (separate from weather)
+        if (elevationData) {
+            updateFieldElevationFromAirport(elevationData);
+        } else {
+            console.log('No elevation data available for this airport');
+        }
+        
+    } catch (error) {
+        console.error('Error in fetchWeatherData:', error);
+        updateWeatherPanel(null, 'Error fetching airport data');
+    }
+}
+
+async function fetchWeatherFromAPIs(airportCode) {
+    try {
+        const upperCode = airportCode.toUpperCase();
+        let weatherData = null;
+        
+        // Try CORS proxy with Aviation Weather Center
+        try {
+            const proxyUrl = 'https://api.allorigins.win/raw?url=';
+            const awcUrl = `https://aviationweather.gov/api/data/metar?ids=${upperCode}&format=json`;
+            const response = await fetch(proxyUrl + encodeURIComponent(awcUrl));
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    weatherData = convertAWCData(data[0]);
+                    console.log('Current weather data from AWC:', weatherData);
+                }
+            }
+        } catch (proxyError) {
+            console.log('CORS proxy failed, trying alternative...');
+        }
+        
+        // Try direct METAR text parsing from another source
+        if (!weatherData) {
+            try {
+                const metarUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://tgftp.nws.noaa.gov/data/observations/metar/stations/${upperCode}.TXT`)}`;
+                const response = await fetch(metarUrl);
+                
+                if (response.ok) {
+                    const metarText = await response.text();
+                    const lines = metarText.trim().split('\n');
+                    if (lines.length >= 2) {
+                        const rawMetar = lines[1].trim(); // Second line contains the METAR
+                        weatherData = parseRawMETAR(rawMetar);
+                        console.log('Current weather data from NOAA:', weatherData);
+                    }
+                }
+            } catch (noaaError) {
+                console.log('NOAA METAR failed, using fallback...');
+            }
+        }
+        
+        // Fallback: Enhanced mock data with disclaimer
+        if (!weatherData) {
+            weatherData = generateMockWeatherData(upperCode);
+            console.log('Using sample weather data (APIs unavailable):', weatherData);
+            updateWeatherPanel(weatherData, `Sample data for ${upperCode} - For current weather, check 1800wxbrief.com`);
+            return;
+        }
+        
+        return weatherData;
+        
+    } catch (error) {
+        console.error('Error fetching weather from APIs:', error);
+        return null;
+    }
+}
+
+// Parse raw METAR text
+function parseRawMETAR(rawMetar) {
+    try {
+        const parts = rawMetar.split(' ');
+        const airportCode = parts[0];
+        
+        // Extract observation time (e.g., 080353Z)
+        const timeMatch = rawMetar.match(/\s(\d{6}Z)\s/);
+        const obsTime = timeMatch ? timeMatch[1] : 'N/A';
+        
+        // Extract wind data including gusts
+        const windMatch = rawMetar.match(/(\d{3})(\d{2,3})(G(\d{2,3}))?KT|(\d{5})KT/);
+        let windDir = 0, windSpeed = 0;
+        if (windMatch) {
+            if (windMatch[1] && windMatch[2]) {
+                windDir = parseInt(windMatch[1]);
+                windSpeed = parseInt(windMatch[2]);
+                // Use gust speed if present
+                if (windMatch[4]) {
+                    windSpeed = parseInt(windMatch[4]);
+                }
+            } else if (windMatch[5]) {
+                const windStr = windMatch[5];
+                windDir = parseInt(windStr.substring(0, 3));
+                windSpeed = parseInt(windStr.substring(3));
+            }
+        }
+        
+        // Extract visibility
+        const visMatch = rawMetar.match(/\s(\d+)SM|\s(\d+\/\d+)SM/);
+        const visibility = visMatch ? (visMatch[1] || visMatch[2]) : '10';
+        
+        // Extract weather conditions (CLR, BKN, SCT, OVC, etc.)
+        const weatherConditions = [];
+        const wxPatterns = [
+            /\s(CLR)\s/,
+            /\s(SKC)\s/,
+            /\s(FEW\d{3})\s/,
+            /\s(SCT\d{3})\s/,
+            /\s(BKN\d{3})\s/,
+            /\s(OVC\d{3})\s/,
+            /\s(RA)\s/,
+            /\s(SN)\s/,
+            /\s(FG)\s/,
+            /\s(BR)\s/,
+            /\s(HZ)\s/
+        ];
+        
+        wxPatterns.forEach(pattern => {
+            const match = rawMetar.match(pattern);
+            if (match) {
+                weatherConditions.push(match[1]);
+            }
+        });
+        
+        const weather = weatherConditions.length > 0 ? weatherConditions.join(' ') : 'CLR';
+        
+        // Extract temperature and dewpoint
+        const tempMatch = rawMetar.match(/\s(M?\d{2})\/(M?\d{2})\s/);
+        let temp = null, dewpoint = null;
+        if (tempMatch) {
+            temp = tempMatch[1].startsWith('M') ? -parseInt(tempMatch[1].substring(1)) : parseInt(tempMatch[1]);
+            dewpoint = tempMatch[2].startsWith('M') ? -parseInt(tempMatch[2].substring(1)) : parseInt(tempMatch[2]);
+        }
+        
+        // Extract altimeter
+        const altMatch = rawMetar.match(/A(\d{4})/);
+        const altimeter = altMatch ? (parseInt(altMatch[1]) / 100).toFixed(2) : '30.00';
+        
+        return {
+            raw: rawMetar,
+            obsTime: obsTime,
+            visibility: { repr: `${visibility} SM` },
+            weather: { repr: weather },
+            temperature: { 
+                repr: temp !== null ? `${temp}°C` : 'N/A',
+                value: temp
+            },
+            dewpoint: { 
+                repr: dewpoint !== null ? `${dewpoint}°C` : 'N/A'
+            },
+            altimeter: { 
+                repr: `${altimeter}"`,
+                value: parseFloat(altimeter)
+            },
+            wind_direction: { 
+                repr: windSpeed === 0 ? 'CALM' : `${windDir}°`,
+                value: windDir
+            },
+            wind_speed: { 
+                repr: windSpeed === 0 ? 'CALM' : `${windSpeed} kts`,
+                value: windSpeed
+            },
+            elevation: { repr: 'N/A' }
+        };
+    } catch (error) {
+        console.error('Error parsing METAR:', error);
+        return null;
+    }
+}
+
+// Convert CheckWX API data format
+function convertCheckWXData(data) {
+    return {
+        raw: data.raw_text || 'N/A',
+        visibility: { repr: data.visibility?.miles_float ? `${data.visibility.miles_float} SM` : 'N/A' },
+        temperature: { 
+            repr: data.temperature?.celsius ? `${Math.round(data.temperature.celsius)}°C` : 'N/A',
+            value: data.temperature?.celsius || null
+        },
+        dewpoint: { 
+            repr: data.dewpoint?.celsius ? `${Math.round(data.dewpoint.celsius)}°C` : 'N/A' 
+        },
+        altimeter: { 
+            repr: data.barometer?.hg ? `${data.barometer.hg}"` : 'N/A',
+            value: data.barometer?.hg || null
+        },
+        wind_direction: { 
+            repr: data.wind?.degrees ? `${data.wind.degrees}°` : 'N/A',
+            value: data.wind?.degrees || null
+        },
+        wind_speed: { 
+            repr: data.wind?.speed_kts ? `${data.wind.speed_kts} kts` : 'N/A',
+            value: data.wind?.speed_kts || null
+        },
+        elevation: { repr: data.elevation?.feet ? `${data.elevation.feet} ft` : 'N/A' }
+    };
+}
+
+// Convert Aviation Weather Center data format
+function convertAWCData(data) {
+    // Extract weather conditions from raw METAR string
+    let weatherConditions = 'N/A';
+    let visibility = 'N/A';
+    let altimeter = null;
+    let temperature = null;
+    let dewpoint = null;
+    
+    if (data.rawOb) {
+        const rawMetar = data.rawOb;
+        
+        // Extract visibility from METAR (e.g., "10SM" or "1/2SM")
+        const visMatch = rawMetar.match(/\s(\d+(?:\/\d+)?|\d+\+?)SM\s/);
+        if (visMatch) {
+            visibility = visMatch[1].replace('+', ''); // Remove + if present
+        }
+        
+        // Extract altimeter from METAR (e.g., "A3016" -> 30.16)
+        const altMatch = rawMetar.match(/\sA(\d{4})\s/);
+        if (altMatch) {
+            altimeter = (parseInt(altMatch[1]) / 100);
+        }
+        
+        // Extract temperature and dewpoint from main METAR section (e.g., "13/01")
+        const tempMatch = rawMetar.match(/\s(M?\d{2})\/(M?\d{2})\s/);
+        if (tempMatch) {
+            temperature = tempMatch[1].startsWith('M') ? -parseInt(tempMatch[1].substring(1)) : parseInt(tempMatch[1]);
+            dewpoint = tempMatch[2].startsWith('M') ? -parseInt(tempMatch[2].substring(1)) : parseInt(tempMatch[2]);
+        }
+        
+        // Extract weather conditions
+        const weatherPatterns = [
+            /\s(CLR)\s/,
+            /\s(SKC)\s/,
+            /\s(FEW\d{3})\s/,
+            /\s(SCT\d{3})\s/,
+            /\s(BKN\d{3})\s/,
+            /\s(OVC\d{3})\s/,
+            /\s(RA)\s/,
+            /\s(SN)\s/,
+            /\s(FG)\s/,
+            /\s(BR)\s/,
+            /\s(HZ)\s/
+        ];
+        
+        const foundConditions = [];
+        weatherPatterns.forEach(pattern => {
+            const match = rawMetar.match(pattern);
+            if (match) {
+                foundConditions.push(match[1]);
+            }
+        });
+        
+        weatherConditions = foundConditions.length > 0 ? foundConditions.join(' ') : 'CLR';
+    }
+    
+    return {
+        raw: data.rawOb || 'N/A',
+        obsTime: extractObsTime(data.rawOb),
+        visibility: { repr: visibility !== 'N/A' ? `${visibility} SM` : 'N/A' },
+        weather: { repr: weatherConditions },
+        temperature: { 
+            repr: temperature !== null ? `${temperature}°C` : 'N/A',
+            value: temperature
+        },
+        dewpoint: { 
+            repr: dewpoint !== null ? `${dewpoint}°C` : 'N/A',
+            value: dewpoint
+        },
+        altimeter: { 
+            repr: altimeter !== null ? `${altimeter.toFixed(2)}"` : 'N/A',
+            value: altimeter
+        },
+        wind_direction: { 
+            repr: data.wdir ? `${data.wdir}°` : 'N/A',
+            value: data.wdir || null
+        },
+        wind_speed: { 
+            repr: data.wspd ? `${data.wspd} kts` : 'N/A',
+            value: data.wspd || null
+        },
+        elevation: { repr: data.elev ? `${data.elev} ft` : 'N/A' }
+    };
+}
+
+// Helper function to extract observation time from raw METAR
+function extractObsTime(rawMetar) {
+    if (!rawMetar) return 'N/A';
+    const timeMatch = rawMetar.match(/\s(\d{6}Z)\s/);
+    return timeMatch ? timeMatch[1] : 'N/A';
+}
+
+// Airport elevation lookup using OurAirports data
+let airportElevationCache = null;
+
+async function fetchAirportElevation(airportCode) {
+    try {
+        const upperCode = airportCode.toUpperCase();
+        console.log(`Fetching elevation data for: ${upperCode}`);
+        
+        // Load airport data if not cached
+        if (!airportElevationCache) {
+            console.log('Loading OurAirports elevation database...');
+            const response = await fetch('https://davidmegginson.github.io/ourairports-data/airports.csv');
+            const csvText = await response.text();
+            
+            // Parse CSV and create lookup cache
+            airportElevationCache = {};
+            const lines = csvText.split('\n');
+            const headers = lines[0].split(',');
+            
+            // Find column indices
+            const icaoIndex = headers.findIndex(h => h.includes('ident'));
+            const elevationIndex = headers.findIndex(h => h.includes('elevation_ft'));
+            const nameIndex = headers.findIndex(h => h.includes('name'));
+            
+            // Parse data rows
+            for (let i = 1; i < lines.length; i++) {
+                const row = lines[i].split(',');
+                if (row.length > Math.max(icaoIndex, elevationIndex)) {
+                    const icao = row[icaoIndex]?.replace(/"/g, '').trim();
+                    const elevation = row[elevationIndex]?.replace(/"/g, '').trim();
+                    const name = row[nameIndex]?.replace(/"/g, '').trim();
+                    
+                    if (icao && elevation && !isNaN(elevation)) {
+                        airportElevationCache[icao] = {
+                            elevation: parseInt(elevation),
+                            name: name || 'Unknown Airport'
+                        };
+                    }
+                }
+            }
+            console.log(`Loaded ${Object.keys(airportElevationCache).length} airports into elevation cache`);
+        }
+        
+        // Look up elevation for requested airport
+        const airportData = airportElevationCache[upperCode];
+        if (airportData) {
+            console.log(`Found elevation for ${upperCode}: ${airportData.elevation} ft MSL`);
+            return {
+                icao: upperCode,
+                elevation: airportData.elevation,
+                name: airportData.name,
+                source: 'OurAirports'
+            };
+        } else {
+            console.log(`No elevation data found for ${upperCode}`);
+            return null;
+        }
+        
+    } catch (error) {
+        console.error('Error fetching airport elevation:', error);
+        return null;
+    }
+}
+
+function updateFieldElevationFromAirport(elevationData) {
+    try {
+        if (!elevationData) return;
+        
+        // Update Field Elevation in Column A
+        const fieldElevationInput = document.getElementById('fieldElevation');
+        if (fieldElevationInput && elevationData.elevation) {
+            fieldElevationInput.value = elevationData.elevation;
+            console.log(`Updated Field Elevation: ${elevationData.elevation} ft MSL`);
+        }
+        
+        // Update Airport Elevation display in Current Conditions panel
+        const airportElevationElement = document.querySelector('[data-field="airportElevation"]');
+        if (airportElevationElement && elevationData.elevation) {
+            airportElevationElement.textContent = `${elevationData.elevation} ft`;
+        }
+        
+        // Trigger pressure/density altitude calculations
+        setTimeout(() => {
+            if (typeof updatePerformanceCalculations === 'function') {
+                updatePerformanceCalculations();
+            }
+            if (typeof updateDisplays === 'function') {
+                updateDisplays();
+            }
+        }, 100);
+        
+    } catch (error) {
+        console.error('Error updating field elevation:', error);
+    }
+}
+function generateMockWeatherData(airportCode) {
+    // Ensure airport code is uppercase
+    const upperCode = airportCode.toUpperCase();
+    
+    const mockData = {
+        'KDFW': {
+            raw: 'KDFW 080253Z 18008KT 10SM FEW250 22/M02 A3012 RMK AO2 SLP220 T02221022',
+            visibility: { repr: '10 SM' },
+            temperature: { repr: '22°C', value: 22 },
+            dewpoint: { repr: '-2°C' },
+            altimeter: { repr: '30.12"', value: 30.12 },
+            wind_direction: { repr: '180°', value: 180 },
+            wind_speed: { repr: '8 kts', value: 8 },
+            elevation: { repr: '607 ft' }
+        },
+        'KDTO': {
+            raw: 'KDTO 080253Z 14005KT 10SM CLR 13/00 A3015 RMK AO2 SLP208 T01330000 51002',
+            visibility: { repr: '10 SM' },
+            temperature: { repr: '13°C', value: 13 },
+            dewpoint: { repr: '0°C' },
+            altimeter: { repr: '30.15"', value: 30.15 },
+            wind_direction: { repr: '140°', value: 140 },
+            wind_speed: { repr: '5 kts', value: 5 },
+            elevation: { repr: '700 ft' }
+        },
+        'KLAX': {
+            raw: 'KLAX 080253Z 25008KT 10SM FEW015 BKN250 18/14 A2995 RMK AO2 SLP142 T01830144',
+            visibility: { repr: '10 SM' },
+            temperature: { repr: '18°C', value: 18 },
+            dewpoint: { repr: '14°C' },
+            altimeter: { repr: '29.95"', value: 29.95 },
+            wind_direction: { repr: '250°', value: 250 },
+            wind_speed: { repr: '8 kts', value: 8 },
+            elevation: { repr: '125 ft' }
+        },
+        'KORD': {
+            raw: 'KORD 080253Z 27012KT 10SM BKN025 OVC035 08/04 A3018 RMK AO2 SLP225 T00830044',
+            visibility: { repr: '10 SM' },
+            temperature: { repr: '8°C', value: 8 },
+            dewpoint: { repr: '4°C' },
+            altimeter: { repr: '30.18"', value: 30.18 },
+            wind_direction: { repr: '270°', value: 270 },
+            wind_speed: { repr: '12 kts', value: 12 },
+            elevation: { repr: '672 ft' }
+        },
+        'KJFK': {
+            raw: 'KJFK 080253Z 28010KT 10SM FEW030 SCT250 12/07 A3020 RMK AO2 SLP230 T01220067',
+            visibility: { repr: '10 SM' },
+            temperature: { repr: '12°C', value: 12 },
+            dewpoint: { repr: '7°C' },
+            altimeter: { repr: '30.20"', value: 30.20 },
+            wind_direction: { repr: '280°', value: 280 },
+            wind_speed: { repr: '10 kts', value: 10 },
+            elevation: { repr: '13 ft' }
+        }
+    };
+    
+    // Return specific airport data or generate realistic generic data
+    if (mockData[upperCode]) {
+        return mockData[upperCode];
+    }
+    
+    // Generate realistic generic data for unknown airports
+    const currentTime = new Date();
+    const day = String(currentTime.getUTCDate()).padStart(2, '0');
+    const hour = String(currentTime.getUTCHours()).padStart(2, '0');
+    const minute = String(currentTime.getUTCMinutes()).padStart(2, '0');
+    const timeString = `${day}${hour}${minute}Z`;
+    
+    // Generate realistic but varied weather conditions
+    const windDirs = [360, 90, 180, 270, 140, 220, 310];
+    const windSpeeds = [0, 5, 8, 12, 15];
+    const temps = [8, 12, 18, 22, 25];
+    const altimeters = [29.92, 30.05, 30.12, 30.18, 30.25];
+    
+    const windDir = windDirs[Math.floor(Math.random() * windDirs.length)];
+    const windSpeed = windSpeeds[Math.floor(Math.random() * windSpeeds.length)];
+    const temp = temps[Math.floor(Math.random() * temps.length)];
+    const dewpoint = temp - Math.floor(Math.random() * 8) - 2; // Realistic dewpoint spread
+    const altimeter = altimeters[Math.floor(Math.random() * altimeters.length)];
+    
+    const windString = windSpeed === 0 ? '00000KT' : `${String(windDir).padStart(3, '0')}${String(windSpeed).padStart(2, '0')}KT`;
+    
+    return {
+        raw: `${upperCode} ${timeString} ${windString} 10SM CLR ${String(temp).padStart(2, '0')}/${String(dewpoint).padStart(2, '0')} A${Math.round(altimeter * 100)} RMK AO2`,
+        visibility: { repr: '10 SM' },
+        temperature: { repr: `${temp}°C`, value: temp },
+        dewpoint: { repr: `${dewpoint}°C` },
+        altimeter: { repr: `${altimeter.toFixed(2)}"`, value: altimeter },
+        wind_direction: { repr: windSpeed === 0 ? 'CALM' : `${windDir}°`, value: windDir },
+        wind_speed: { repr: windSpeed === 0 ? 'CALM' : `${windSpeed} kts`, value: windSpeed },
+        elevation: { repr: '1000 ft' }
+    };
+}
+
+function updateWeatherPanel(weatherData, errorMessage = null) {
+    try {
+        // Update METAR display panel
+        const metarDisplay = document.getElementById('metarDisplay');
+        if (metarDisplay) {
+            if (errorMessage) {
+                metarDisplay.textContent = errorMessage;
+                metarDisplay.style.color = '#FF9800';
+            } else if (weatherData && weatherData.raw) {
+                metarDisplay.textContent = weatherData.raw;
+                metarDisplay.style.color = '#4CAF50';
+            }
+        }
+        
+        // Update Current Conditions panel with combined fields
+        if (weatherData) {
+            // Aprt. Wx. Observation (Zulu date/time)
+            const wxObsElement = document.querySelector('[data-field="wxObs"]');
+            if (wxObsElement) {
+                wxObsElement.textContent = weatherData.obsTime || 'N/A';
+            }
+            
+            // Surface Wind (direction/speed combined)
+            const surfaceWindElement = document.querySelector('[data-field="surfaceWind"]');
+            if (surfaceWindElement && weatherData.wind_direction && weatherData.wind_speed) {
+                const windDir = weatherData.wind_direction.repr;
+                const windSpeed = weatherData.wind_speed.repr;
+                surfaceWindElement.textContent = `${windDir} at ${windSpeed}`;
+            }
+            
+            // Vis/Weather (visibility + weather combined)
+            const visWeatherElement = document.querySelector('[data-field="visWeather"]');
+            if (visWeatherElement) {
+                const vis = weatherData.visibility?.repr || 'N/A';
+                const weather = weatherData.weather?.repr || 'N/A';
+                visWeatherElement.textContent = `${vis} ${weather}`;
+            }
+            
+            // Temp/Dew Pt. (temperature and dewpoint combined)
+            const tempDewPtElement = document.querySelector('[data-field="tempDewPt"]');
+            if (tempDewPtElement) {
+                const temp = weatherData.temperature?.repr || 'N/A';
+                const dewpt = weatherData.dewpoint?.repr || 'N/A';
+                tempDewPtElement.textContent = `${temp}/${dewpt}`;
+            }
+            
+            // Altimeter Setting
+            const altimeterElement = document.querySelector('[data-field="altimeterSetting"]');
+            if (altimeterElement) {
+                altimeterElement.textContent = weatherData.altimeter?.repr || 'N/A';
+            }
+        }
+        
+        // Note: Crosswind, Headwind, Airport Elevation, Pressure Altitude, and Density Altitude
+        // are calculated values that will be updated by the updateDisplays function
+        
+        // Also update form fields if they exist
+        updateFormFieldsFromWeather(weatherData);
+        
+        console.log('Current Conditions panel and METAR display updated successfully');
+        
+    } catch (error) {
+        console.error('Error updating weather panel:', error);
+    }
+}
+
+function updateFormFieldsFromWeather(weatherData) {
+    try {
+        if (!weatherData) return;
+        
+        // Update Weather Observation with Zulu time
+        if (weatherData.obsTime && weatherData.obsTime !== 'N/A') {
+            const weatherObsField = document.getElementById('weatherObs');
+            if (weatherObsField) {
+                weatherObsField.value = weatherData.obsTime;
+            }
+        }
+        
+        // Update wind direction
+        if (weatherData.wind_direction?.value !== undefined) {
+            const windDirField = document.getElementById('windDirection');
+            if (windDirField) {
+                windDirField.value = weatherData.wind_direction.value;
+            }
+        }
+        
+        // Update wind speed
+        if (weatherData.wind_speed?.value !== undefined) {
+            const windSpeedField = document.getElementById('windSpeed');
+            if (windSpeedField) {
+                windSpeedField.value = weatherData.wind_speed.value;
+            }
+        }
+        
+        // Update visibility
+        if (weatherData.visibility?.repr) {
+            const visibilityField = document.getElementById('visibility');
+            if (visibilityField) {
+                // Extract numeric value from "10 SM" format, removing SM and any +
+                const visValue = weatherData.visibility.repr.replace(' SM', '').replace('SM', '').replace('+', '');
+                visibilityField.value = visValue;
+                console.log('Updated visibility field:', visValue);
+            } else {
+                console.log('Visibility field not found');
+            }
+        } else {
+            console.log('No visibility data:', weatherData.visibility);
+        }
+        
+        // Update weather conditions
+        if (weatherData.weather?.repr) {
+            const weatherField = document.getElementById('weather');
+            if (weatherField) {
+                weatherField.value = weatherData.weather.repr;
+                console.log('Updated weather field:', weatherData.weather.repr);
+            } else {
+                console.log('Weather field not found');
+            }
+        } else {
+            console.log('No weather data:', weatherData.weather);
+        }
+        
+        // Update temperature (keep in Celsius)
+        if (weatherData.temperature?.value !== null && weatherData.temperature?.value !== undefined) {
+            const tempField = document.getElementById('temperature');
+            if (tempField) {
+                tempField.value = weatherData.temperature.value;
+            }
+        }
+        
+        // Update dewpoint (keep in Celsius)
+        if (weatherData.dewpoint?.repr && weatherData.dewpoint.repr !== 'N/A') {
+            const dewpointField = document.getElementById('dewpoint');
+            if (dewpointField) {
+                // Extract numeric value from "1°C" format
+                const dewpointC = parseInt(weatherData.dewpoint.repr.replace('°C', ''));
+                if (!isNaN(dewpointC)) {
+                    dewpointField.value = dewpointC;
+                }
+            }
+        }
+        
+        // Update altimeter
+        if (weatherData.altimeter?.value !== undefined) {
+            const altimeterField = document.getElementById('altimeter');
+            if (altimeterField) {
+                altimeterField.value = weatherData.altimeter.value.toFixed(2);
+            }
+        }
+        
+        // Auto-select runway heading based on wind direction for optimal headwind
+        if (weatherData.wind_direction?.value !== undefined && weatherData.wind_direction.value !== null) {
+            const windDir = weatherData.wind_direction.value;
+            const runwayHeadingField = document.getElementById('runwayHeading');
+            
+            if (runwayHeadingField) {
+                let optimalRunway;
+                
+                // Determine which runway (18 or 36) provides better headwind
+                // Runway 18 = 180° heading, Runway 36 = 360°/0° heading
+                const runway18Diff = Math.abs(windDir - 180);
+                const runway36Diff = Math.min(Math.abs(windDir - 360), Math.abs(windDir - 0));
+                
+                // Choose runway that minimizes angle difference (maximizes headwind)
+                if (runway18Diff <= runway36Diff) {
+                    optimalRunway = '18';
+                } else {
+                    optimalRunway = '36';
+                }
+                
+                runwayHeadingField.value = optimalRunway;
+                console.log(`Auto-selected runway ${optimalRunway} for wind direction ${windDir}°`);
+            }
+        }
+        
+        // Trigger calculations after all fields are updated
+        setTimeout(() => {
+            if (typeof updatePerformanceCalculations === 'function') {
+                updatePerformanceCalculations();
+            }
+            if (typeof updateDisplays === 'function') {
+                updateDisplays();
+            }
+        }, 100);
+        
+        console.log('Column A weather fields populated from METAR data');
+        
+    } catch (error) {
+        console.error('Error updating form fields from weather:', error);
     }
 }
 </script>
