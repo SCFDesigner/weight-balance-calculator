@@ -3929,7 +3929,7 @@
             }
             
             // Chart dimensions and scaling (use rect dimensions for proper scaling)
-            const margin = 40;
+            const margin = 60; // Increased from 40 to give more space for labels
             const chartWidth = rect.width - 2 * margin;
             const chartHeight = rect.height - 2 * margin;
             
@@ -3957,10 +3957,14 @@
                     const yValues = specs.yAxisRange.split(',').map(v => parseFloat(v.trim())).filter(v => !isNaN(v));
                     
                     if (xValues.length > 0 && yValues.length > 0) {
-                        cgMin = Math.min(...xValues);
-                        cgMax = Math.max(...xValues);
-                        weightMin = Math.min(...yValues);
-                        weightMax = Math.max(...yValues);
+                        // Use the actual range values but add some padding for better visualization
+                        const xRange = Math.max(...xValues) - Math.min(...xValues);
+                        const yRange = Math.max(...yValues) - Math.min(...yValues);
+                        
+                        cgMin = Math.min(...xValues) - (xRange * 0.1);
+                        cgMax = Math.max(...xValues) + (xRange * 0.1);
+                        weightMin = Math.min(...yValues) - (yRange * 0.1);
+                        weightMax = Math.max(...yValues) + (yRange * 0.1);
                     } else {
                         // Fallback to default ranges
                         cgMin = 25; cgMax = 50;
@@ -4055,7 +4059,7 @@
             
             // Draw CG envelope based on aircraft type
             ctx.strokeStyle = '#2196F3'; // Blue color to match reference
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 2; // Reduced from 3 to make lines thinner
             ctx.beginPath();
             
             if (aircraftType === 'C-152') {
@@ -4076,7 +4080,7 @@
                 // Draw STC envelope extension as dashed line
                 // STC path: 32.6,1670 -> 33,1710 -> 35.4,1710 -> 36.5,1670
                 ctx.strokeStyle = '#2196F3'; // Same blue color
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 1.5; // Reduced from 2 to make dashed line thinner
                 ctx.setLineDash([8, 4]); // Dashed line pattern
                 ctx.beginPath();
                 
@@ -4108,7 +4112,7 @@
                 
                 // Draw MTOW limit lines
                 ctx.strokeStyle = '#FF5722'; // Orange/red color for MTOW lines
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 1.5; // Reduced from 2 to make MTOW lines thinner
                 ctx.setLineDash([5, 3]); // Dashed line pattern
                 
                 // MTOW 2844 lb line (already at top of envelope)
@@ -4135,7 +4139,7 @@
                 const specs = aircraftSpecs[aircraftType];
                 if (specs && specs.cgEnvelope && specs.cgEnvelope.length > 2) {
                     ctx.strokeStyle = '#4CAF50'; // Green color for custom aircraft
-                    ctx.lineWidth = 3;
+                    ctx.lineWidth = 2; // Reduced from 3 to make lines thinner
                     ctx.beginPath();
                     
                     // Draw the envelope by connecting all points
@@ -4172,14 +4176,14 @@
             // X-axis labels (CG)
             for (let cg = cgMin; cg <= cgMax; cg += majorCGIncrement) {
                 const x = cgToX(cg);
-                ctx.fillText(cg.toString(), x, rect.height - 10);
+                ctx.fillText(cg.toString(), x, rect.height - 20); // Moved from -10 to -20 for more space
             }
             
             // Y-axis labels (Weight)
             ctx.textAlign = 'right';
             for (let weight = weightMin; weight <= weightMax; weight += majorWeightIncrement) {
                 const y = weightToY(weight);
-                ctx.fillText(weight.toString(), margin - 10, y + 4);
+                ctx.fillText(weight.toString(), margin - 20, y + 4); // Moved from -10 to -20 for more space
             }
             
             // Add MTOW labels for P2006T
@@ -5712,7 +5716,7 @@ function loadDefaultAircraft() {
 function showCustomAircraftBuilder() {
     // On mobile, navigate to Column D (options page) first
     if (window.innerWidth <= 768) {
-        showColumn('D');
+        showMobileColumn('settings');
     }
     
     document.getElementById('customAircraftBuilder').style.display = 'block';
