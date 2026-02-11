@@ -34,20 +34,39 @@
             pointer-events: none;
         }
 
-        /* Lightspeed Mode Off - Dark Background */
+        /* Normal Space Canvas Background (Floating Stars) */
+        #normalspace-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Lightspeed Mode Control */
         body.lightspeed-off #hyperspace-canvas {
-            background: #0a0a0a !important;
+            display: none;
+        }
+
+        body.lightspeed-off #normalspace-canvas {
+            display: block;
+        }
+
+        body.lightspeed-on #hyperspace-canvas {
+            display: block;
+        }
+
+        body.lightspeed-on #normalspace-canvas {
+            display: none;
         }
 
         /* Mobile lightspeed-off background fix */
         @media (max-width: 768px) {
-            body.lightspeed-off {
-                background-color: #0a0a0a !important;
-            }
-            
             body.lightspeed-off html,
             body.lightspeed-off {
-                background-color: #0a0a0a !important;
+                background-color: transparent !important;
             }
         }
 
@@ -770,6 +789,13 @@
                 height: 100vh;
                 overflow: hidden;
                 background-color: transparent !important;
+            }
+
+            /* Override desktop column widths on mobile */
+            .risk-column {
+                width: calc(100% - 40px) !important;
+                min-width: calc(100% - 40px) !important;
+                max-width: 95% !important;
             }
 
             /* Desktop layout becomes mobile column container */
@@ -1497,6 +1523,9 @@
 <body>
     <!-- Hyperspace Canvas Background -->
     <canvas id="hyperspace-canvas"></canvas>
+    
+    <!-- Normal Space Canvas Background (Floating Stars) -->
+    <canvas id="normalspace-canvas"></canvas>
     
     <!-- Desktop Layout -->
     <div class="desktop-layout" style="display: flex; width: 100%; height: 100vh;">
@@ -2492,7 +2521,7 @@
     <div class="column-resizer" data-resize="risk-settings"></div>
 
     <!-- Settings Panel (Column D) -->
-    <div class="settings-panel" style="padding: 20px; overflow-y: auto; height: 100vh; border-left: 1px solid #555;">
+    <div class="settings-panel" style="padding: 20px; overflow-y: auto; height: 100vh;">
         <h2 id="lightspeed-toggle" style="color: #4CAF50; margin-bottom: 20px; font-size: 18px; cursor: pointer; user-select: none; transition: color 0.3s ease;" title="Secret lightspeed mode toggle">Settings</h2>
         
         <!-- User Profile Section -->
@@ -2862,7 +2891,7 @@
     <div class="column-resizer" data-resize="settings-brain"></div>
 
     <!-- Brain Column (Column E) -->
-    <div class="brain-panel brain-hidden" style="padding: 20px; overflow-y: auto; height: 100vh; border-left: 1px solid #555; display: none;">
+    <div class="brain-panel brain-hidden" style="padding: 20px; overflow-y: auto; height: 100vh; display: none;">
         <h2 style="color: #4CAF50; margin-bottom: 20px; font-size: 18px;">🧠 Brain</h2>
         
         <!-- Mnemonics Section -->
@@ -8377,15 +8406,13 @@ function updateFormFieldsFromWeather(weatherData) {
     // Set initial state
     document.body.classList.add('lightspeed-off');
     
-    // Hide canvas initially since lightspeed is OFF by default
-    const canvas = document.getElementById('hyperspace-canvas');
-    if (canvas) {
-        canvas.style.display = 'none';
-    }
-    
     // Get the toggle element
     const toggle = document.getElementById('lightspeed-toggle');
     if (!toggle) return;
+    
+    // Get both canvases
+    const hyperspaceCanvas = document.getElementById('hyperspace-canvas');
+    const normalspaceCanvas = document.getElementById('normalspace-canvas');
     
     // Toggle function
     function toggleLightspeed() {
@@ -8395,22 +8422,10 @@ function updateFormFieldsFromWeather(weatherData) {
             // Turn ON lightspeed mode
             document.body.classList.remove('lightspeed-off');
             document.body.classList.add('lightspeed-on');
-            
-            // Resume hyperspace animation
-            const canvas = document.getElementById('hyperspace-canvas');
-            if (canvas) {
-                canvas.style.display = 'block';
-            }
         } else {
             // Turn OFF lightspeed mode
             document.body.classList.remove('lightspeed-on');
             document.body.classList.add('lightspeed-off');
-            
-            // Hide hyperspace animation (dark background will show)
-            const canvas = document.getElementById('hyperspace-canvas');
-            if (canvas) {
-                canvas.style.display = 'none';
-            }
         }
     }
     
@@ -8424,6 +8439,142 @@ function updateFormFieldsFromWeather(weatherData) {
     
     toggle.addEventListener('mouseleave', () => {
         toggle.style.transform = 'scale(1)';
+    });
+})();
+
+// Normal Space Effect - Lightweight Stars
+(() => {
+    const canvas = document.getElementById("normalspace-canvas");
+    const ctx = canvas.getContext("2d", { alpha: false });
+
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const rand = (a, b) => a + Math.random() * (b - a);
+
+    let W = 0, H = 0, dpr = 1;
+    let stars = [];
+
+    // PERFORMANCE KNOBS (tune these first)
+    const MAX_DPR = 1.25;       // cap retina cost hard (big perf win)
+    const STAR_COUNT = 260;     // fewer stars
+    const USE_GLOW = false;     // glow is expensive; keep off
+    const TWINKLE = true;       // can turn off if needed
+    const DRIFT = 10;           // px/sec (device px)
+
+    function resize() {
+        dpr = Math.max(1, Math.min(MAX_DPR, window.devicePixelRatio || 1));
+        W = Math.floor(innerWidth * dpr);
+        H = Math.floor(innerHeight * dpr);
+        canvas.width = W;
+        canvas.height = H;
+        canvas.style.width = innerWidth + "px";
+        canvas.style.height = innerHeight + "px";
+        initStars();
+    }
+    window.addEventListener("resize", resize);
+
+    function randomBlueWhite() {
+        // mostly white, sometimes blue-ish
+        if (Math.random() < 0.65) return { r: 255, g: 255, b: 255 };
+        return {
+            r: Math.round(rand(140, 210)),
+            g: Math.round(rand(170, 235)),
+            b: 255
+        };
+    }
+
+    function initStars() {
+        stars = new Array(STAR_COUNT).fill(0).map(() => {
+            const depth = Math.pow(Math.random(), 2.2); // far dominates
+            const sizeNorm = 1 - depth;
+
+            const r = lerp(0.6, 2.4, Math.pow(sizeNorm, 1.1)) * (Math.random() < 0.03 ? rand(1.8, 2.8) : 1);
+            const a = lerp(0.18, 0.95, Math.pow(sizeNorm, 0.9));
+
+            // simple parallax drift
+            const sp = DRIFT * lerp(0.35, 1.4, sizeNorm) * rand(0.8, 1.2);
+            const ang = rand(0, Math.PI * 2);
+            const vx = Math.cos(ang) * sp;
+            const vy = Math.sin(ang) * sp;
+
+            return {
+                x: rand(0, W),
+                y: rand(0, H),
+                vx, vy,
+                r,
+                a,
+                col: randomBlueWhite(),
+                twSpeed: rand(0.5, 1.3),
+                twPhase: rand(0, Math.PI * 2)
+            };
+        });
+    }
+
+    function wrap(s) {
+        const pad = s.r * 4;
+        if (s.x < -pad) s.x = W + pad;
+        else if (s.x > W + pad) s.x = -pad;
+
+        if (s.y < -pad) s.y = H + pad;
+        else if (s.y > H + pad) s.y = -pad;
+    }
+
+    // Precompute a single background gradient per resize (cheaper than remaking every frame)
+    let bg = null;
+    function rebuildBg() {
+        bg = ctx.createRadialGradient(W * 0.5, H * 0.45, 0, W * 0.5, H * 0.45, Math.hypot(W, H) * 0.6);
+        // keep it simple/cheap
+        bg.addColorStop(0, "rgb(2,4,10)");
+        bg.addColorStop(1, "rgb(0,0,0)");
+    }
+
+    let last = 0;
+    function frame(ms) {
+        const t = ms * 0.001;
+        const dt = last ? Math.min(0.05, (ms - last) * 0.001) : 0.016;
+        last = ms;
+
+        // background
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        // stars
+        ctx.globalCompositeOperation = "lighter";
+        ctx.shadowBlur = 0;
+
+        for (const s of stars) {
+            s.x += s.vx * dt;
+            s.y += s.vy * dt;
+            wrap(s);
+
+            const tw = TWINKLE ? (0.85 + 0.15 * Math.sin(s.twPhase + t * s.twSpeed)) : 1;
+            const a = clamp(s.a * tw, 0, 1);
+
+            const { r, g, b } = s.col;
+
+            if (USE_GLOW) {
+                ctx.shadowBlur = Math.min(8, s.r * 5);
+                ctx.shadowColor = `rgba(${r},${g},${b},${a})`;
+            }
+
+            ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.globalCompositeOperation = "source-over";
+        requestAnimationFrame(frame);
+    }
+
+    resize();
+    rebuildBg();
+    requestAnimationFrame(frame);
+
+    // rebuild gradient after resize
+    window.addEventListener("resize", () => {
+        rebuildBg();
     });
 })();
 </script>
