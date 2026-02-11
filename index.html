@@ -13,17 +13,66 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #2a2a2a;
+            background-color: #1a1a1a;
             color: #ffffff;
             min-height: 100vh;
             display: flex;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Hyperspace Canvas Background */
+        #hyperspace-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Lightspeed Mode Off - Dark Background */
+        body.lightspeed-off #hyperspace-canvas {
+            background: #0a0a0a !important;
+        }
+
+        /* Mobile lightspeed-off background fix */
+        @media (max-width: 768px) {
+            body.lightspeed-off {
+                background-color: #0a0a0a !important;
+            }
+            
+            body.lightspeed-off html,
+            body.lightspeed-off {
+                background-color: #0a0a0a !important;
+            }
+        }
+
+        /* Lightspeed Mode Indicator */
+        body.lightspeed-on #lightspeed-toggle {
+            color: #00ff88 !important;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        body.lightspeed-off #lightspeed-toggle {
+            color: #666 !important;
+        }
+
+        /* Ensure panels are above background */
+        .desktop-layout,
+        .mobile-layout {
+            position: relative;
+            z-index: 2;
         }
 
         .left-panel {
             width: 340px;
             min-width: 340px;
             padding: 20px;
-            background-color: #2a2a2a;
+            background-color: transparent;
             overflow-y: auto;
             overflow-x: hidden;
             height: 100vh;
@@ -31,7 +80,7 @@
         }
 
         .input-section {
-            background-color: #3a3a3a;
+            background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
@@ -40,7 +89,7 @@
 
         /* Time panel styling */
         .time-panel {
-            background-color: #3a3a3a;
+            background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
             border-radius: 12px;
             padding: 15px;
             margin: 15px 0;
@@ -132,7 +181,7 @@
         .main-content {
             flex: 1;
             padding: 20px;
-            background-color: #2a2a2a;
+            background-color: transparent;
             overflow-y: auto;
         }
 
@@ -186,7 +235,7 @@
         }
 
         .data-table td {
-            background-color: #3a3a3a;
+            background-color: #2a2a2a;
             color: #e0e0e0;
             padding: 8px 12px;
             border: 1px solid #555;
@@ -249,7 +298,7 @@
         }
 
         .time-panel {
-            background-color: #3a3a3a;
+            background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
             border-radius: 12px;
             padding: 15px;
             margin-bottom: 20px;
@@ -315,7 +364,7 @@
             bottom: 20px;
             left: 20px;
             right: 20px;
-            background-color: #3a3a3a;
+            background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
             display: flex;
             justify-content: space-around;
             padding: 15px 10px;
@@ -368,7 +417,7 @@
             flex: 1;
             padding: 20px;
             padding-bottom: 120px; /* Extra bottom padding for mobile nav clearance */
-            background-color: #2a2a2a;
+            background-color: transparent;
             overflow-y: auto;
             height: 100vh;
             min-width: 400px;
@@ -376,10 +425,10 @@
 
         /* Risk Assessment Column (Third Column) */
         .risk-column {
-            width: 380px;
-            min-width: 380px;
+            width: 650px;
+            min-width: 650px;
             padding: 20px;
-            background-color: #2a2a2a;
+            background-color: transparent;
             overflow-y: auto;
             height: 100vh;
             flex-shrink: 0;
@@ -411,9 +460,9 @@
             width: 350px;
             min-width: 350px;
             flex-shrink: 0;
-            background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
-            border-radius: 12px;
-            margin-bottom: 20px;
+            background-color: transparent;
+            border-radius: 0;
+            margin-bottom: 0;
             transition: all 0.3s ease;
         }
 
@@ -431,7 +480,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #3a3a3a;
+            background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
             color: #e0e0e0;
             font-weight: bold;
             transition: background-color 0.2s ease;
@@ -449,7 +498,7 @@
 
         .mnemonic-detail {
             padding: 15px;
-            background-color: #2a2a2a;
+            background-color: #1a1a1a;
             border-top: 1px solid #444;
             color: #ccc;
             line-height: 1.6;
@@ -479,7 +528,7 @@
             width: 350px;
             min-width: 350px;
             padding: 20px;
-            background-color: #2a2a2a;
+            background-color: transparent;
             overflow-y: auto;
             height: 100vh;
             flex-shrink: 0;
@@ -523,7 +572,7 @@
 
         /* Risk Assessment Styles */
         .risk-panel {
-            background-color: #3a3a3a;
+            background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
@@ -720,7 +769,7 @@
                 padding: 0;
                 height: 100vh;
                 overflow: hidden;
-                background-color: #1a1a1a;
+                background-color: transparent !important;
             }
 
             /* Desktop layout becomes mobile column container */
@@ -729,8 +778,10 @@
                 height: calc(100vh - 80px);
                 overflow: hidden;
                 transition: transform 0.3s ease;
-                width: 100vw;
+                width: 90vw; /* Reduced to show background on sides */
                 position: relative;
+                margin: 0 auto; /* Center the layout */
+                left: 0; /* Remove conflicting offset */
             }
 
             /* Hide all columns by default on mobile */
@@ -739,13 +790,18 @@
             .settings-panel,
             .brain-panel {
                 display: none;
-                width: 100vw !important;
+                width: calc(100% - 40px); /* Responsive width with margins */
                 height: 100%;
                 position: absolute;
                 top: 0;
-                left: 0;
+                left: 50%; /* Center horizontally */
+                transform: translateX(-50%); /* Center the panel */
                 z-index: 5;
                 overflow-y: auto;
+                border-radius: 12px; /* Add rounded corners */
+                margin: 0; /* Remove margin */
+                max-width: 95%; /* Ensure it doesn't exceed screen */
+                box-sizing: border-box;
             }
 
             /* Show mobile navigation only on mobile */
@@ -936,11 +992,21 @@
                 display: block !important;
                 position: absolute;
                 top: 0;
-                left: 0;
+                left: 50%; /* Center horizontally */
+                transform: translateX(-50%); /* Center the panel */
                 z-index: 10;
+                width: calc(100% - 40px); /* Responsive width with margins */
+                height: 100%;
+                overflow-y: auto;
+                overflow-x: hidden;
+                padding: 10px;
+                box-sizing: border-box;
+                border-radius: 12px;
+                max-width: 95%; /* Ensure it doesn't exceed screen */
             }
 
             .desktop-layout.mobile-show-left .right-column,
+            .desktop-layout.mobile-show-left .risk-column,
             .desktop-layout.mobile-show-left .settings-panel {
                 display: none !important;
             }
@@ -949,11 +1015,21 @@
                 display: block !important;
                 position: absolute;
                 top: 0;
-                left: 0;
+                left: 50%; /* Center horizontally */
+                transform: translateX(-50%); /* Center the panel */
                 z-index: 10;
+                width: calc(100% - 40px); /* Responsive width with margins */
+                height: 100%;
+                overflow-y: auto;
+                overflow-x: hidden;
+                padding: 10px;
+                box-sizing: border-box;
+                border-radius: 12px;
+                max-width: 95%; /* Ensure it doesn't exceed screen */
             }
 
             .desktop-layout.mobile-show-right .left-panel,
+            .desktop-layout.mobile-show-right .risk-column,
             .desktop-layout.mobile-show-right .settings-panel {
                 display: none !important;
             }
@@ -962,14 +1038,17 @@
                 display: block !important;
                 position: absolute;
                 top: 0;
-                left: 0;
+                left: 50%; /* Center horizontally */
+                transform: translateX(-50%); /* Center the panel */
                 z-index: 10;
-                width: 100vw !important;
+                width: calc(100% - 40px); /* Responsive width with margins */
                 height: 100%;
                 overflow-y: auto;
                 overflow-x: hidden;
                 padding: 10px;
                 box-sizing: border-box;
+                border-radius: 12px;
+                max-width: 95%; /* Ensure it doesn't exceed screen */
             }
 
             .desktop-layout.mobile-show-risk .left-panel,
@@ -982,8 +1061,17 @@
                 display: block !important;
                 position: absolute;
                 top: 0;
-                left: 0;
+                left: 50%; /* Center horizontally */
+                transform: translateX(-50%); /* Center the panel */
                 z-index: 10;
+                width: calc(100% - 40px); /* Responsive width with margins */
+                height: 100%;
+                overflow-y: auto;
+                overflow-x: hidden;
+                padding: 10px;
+                box-sizing: border-box;
+                border-radius: 12px;
+                max-width: 95%; /* Ensure it doesn't exceed screen */
             }
 
             .desktop-layout.mobile-show-settings .left-panel,
@@ -996,8 +1084,17 @@
                 display: block !important;
                 position: absolute;
                 top: 0;
-                left: 0;
+                left: 50%; /* Center horizontally */
+                transform: translateX(-50%); /* Center the panel */
                 z-index: 10;
+                width: calc(100% - 40px); /* Responsive width with margins */
+                height: 100%;
+                overflow-y: auto;
+                overflow-x: hidden;
+                padding: 10px;
+                box-sizing: border-box;
+                border-radius: 12px;
+                max-width: 95%; /* Ensure it doesn't exceed screen */
             }
 
             .desktop-layout.mobile-show-brain .left-panel,
@@ -1107,9 +1204,10 @@
                 padding: 8px;
             }
 
-            /* Hide settings and brain toggle on mobile */
+            /* Hide settings, brain, and risk toggle on mobile */
             .settings-toggle,
-            .brain-toggle {
+            .brain-toggle,
+            .risk-toggle {
                 display: none !important;
             }
 
@@ -1177,7 +1275,8 @@
 
             /* Show floating toggle buttons on desktop */
             .settings-toggle,
-            .brain-toggle {
+            .brain-toggle,
+            .risk-toggle {
                 display: flex !important;
             }
 
@@ -1210,30 +1309,63 @@
                 flex: 0 0 16.67%;
                 min-width: 200px;
                 max-width: 300px;
+                padding: 20px;
+                background-color: transparent;
+                overflow-y: auto;
+                overflow-x: hidden;
+                height: 100vh;
+                box-sizing: border-box;
             }
 
             .right-column {
                 flex: 1 1 33.33%;
                 min-width: 300px;
                 max-width: calc(100vw - 600px); /* Ensure space for other columns */
+                padding: 20px;
+                background-color: transparent;
+                overflow-y: auto;
+                overflow-x: hidden;
+                height: 100vh;
+                box-sizing: border-box;
             }
 
             .risk-column {
-                flex: 1 1 33.33%;
-                min-width: 300px;
-                max-width: calc(100vw - 600px); /* Ensure space for other columns */
+                flex: 0 0 auto;
+                min-width: 650px;
+                max-width: 750px;
+                padding: 20px;
+                background-color: transparent;
+                overflow-y: auto;
+                overflow-x: hidden;
+                height: 100vh;
+                box-sizing: border-box;
+                width: auto;
             }
 
             .settings-panel {
-                flex: 0 0 16.67%;
-                min-width: 200px;
-                max-width: 300px;
+                flex: 0 0 auto;
+                min-width: 300px;
+                max-width: 450px;
+                width: auto;
+                padding: 20px;
+                background-color: transparent;
+                overflow-y: auto;
+                overflow-x: hidden;
+                height: 100vh;
+                box-sizing: border-box;
             }
 
             .brain-panel {
-                flex: 0 0 16.67%;
-                min-width: 200px;
-                max-width: 300px;
+                flex: 0 0 auto;
+                min-width: 300px;
+                max-width: 450px;
+                width: auto;
+                padding: 20px;
+                background-color: transparent;
+                overflow-y: auto;
+                overflow-x: hidden;
+                height: 100vh;
+                box-sizing: border-box;
             }
 
             /* When settings are hidden, expand right column */
@@ -1257,6 +1389,19 @@
             }
 
             .brain-panel.brain-visible {
+                display: block !important;
+            }
+
+            /* When risk is hidden, hide risk panel */
+            .desktop-layout.risk-collapsed .risk-column {
+                display: none !important;
+            }
+
+            .risk-column.risk-hidden {
+                display: none !important;
+            }
+
+            .risk-column.risk-visible {
                 display: block !important;
             }
 
@@ -1350,6 +1495,9 @@
     </style>
 </head>
 <body>
+    <!-- Hyperspace Canvas Background -->
+    <canvas id="hyperspace-canvas"></canvas>
+    
     <!-- Desktop Layout -->
     <div class="desktop-layout" style="display: flex; width: 100%; height: 100vh;">
         <div class="left-panel">
@@ -2344,8 +2492,8 @@
     <div class="column-resizer" data-resize="risk-settings"></div>
 
     <!-- Settings Panel (Column D) -->
-    <div class="settings-panel" style="padding: 20px; background-color: #2a2a2a; overflow-y: auto; height: 100vh; border-left: 1px solid #555;">
-        <h2 style="color: #4CAF50; margin-bottom: 20px; font-size: 18px;">Settings</h2>
+    <div class="settings-panel" style="padding: 20px; overflow-y: auto; height: 100vh; border-left: 1px solid #555;">
+        <h2 id="lightspeed-toggle" style="color: #4CAF50; margin-bottom: 20px; font-size: 18px; cursor: pointer; user-select: none; transition: color 0.3s ease;" title="Secret lightspeed mode toggle">Settings</h2>
         
         <!-- User Profile Section -->
         <div class="input-section">
@@ -2387,7 +2535,7 @@
             </div>
             
             <!-- Aircraft Manager Modal -->
-            <div id="aircraftManager" style="display: none; background-color: #3a3a3a; border-radius: 8px; padding: 15px; margin-top: 10px; border: 1px solid #555;">
+            <div id="aircraftManager" style="display: none; background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%); border-radius: 8px; padding: 15px; margin-top: 10px; border: 1px solid #555;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h4 style="color: #e0e0e0; margin: 0;">Saved Aircraft</h4>
                     <button onclick="hideAircraftManager()" style="background: none; border: none; color: #ccc; font-size: 18px; cursor: pointer;">×</button>
@@ -2395,7 +2543,7 @@
                 <div id="aircraftList"></div>
             </div>
 
-            <div id="customAircraftManager" style="display: none; background-color: #3a3a3a; border-radius: 8px; padding: 15px; margin-top: 10px; border: 1px solid #555;">
+            <div id="customAircraftManager" style="display: none; background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%); border-radius: 8px; padding: 15px; margin-top: 10px; border: 1px solid #555;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h4 style="color: #e0e0e0; margin: 0;">Custom Aircraft</h4>
                     <button onclick="hideCustomAircraftManager()" style="background: none; border: none; color: #ccc; font-size: 18px; cursor: pointer;">×</button>
@@ -2404,7 +2552,7 @@
             </div>
             
             <!-- Custom Aircraft Builder Modal -->
-            <div id="customAircraftBuilder" style="display: none; background-color: #2a2a2a; border-radius: 8px; padding: 15px; margin-top: 10px; border: 1px solid #555; max-height: 80vh; overflow-y: auto;">
+            <div id="customAircraftBuilder" style="display: none; background-color: #1a1a1a; border-radius: 8px; padding: 15px; margin-top: 10px; border: 1px solid #555; max-height: 80vh; overflow-y: auto;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #555;">
                     <h3 style="color: #4CAF50; margin: 0; font-size: 16px;">🛠️ Custom Aircraft Builder</h3>
                     <button onclick="hideCustomAircraftBuilder()" style="background: none; border: none; color: #ccc; font-size: 20px; cursor: pointer; padding: 0; line-height: 1;">&times;</button>
@@ -2714,7 +2862,7 @@
     <div class="column-resizer" data-resize="settings-brain"></div>
 
     <!-- Brain Column (Column E) -->
-    <div class="brain-panel" style="padding: 20px; background-color: #2a2a2a; overflow-y: auto; height: 100vh; border-left: 1px solid #555; display: none;">
+    <div class="brain-panel brain-hidden" style="padding: 20px; overflow-y: auto; height: 100vh; border-left: 1px solid #555; display: none;">
         <h2 style="color: #4CAF50; margin-bottom: 20px; font-size: 18px;">🧠 Brain</h2>
         
         <!-- Mnemonics Section -->
@@ -2749,17 +2897,166 @@
                     </div>
                 </div>
 
-                <!-- Required Pilot Documents -->
+                <!-- Required Equipment for Day VFR -->
                 <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('pilot-docs')">
-                        <span>👨‍✈️ Required Pilot Documents</span>
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('day-vfr')">
+                        <span>☀️ Required Equipment for Day VFR (91.205b) (ATOMS2 FLEAF)</span>
                         <span class="expand-icon">+</span>
                     </div>
-                    <div id="pilot-docs" class="mnemonic-detail" style="display: none;">
-                        <p>• Valid Government Issued Photo I.D.</p>
-                        <p>• Current Pilot's Certificate</p>
-                        <p>• Current Medical Certificate</p>
-                        <p>• Logbook (student pilots only)</p>
+                    <div id="day-vfr" class="mnemonic-detail" style="display: none;">
+                        <p><strong>A</strong> – Airspeed Indicator</p>
+                        <p><strong>A</strong> – Altimeter</p>
+                        <p><strong>T</strong> – Temperature Gauge (each liquid cooled engine)</p>
+                        <p><strong>T</strong> – Tachometer (each engine)</p>
+                        <p><strong>O</strong> – Oil Temperature Gauge (each air cooled engine)</p>
+                        <p><strong>O</strong> – Oil Pressure Gauge (each engine using the pressure system)</p>
+                        <p><strong>M</strong> – Manifold Pressure Gauge (each altitude engine)</p>
+                        <p><strong>M</strong> – Magnetic Compass</p>
+                        <p><strong>S</strong> – Seatbelt</p>
+                        <p><strong>S</strong> – Shoulder Harness (man. after July 18, 1978)</p>
+                        <p><strong>F</strong> – Fuel Quantity Indicator (each tank)</p>
+                        <p><strong>L</strong> – Landing Gear Position Indicator</p>
+                        <p><strong>E</strong> – Emergency Locator Transmitter (ELT)</p>
+                        <p><strong>A</strong> – Anti-Collision Lights (man. after March 11, 1996)</p>
+                        <p><strong>F</strong> – Flotation Device (for hire beyond power off glide distance from shore)</p>
+                    </div>
+                </div>
+
+                <!-- Required Equipment for IFR Flight -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('ifr-equipment')">
+                        <span>🛩️ Required Equipment for IFR Flight (91.205d) (GRAB CARD)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="ifr-equipment" class="mnemonic-detail" style="display: none;">
+                        <p><strong>G</strong> – Generator / Alternator</p>
+                        <p><strong>R</strong> – Radios (two-way) and Nav. Equipment</p>
+                        <p><strong>A</strong> – Altimeter (pressure sensitive)</p>
+                        <p><strong>B</strong> – Ball (Inclonometer)</p>
+                        <p><strong>C</strong> – Clock (must have sweeping seconds or digital display and must be installed in a/c)</p>
+                        <p><strong>R</strong> – Rate of Turn Indicator</p>
+                        <p><strong>A</strong> – Attitude Indicator</p>
+                        <p><strong>D</strong> – Direction Gyro</p>
+                        <p><strong>D</strong> – DME (above FL240)</p>
+                    </div>
+                </div>
+
+                <!-- Required Inspections -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('inspections')">
+                        <span>🔧 Required Inspections (GAVIATES)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="inspections" class="mnemonic-detail" style="display: none;">
+                        <p><strong>G</strong> – GPS (every 28 days)</p>
+                        <p><strong>A</strong> – Annual (every 12 calendar months)</p>
+                        <p><strong>V</strong> – VOR (every 30 days for IFR)</p>
+                        <p><strong>I</strong> – 100-hour Inspection (for hire)</p>
+                        <p><strong>A</strong> – Altimeter (every 24 calendar months for IFR)</p>
+                        <p><strong>T</strong> – Transponder (every 24 calendar months)</p>
+                        <p><strong>E</strong> – ELT (every 12 calendar months)</p>
+                        <p><strong>S</strong> – Static/Pitot System (every 24 calendar months for IFR)</p>
+                        <p><strong>A</strong> – Airworthiness Directives (as required)</p>
+                    </div>
+                </div>
+
+                <!-- Pre-Flight Action -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('preflight')">
+                        <span>📋 Pre-Flight Action (91.103) (WKRAFTN)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="preflight" class="mnemonic-detail" style="display: none;">
+                        <p><strong>W</strong> – Weather and Forecasts</p>
+                        <p><strong>K</strong> – Known ATC Delays (IFR Flight)</p>
+                        <p><strong>R</strong> – Runway lengths of intended use</p>
+                        <p><strong>A</strong> – Alternates (IFR Flight)</p>
+                        <p><strong>F</strong> – Fuel Requirements</p>
+                        <p><strong>T</strong> – T/O and LDG Distances</p>
+                        <p><strong>N</strong> – NOTAMs</p>
+                    </div>
+                </div>
+
+                <!-- VOR Receiver Checks -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('vor-checks')">
+                        <span>📡 VOR Receiver Checks (91.171) (BAD VAG)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="vor-checks" class="mnemonic-detail" style="display: none;">
+                        <p><strong>B</strong> – Bench (+/- 4)</p>
+                        <p><strong>A</strong> – Airway (+/- 6)</p>
+                        <p><strong>D</strong> – Dual (+/- 4)</p>
+                        <p><strong>V</strong> – VOT (+/- 4)</p>
+                        <p><strong>A</strong> – Airborne (+/- 6)</p>
+                        <p><strong>G</strong> – Ground (+/- 4)</p>
+                    </div>
+                </div>
+
+                <!-- Clearance Information -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('clearance')">
+                        <span>📻 Clearance Information (IFR Flight) (CRAFTT)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="clearance" class="mnemonic-detail" style="display: none;">
+                        <p><strong>C</strong> – Clearance limit</p>
+                        <p><strong>R</strong> – Route of flight</p>
+                        <p><strong>A</strong> – Altitudes</p>
+                        <p><strong>F</strong> – Frequency</p>
+                        <p><strong>T</strong> – Transponder Code</p>
+                        <p><strong>T</strong> – Time of Void</p>
+                    </div>
+                </div>
+
+                <!-- Lost Procedures -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('lost')">
+                        <span>🧭 Lost Procedures (VFR) (5 C's)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="lost" class="mnemonic-detail" style="display: none;">
+                        <p><strong>C</strong> – Climb</p>
+                        <p><strong>C</strong> – Communicate</p>
+                        <p><strong>C</strong> – Confess</p>
+                        <p><strong>C</strong> – Comply</p>
+                        <p><strong>C</strong> – Conserve</p>
+                    </div>
+                </div>
+
+                <!-- Types of Altitudes -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('altitude-types')">
+                        <span>📏 Types of Altitudes (IPDAT)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="altitude-types" class="mnemonic-detail" style="display: none;">
+                        <p><strong>I</strong> – Indicated – Read off your Altimeter</p>
+                        <p><strong>P</strong> – Pressure – Height above standard datum plane (29.92")</p>
+                        <p><strong>D</strong> – Density – Pressure altitude corrected for non standard temperature</p>
+                        <p><strong>A</strong> – Absolute – Height above the ground (AGL)</p>
+                        <p><strong>T</strong> – True – Height above mean sea level (MSL)</p>
+                    </div>
+                </div>
+
+                <!-- IFR Altitudes -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('ifr-altitudes')">
+                        <span>🛩️ IFR Altitudes (MOMMAD)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="ifr-altitudes" class="mnemonic-detail" style="display: none;">
+                        <p><strong>M</strong> – MEA – Minimum Enroute Altitude</p>
+                        <p><strong>O</strong> – MOCA – Minimum Obstruction Clearance Altitude</p>
+                        <p><strong>M</strong> – OROCA – Off Route Obstruction Clearance Altitude or MORA – Minimum Off-Route Altitude</p>
+                        <p><strong>M</strong> – MAA – Maximum Authorized Altitude</p>
+                        <p><strong>A</strong> – MCA – Minimum Crossing Altitude</p>
+                        <p><strong>D</strong> – MRA – Minimum Reception Altitude</p>
+                        <p><strong>M</strong> – MSA – Minimum Safe Altitude</p>
+                        <p><strong>A</strong> – MVA – Minimum Vectoring Altitude</p>
+                        <p><strong>D</strong> – DH – Decision Height (AGL)</p>
+                        <p><strong>A</strong> – DA – Decision Altitude (MSL)</p>
+                        <p><strong>M</strong> – MDA – Minimum Descent Altitude (MSL)</p>
                     </div>
                 </div>
 
@@ -2780,17 +3077,261 @@
                         <p><strong>S</strong> – Seatbelts (fastened)</p>
                     </div>
                 </div>
+
+                <!-- Night VFR Equipment -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('night-vfr')">
+                        <span>🌙 Night VFR Equipment (FLAPS)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="night-vfr" class="mnemonic-detail" style="display: none;">
+                        <p><strong>F</strong> – Fuses (1 set or 3 of each – in reach of pilot)</p>
+                        <p><strong>L</strong> – Landing Light (for hire)</p>
+                        <p><strong>A</strong> – Anti-Collision Lights (man. after August 11, 1971)</p>
+                        <p><strong>P</strong> – Position Lights</p>
+                        <p><strong>S</strong> – Source of electrical power</p>
+                    </div>
+                </div>
+
+                <!-- CRM Principles -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('crm')">
+                        <span>⚠️ Critical Engine Inoperative Vmc (CRMALOFT)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="crm" class="mnemonic-detail" style="display: none;">
+                        <p><strong>C</strong> – Critical Engine Inoperative (failed engine windmilling, creating high drag)</p>
+                        <p><strong>R</strong> – Rearward Center of Gravity (reduces rudder effectiveness, increases Vmc)</p>
+                        <p><strong>M</strong> – Most Unfavorable Weight (lighter weight can increase Vmc due to less horizontal lift component)</p>
+                        <p><strong>A</strong> – Airborne/Out of Ground Effect (allows more rudder effectiveness but higher Vmc due to accelerated slipstream)</p>
+                        <p><strong>L</strong> – Landing Gear Up (removes drag on failed side, allows faster yaw and higher Vmc)</p>
+                        <p><strong>O</strong> – Operating Engine at Max Power (maximum yaw on good engine increases Vmc)</p>
+                        <p><strong>F</strong> – Flaps Up (flaps up position allows for higher Vmc)</p>
+                        <p><strong>T</strong> – Trimmed for Takeoff (rudder trim set for takeoff increases Vmc)</p>
+                    </div>
+                </div>
+
+                <!-- Multi-Engine Operations -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('multi-engine')">
+                        <span>🛩️ Critical Engine Determination (PAST)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="multi-engine" class="mnemonic-detail" style="display: none;">
+                        <p><strong>P</strong> – P-Factor (Asymmetric Thrust - descending propeller blade produces more thrust, center of thrust on right engine further from CG)</p>
+                        <p><strong>A</strong> – Accelerated Slipstream (Roll - right engine creates accelerated airflow over wing, more lift further from CG causes severe roll when left engine fails)</p>
+                        <p><strong>S</strong> – Spiraling Slipstream (Yaw - left engine slipstream strikes vertical stabilizer from left, helping counteract yaw from failed right engine)</p>
+                        <p><strong>T</strong> – Torque (Roll - clockwise torque from right engine causes greater roll toward dead engine in left engine failure)</p>
+                    </div>
+                </div>
+
+                <!-- Pre-Maneuver Checklist -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('pre-maneuver')">
+                        <span>🔄 Pre-Maneuver Checklist (CCMALS)</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="pre-maneuver" class="mnemonic-detail" style="display: none;">
+                        <p><strong>C</strong> – Clearing Turns (visually checking for traffic)</p>
+                        <p><strong>C</strong> – Configuration (setting aircraft - flaps, power)</p>
+                        <p><strong>M</strong> – Minimum Safe Altitude (ensuring required altitude - 1,500' or 2,000' AGL)</p>
+                        <p><strong>A</strong> – Airspeed (establishing proper speed)</p>
+                        <p><strong>L</strong> – Landing Area (identifying emergency landing spot)</p>
+                        <p><strong>S</strong> – Scan/Seatbelts (scanning for traffic and securing belts)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- General Aviation Knowledge Section -->
+        <div class="input-section">
+            <button onclick="toggleGeneralKnowledge()" style="
+                background: linear-gradient(135deg, rgba(156, 39, 176, 0.3) 0%, rgba(156, 39, 176, 0.1) 100%);
+                color: white;
+                border: 1px solid #9C27B0;
+                padding: 12px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: bold;
+                width: 100%;
+                margin-bottom: 15px;
+                box-shadow: 0 2px 4px rgba(156, 39, 176, 0.2);
+            ">📚 General Aviation Knowledge</button>
+            
+            <div id="generalKnowledgeContainer" style="display: none;">
+                <!-- Required Documents & Currency -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('docs-currency')">
+                        <span>📋 Documents & Currency</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="docs-currency" class="mnemonic-detail" style="display: none;">
+                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
+                            <h4 style="color: #9C27B0; margin-bottom: 8px;">👨‍✈️ Required Pilot Documents</h4>
+                            <p>• Valid Government Issued Photo I.D.</p>
+                            <p>• Current Pilot's Certificate</p>
+                            <p>• Current Medical Certificate</p>
+                            <p>• Logbook (student pilots only)</p>
+                        </div>
+
+                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
+                            <h4 style="color: #9C27B0; margin-bottom: 8px;">⏰ Pilot Currency Requirements</h4>
+                            <p><strong>General:</strong> Flight Review, FAA Checkride, or WINGS program within preceding 24 calendar months</p>
+                            <p><strong>With PAX:</strong> 3 T/O and LDGs within preceding 90 (must be full stop if flight will be at night or in a tailwheel aircraft)</p>
+                            <p><strong>IFR Flight:</strong> 6 Instrument Approaches, Holding, Intercepting, and Tracking Course within preceding 6 months (or Instrument Proficiency Check)</p>
+                        </div>
+
+                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
+                            <h4 style="color: #9C27B0; margin-bottom: 8px;">🏥 Medical Certificates</h4>
+                            <p><strong>1st Class:</strong> Valid for 12 calendar months (6 if over 40)</p>
+                            <p><strong>2nd Class:</strong> Valid for 12 calendar months</p>
+                            <p><strong>3rd Class:</strong> Valid for 60 calendar months (24 if over 40)</p>
+                            <p><em>*1st reverts to 2nd which reverts to 3rd</em></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equipment Requirements -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('equipment-reqs')">
+                        <span>🛩️ Equipment Requirements</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="equipment-reqs" class="mnemonic-detail" style="display: none;">
+                    </div>
+                </div>
+
+                <!-- Airspace & Weather -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('airspace-weather')">
+                        <span>☁️ Airspace & Weather</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="airspace-weather" class="mnemonic-detail" style="display: none;">
+                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
+                            <h4 style="color: #9C27B0; margin-bottom: 8px;">🗺️ Airspace Dimensions</h4>
+                            <p><strong>Class A:</strong> FL180 to FL600 and over the entire U.S. and extends 12 NM off the coast line</p>
+                            <p><strong>Class B:</strong> Extends from the surface to 10,000MSL in multiple shelves. Generally extends laterally from the airport to 30NM.</p>
+                            <p><strong>Class C:</strong> Extends from the surface to 4,000AGL with 1 shelf (lower shelf starts at 1,200AGL). Generally extends laterally from the airport to 10NM.</p>
+                            <p><strong>Class D:</strong> Extends from the surface to 2,500AGL. Generally extends laterally from the airport to 4NM.</p>
+                            <p><strong>Class E:</strong> Extends from either SFC, 700AGL, or 1,200AGL to 17,999MSL.</p>
+                            <p><strong>Class G:</strong> Extends from SFC to 700AGL or 1200AGL. Maximum altitude is 14,500MSL (out west)</p>
+                            <p><em>*Class A > B > C > D > E > G in hierarchy.</em></p>
+                        </div>
+
+                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
+                            <h4 style="color: #9C27B0; margin-bottom: 8px;">📡 Airspace Equipment Requirements</h4>
+                            <p><strong>Class A:</strong> IFR flight plan, A/C IFR equip, IFR current</p>
+                            <p><strong>Class B:</strong> Two-way radio, Mode C transponder, clearance into specific Class B airspace</p>
+                            <p><strong>Class C:</strong> Two-way radio, Mode C transponder, est. 2 way radio contact</p>
+                            <p><strong>Class D:</strong> Two-way radio. Establish 2 way radio contact</p>
+                            <p><strong>Class E:</strong> None</p>
+                            <p><strong>Class G:</strong> None</p>
+                        </div>
+
+                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
+                            <h4 style="color: #9C27B0; margin-bottom: 8px;">☁️ VFR Weather Requirements</h4>
+                            <p><strong>Class A:</strong> VFR N/A</p>
+                            <p><strong>Class B:</strong> 3SM visibility, Clear of clouds</p>
+                            <p><strong>Class C:</strong> 3SM visibility, 1000 above, 500 below, 2000 horizontal from any clouds (3-152)</p>
+                            <p><strong>Class D:</strong> 3SM visibility, 1000 above, 500 below, 2000 horizontal from any clouds (3-152)</p>
+                            <p><strong>Class E below 10k:</strong> 3SM visibility, 1000 above, 500 below, 2000 horizontal from any clouds (3-152)</p>
+                            <p><strong>Class E >10k:</strong> 5SM visibility, 1000 above, 1000 below, 1 SM horizontal from any clouds (5-111)</p>
+                            <p><strong>Class G <1200AGL day:</strong> 1SM visibility, Clear of clouds</p>
+                            <p><strong>Class G >1200AGL, <10k MSL:</strong> 1SM 1000 above, 500 below, 2000 horizontal from any clouds (3-152)</p>
+                            <p><strong>Class G >1200AGL, >10k MSL:</strong> 5SM visibility, 1000 above, 1000 below, 1 SM horizontal from any clouds (5-111)</p>
+                            <p><strong>Class G during night:</strong> 3SM visibility, 1000 above, 500 below, 2000 horizontal from any clouds (3-152)</p>
+                        </div>
+
+                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
+                            <h4 style="color: #9C27B0; margin-bottom: 8px;">⛰️ Minimum Safe Altitudes (91.119)</h4>
+                            <p><strong>Anywhere:</strong> Altitude at which should a powerplant fail, a safe landing can be made without undue harm to persons or property on the surface.</p>
+                            <p><strong>Congested areas:</strong> 2000ft horizontal, 1000ft above the highest obstacle</p>
+                            <p><strong>Other than congested area:</strong> 500ft above the surface</p>
+                            <p><strong>Over water or sparse areas:</strong> 500ft from any person, vessel, vehicle, or structure</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Regulations & Procedures -->
+                <div class="mnemonic-item">
+                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('regulations')">
+                        <span>⚖️ Regulations & Procedures</span>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div id="regulations" class="mnemonic-detail" style="display: none;">
+                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
+                            <h4 style="color: #9C27B0; margin-bottom: 8px;">⚠️ Inoperative Equipment Test (91.213)</h4>
+                            <p><strong>1.</strong> VFR Day Type Certificate</p>
+                            <p><strong>2.</strong> Kinds of Operations List</p>
+                            <p><strong>3.</strong> 91.205 Requirements</p>
+                            <p><strong>4.</strong> Airworthiness Directives</p>
+                            <p><em>---If item passes all 4 steps</em></p>
+                            <p><strong>1.</strong> Deactivate and Placard INOPERATIVE (entire word)</p>
+                            <p><strong>2.</strong> Remove Item and redo weight and balance</p>
+                            <p><em>*Minimum Equipment List DO NOT require use of the 4-step test. MELs contain items that can break and not affect airworthiness of the aircraft. MELs are tail number specific.</em></p>
+                        </div>
+
+                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
+                            <h4 style="color: #9C27B0; margin-bottom: 8px;">🎛️ Instrument Cockpit Check</h4>
+                            <p><strong>Airspeed:</strong> Reading 0kts</p>
+                            <p><strong>Altimeter:</strong> +/- 75 ft of field elevation</p>
+                            <p><strong>Attitude:</strong> Erect, bank no more than 5°</p>
+                            <p><strong>Compass:</strong> Swinging feely, full of fluid, known headings</p>
+                            <p><strong>D.G.:</strong> Matches compass, known headings, moving in the right direction during turns</p>
+                            <p><strong>Turn and Bank:</strong> Ball to outside of turn, coordinator goes with turn</p>
+                            <p><strong>Vertical Speed:</strong> Value read will be 0fpm for the flight</p>
+                        </div>
+
+                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
+                            <h4 style="color: #9C27B0; margin-bottom: 8px;">🫁 Supplemental Oxygen Requirements (91.211)</h4>
+                            <p><strong>12,500:</strong> Minimum flight crew must use supp. oxygen for time period greater than 30 minutes</p>
+                            <p><strong>14,000:</strong> Minimum flight crew must use supp. oxygen.</p>
+                            <p><strong>15,000:</strong> All flight crew must use supp. oxygen. Passengers must be supplied with supp. oxygen.</p>
+                        </div>
+
+                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
+                            <h4 style="color: #9C27B0; margin-bottom: 8px;">⚖️ Aircraft Load Factors</h4>
+                            <p><strong>Normal:</strong> + 3.8 g's - 1.52 g's</p>
+                            <p><strong>Utility:</strong> + 4.4 g's - 1.76 g's</p>
+                            <p><strong>Acrobatic:</strong> + 6.0 g's - 3.00 g's</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     </div> <!-- Close desktop-layout div -->
 
+    <!-- Floating Risk Toggle (Desktop Only) -->
+    <div class="risk-toggle" onclick="toggleRiskPanel()" style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, rgba(255, 152, 0, 0.3) 0%, rgba(255, 152, 0, 0.1) 100%);
+        border: 1px solid #FF9800;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        z-index: 1000;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        ⚠️
+    </div>
+
     <!-- Floating Settings Toggle (Desktop Only) -->
     <div class="settings-toggle" onclick="toggleSettingsPanel()" style="
         position: fixed;
         top: 20px;
-        right: 20px;
+        right: 80px;
         width: 50px;
         height: 50px;
         background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%);
@@ -2812,7 +3353,7 @@
     <div class="brain-toggle" onclick="toggleBrainPanel()" style="
         position: fixed;
         top: 20px;
-        right: 80px;
+        right: 140px;
         width: 50px;
         height: 50px;
         background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%);
@@ -2951,6 +3492,30 @@
             }
         }
 
+        // Toggle risk panel visibility (desktop only)
+        function toggleRiskPanel() {
+            const riskPanel = document.querySelector('.risk-column');
+            const desktopLayout = document.querySelector('.desktop-layout');
+            
+            if (!riskPanel || !desktopLayout) return;
+            
+            // Check if risk panel is currently visible
+            const isVisible = riskPanel.classList.contains('risk-visible') || 
+                             (window.getComputedStyle(riskPanel).display !== 'none');
+            
+            if (isVisible) {
+                // Hide the risk panel
+                riskPanel.classList.add('risk-hidden');
+                riskPanel.classList.remove('risk-visible');
+                desktopLayout.classList.add('risk-collapsed');
+            } else {
+                // Show the risk panel
+                riskPanel.classList.remove('risk-hidden');
+                riskPanel.classList.add('risk-visible');
+                desktopLayout.classList.remove('risk-collapsed');
+            }
+        }
+
         // Toggle mnemonics container visibility
         function toggleMnemonics() {
             const container = document.getElementById('mnemonicsContainer');
@@ -2966,6 +3531,24 @@
                 button.textContent = '📚 Mnemonics';
                 button.style.background = 'linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%)';
                 button.style.borderColor = '#4CAF50';
+            }
+        }
+
+        // Toggle general knowledge container visibility
+        function toggleGeneralKnowledge() {
+            const container = document.getElementById('generalKnowledgeContainer');
+            const button = event.target;
+            
+            if (container.style.display === 'none' || container.style.display === '') {
+                container.style.display = 'block';
+                button.textContent = '📚 Hide General Knowledge';
+                button.style.background = 'linear-gradient(135deg, rgba(255, 87, 34, 0.3) 0%, rgba(255, 87, 34, 0.1) 100%)';
+                button.style.borderColor = '#FF5722';
+            } else {
+                container.style.display = 'none';
+                button.textContent = '📚 General Aviation Knowledge';
+                button.style.background = 'linear-gradient(135deg, rgba(156, 39, 176, 0.3) 0%, rgba(156, 39, 176, 0.1) 100%)';
+                button.style.borderColor = '#9C27B0';
             }
         }
 
@@ -2991,13 +3574,20 @@
             
             if (!settingsPanel || !desktopLayout) return;
             
-            // Toggle the hidden class instead of inline styles
-            if (settingsPanel.classList.contains('settings-hidden')) {
-                settingsPanel.classList.remove('settings-hidden');
-                desktopLayout.classList.remove('settings-collapsed');
-            } else {
+            // Check if settings panel is currently visible
+            const isVisible = settingsPanel.classList.contains('settings-visible') || 
+                             (window.getComputedStyle(settingsPanel).display !== 'none');
+            
+            if (isVisible) {
+                // Hide the settings panel
                 settingsPanel.classList.add('settings-hidden');
+                settingsPanel.classList.remove('settings-visible');
                 desktopLayout.classList.add('settings-collapsed');
+            } else {
+                // Show the settings panel
+                settingsPanel.classList.remove('settings-hidden');
+                settingsPanel.classList.add('settings-visible');
+                desktopLayout.classList.remove('settings-collapsed');
             }
         }
 
@@ -3081,22 +3671,6 @@
                 grandTotalDisplay.classList.add('red');
                 riskMessage.textContent = 'Requires Manager Approval';
                 riskMessage.style.color = '#f44336';
-            }
-        }
-
-        // Initialize mobile interface
-        function initializeMobileInterface() {
-            // Set initial mobile state to show left panel (Data)
-            if (window.innerWidth <= 768) {
-                const desktopLayout = document.querySelector('.desktop-layout');
-                if (desktopLayout) {
-                    desktopLayout.classList.add('mobile-show-left');
-                }
-                
-                // Ensure CG chart is drawn after mobile initialization
-                setTimeout(() => {
-                    drawCGChart();
-                }, 200);
             }
         }
 
@@ -3312,9 +3886,11 @@
                 groundFuelUse: -3
             },
             'P2006T': {
-                frontSeatArm: -2.93,  // Front seats arm
-                rearSeatArm: 0.741,   // Rear seats arm
-                baggage1Arm: 3.986,   // Baggage 1 arm
+                basicEmptyWeight: 1470,
+                basicEmptyArm: 2.477,
+                frontSeatArm: 2.477,
+                rearSeatArm: 2.477,
+                baggage1Arm: 2.477,
                 baggage2Arm: null,    // Baggage 2 arm (N/A)
                 fuelArm: 2.477,       // Fuel arm
                 groundFuelArm: 2.477, // Ground fuel use arm
@@ -3322,13 +3898,15 @@
                 fuelWeightMultiplier: 6, // 6 gallons per lb per tank
                 fuelBurnRate: 9,      // 9 gal per hour
                 groundFuelUse: -12,   // Always -12
-                maxTakeoffWeight: 2844,
-                maxLandingWeight: 2844,
+                maxTakeoffWeight: 2712,
+                maxLandingWeight: 2712,
                 forwardLimit: 16.5,   // Forward CG limit up to 2712 lb, then 19.5% at 2844 lb
                 aftLimit: 31,         // Aft CG limit for all conditions
                 forwardLimitHigh: 19.5, // Forward limit at maximum weight (2844 lb)
-                weightBreakpoint: 2712, // Weight where forward limit changes
-                macConstant: 4.39     // MAC constant for D% calculation
+                forwardLimitWeight: 2712, // Weight at which forward limit changes
+                seats: 4,
+                fuelTanks: 2,
+                fuelCapacity: 92      // Total fuel capacity in gallons
             },
             'P2010': {
                 frontSeatArm: 89.8,
@@ -4840,13 +5418,13 @@
             const fuelWeightCell = document.querySelector('.data-table tbody tr:nth-child(7) td:nth-child(2)'); // Fuel weight (row 7)
             if (fuelWeightCell) fuelWeightCell.textContent = fuelWeight || '';
             
-            // Calculate estimated fuel burn - P2006T has dual tanks so multiply by 2
+            // Calculate estimated fuel burn - P2006T fuel burn rate is total for both tanks
             // Adding 25% safety margin: calculate base burn then add 25%
             console.log('Fuel burn calculation - Aircraft type:', aircraftType, 'Time:', time, 'Fuel burn rate:', specs.fuelBurnRate);
             let baseFuelBurn;
             if (aircraftType === 'P2006T') {
-                baseFuelBurn = time * specs.fuelBurnRate * 2 * specs.fuelWeightMultiplier * -1; // Dual tanks
-                console.log('P2006T fuel burn calculation:', time, 'hrs x', specs.fuelBurnRate, 'gal/hr x 2 tanks x', specs.fuelWeightMultiplier, 'lbs/gal x -1 =', baseFuelBurn, 'lbs');
+                baseFuelBurn = time * specs.fuelBurnRate * specs.fuelWeightMultiplier * -1; // Total burn rate for both tanks
+                console.log('P2006T fuel burn calculation:', time, 'hrs x', specs.fuelBurnRate, 'gal/hr x', specs.fuelWeightMultiplier, 'lbs/gal x -1 =', baseFuelBurn, 'lbs');
             } else {
                 baseFuelBurn = time * specs.fuelBurnRate * specs.fuelWeightMultiplier * -1; // Single tank
                 console.log('Other aircraft fuel burn calculation:', time, 'hrs x', specs.fuelBurnRate, 'gal/hr x', specs.fuelWeightMultiplier, 'lbs/gal x -1 =', baseFuelBurn, 'lbs');
@@ -6126,7 +6704,7 @@ function updateAircraftManager() {
             let content = '';
             Object.entries(savedAircraft).forEach(([name, aircraft]) => {
                 content += `
-                    <div style="background-color: #3a3a3a; border-radius: 6px; padding: 10px; margin-bottom: 8px; border: 1px solid #555;">
+                    <div style="background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%); border-radius: 6px; padding: 10px; margin-bottom: 8px; border: 1px solid #555;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
                                 <div style="font-weight: bold; color: #fff; margin-bottom: 4px;">${name}</div>
@@ -6201,6 +6779,22 @@ function showCustomAircraftBuilder() {
     // On mobile, navigate to Column D (options page) first
     if (window.innerWidth <= 768) {
         showMobileColumn('settings');
+    } else {
+        // On desktop, check if Settings panel is hidden and show it if needed
+        const settingsPanel = document.querySelector('.settings-panel');
+        const desktopLayout = document.querySelector('.desktop-layout');
+        
+        if (settingsPanel && desktopLayout) {
+            const isHidden = settingsPanel.classList.contains('settings-hidden') || 
+                            (window.getComputedStyle(settingsPanel).display === 'none');
+            
+            if (isHidden) {
+                // Show the settings panel
+                settingsPanel.classList.remove('settings-hidden');
+                settingsPanel.classList.add('settings-visible');
+                desktopLayout.classList.remove('settings-collapsed');
+            }
+        }
     }
     
     document.getElementById('customAircraftBuilder').style.display = 'block';
@@ -6588,7 +7182,7 @@ function displayCustomAircraftInfo(aircraft) {
     const performanceSection = document.querySelector('.info-grid');
     if (performanceSection && aircraft.vspeeds) {
         // Create custom performance display
-        let customInfo = '<div style="background-color: #3a3a3a; padding: 15px; border-radius: 8px; margin-top: 10px;">';
+        let customInfo = '<div style="background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%); padding: 15px; border-radius: 8px; margin-top: 10px;">';
         customInfo += `<h4 style="color: #4CAF50; margin-bottom: 10px;">${aircraft.name} - Custom Aircraft</h4>`;
         customInfo += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">';
         
@@ -7541,6 +8135,297 @@ function updateFormFieldsFromWeather(weatherData) {
         console.error('Error updating form fields from weather:', error);
     }
 }
+
+// Hyperspace Canvas Effect - Donut Origin + Longer Streaks
+(() => {
+    const canvas = document.getElementById("hyperspace-canvas");
+    const ctx = canvas.getContext("2d", { alpha: false });
+
+    const TAU = Math.PI * 2;
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const rand = (a, b) => a + Math.random() * (b - a);
+
+    let W = 0, H = 0, CX = 0, CY = 0, R = 0, dpr = 1;
+    let beams = [];
+
+    // PERFORMANCE
+    const MAX_BEAMS = 160;       // Reduced for mobile performance
+    const SOFT_CLEAR = 0.10;     // LOWER = longer persistence
+    const USE_GLOW = false;      // Keep off for performance
+    const MAX_DPR = 1.5;
+
+    // LOOK: push origins away from center (donut), and make streaks last longer
+    const BIRTH_MIN = 0.07;      // Minimum spawn radius (fraction of R)
+    const BIRTH_MAX = 0.28;      // Maximum spawn radius (fraction of R)
+    const ANGLE_JITTER_DEG = 1.8;
+
+    // Longer streaks:
+    const TAIL_MIN = 0.14;       // Fraction of R
+    const TAIL_MAX = 0.40;       // Fraction of R
+    const DEATH_FADE_MIN = 0.25; // Seconds
+    const DEATH_FADE_MAX = 0.55; // Seconds
+
+    function resize() {
+        dpr = Math.max(1, Math.min(MAX_DPR, window.devicePixelRatio || 1));
+        W = Math.floor(innerWidth * dpr);
+        H = Math.floor(innerHeight * dpr);
+        canvas.width = W;
+        canvas.height = H;
+        canvas.style.width = innerWidth + "px";
+        canvas.style.height = innerHeight + "px";
+
+        CX = W / 2;
+        CY = H / 2;
+        R = Math.hypot(CX, CY);
+
+        for (const b of beams) b.target = R * rand(1.02, 1.18);
+
+        // Adjust beam count for mobile
+        const targetBeams = window.innerWidth < 768 ? 100 : MAX_BEAMS;
+        while (beams.length < targetBeams) beams.push(newBeam());
+        if (beams.length > targetBeams) beams.length = targetBeams;
+    }
+    window.addEventListener("resize", resize);
+
+    function randomStartBlue() {
+        return {
+            r: Math.round(rand(70, 150)),
+            g: Math.round(rand(130, 205)),
+            b: Math.round(rand(220, 255))
+        };
+    }
+
+    function birthRadius() {
+        // Uniform in area for a donut (prevents "too many near center")
+        // Area-uniform: sqrt(lerp(rmin^2, rmax^2, u))
+        const rmin = BIRTH_MIN * R;
+        const rmax = BIRTH_MAX * R;
+        const u = Math.random();
+        return Math.sqrt(lerp(rmin * rmin, rmax * rmax, u));
+    }
+
+    function newBeam() {
+        const jitter = (ANGLE_JITTER_DEG * Math.PI / 180) * rand(-1, 1);
+        const ang = rand(0, TAU) + jitter;
+
+        const depth = Math.pow(Math.random(), 1.7); // Far dominates
+
+        const edgeW = lerp(2, 20, 1 - depth) * (Math.random() < 0.10 ? rand(1.4, 2.1) : 1);
+        const startW = Math.max(0.35, edgeW * rand(0.02, 0.07));
+
+        const target = R * rand(1.02, 1.18);
+
+        // Slightly slower overall => rays persist longer before edge
+        const speed = lerp(520, 1650, 1 - depth) * rand(0.85, 1.10); // Reduced for performance
+
+        const tailPx = lerp(R * TAIL_MIN, R * TAIL_MAX, 1 - depth) * rand(0.85, 1.15);
+        const deathFade = rand(DEATH_FADE_MIN, DEATH_FADE_MAX);
+
+        const startCol = randomStartBlue();
+        const alpha = lerp(0.08, 0.20, 1 - depth); // Reduced for performance
+        const glow = lerp(4, 12, 1 - depth); // Reduced for performance
+
+        const birth = birthRadius();
+
+        return {
+            ang, depth,
+            startW, edgeW,
+            startCol,
+            alpha, glow,
+
+            birth,
+            head: birth,
+            speed,
+            tailPx,
+            target,
+
+            dead: false,
+            deathT: 0,
+            deathFade
+        };
+    }
+
+    function softClear() {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = `rgba(0,0,0,${SOFT_CLEAR})`;
+        ctx.fillRect(0, 0, W, H);
+    }
+
+    function centerBloom() {
+        // Keep subtle so it doesn't read as "everything starts at center"
+        const g = ctx.createRadialGradient(CX, CY, 0, CX, CY, R * 0.18);
+        g.addColorStop(0, "rgba(20,40,90,0.05)");
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+    }
+
+    function drawBeam(b, dt, t) {
+        const ca = Math.cos(b.ang), sa = Math.sin(b.ang);
+        const px = -sa, py = ca;
+
+        if (!b.dead) {
+            b.head += b.speed * dt;
+            if (b.head >= b.target) {
+                b.dead = true;
+                b.deathT = 0;
+            }
+        } else {
+            b.deathT += dt;
+        }
+
+        const head = Math.min(b.head, b.target);
+
+        let deathK = 1;
+        if (b.dead) {
+            const u = clamp(b.deathT / b.deathFade, 0, 1);
+            deathK = 1 - u;
+        }
+
+        const tailLen = b.tailPx * deathK;
+        let tail = head - tailLen;
+
+        // Critical: never draw behind the birth radius -> prevents hard convergence to center
+        tail = Math.max(b.birth, tail);
+
+        if (b.dead && deathK <= 0.001) {
+            Object.assign(b, newBeam());
+            return;
+        }
+
+        if (head - tail < 1) return;
+
+        const x0 = CX + ca * tail, y0 = CY + sa * tail;
+        const x1 = CX + ca * head, y1 = CY + sa * head;
+
+        const r0 = tail / b.target;
+        const r1 = head / b.target;
+        const w0 = lerp(b.startW, b.edgeW, clamp(r0, 0, 1));
+        const w1 = lerp(b.startW, b.edgeW, clamp(r1, 0, 1));
+
+        // Color to white at edge
+        const { r, g, b: bb } = b.startCol;
+        const whiten = clamp(r1 * 1.25, 0, 1);
+        const er = Math.round(lerp(r, 255, whiten));
+        const eg = Math.round(lerp(g, 255, whiten));
+        const eb = Math.round(lerp(bb, 255, whiten));
+
+        const pulse = 0.90 + 0.10 * Math.sin(t * 5.5 + b.ang * 2.4);
+        const a = b.alpha * pulse * deathK;
+
+        const grad = ctx.createLinearGradient(x0, y0, x1, y1);
+        grad.addColorStop(0.0, `rgba(${r},${g},${bb},0)`);
+        grad.addColorStop(0.18, `rgba(${r},${g},${bb},${a * 0.55})`);
+        grad.addColorStop(0.80, `rgba(${er},${eg},${eb},${a * 0.92})`);
+        grad.addColorStop(1.0, `rgba(${er},${eg},${eb},${a})`);
+
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        if (USE_GLOW) {
+            ctx.shadowBlur = b.glow;
+            ctx.shadowColor = `rgba(${er},${eg},${eb},${Math.min(1, a * 1.4)})`;
+        } else {
+            ctx.shadowBlur = 0;
+        }
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(x0 + px * w0, y0 + py * w0);
+        ctx.lineTo(x1 + px * w1, y1 + py * w1);
+        ctx.lineTo(x1 - px * w1, y1 - py * w1);
+        ctx.lineTo(x0 - px * w0, y0 - py * w0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    }
+
+    let last = 0;
+    function frame(ms) {
+        const t = ms * 0.001;
+        const dt = last ? Math.min(0.033, (ms - last) * 0.001) : 0.016;
+        last = ms;
+
+        softClear();
+        centerBloom();
+
+        // Cheap shuffle to break bands
+        for (let i = 0; i < 3; i++) { // Reduced for performance
+            const a = (Math.random() * beams.length) | 0;
+            const b = (Math.random() * beams.length) | 0;
+            const tmp = beams[a]; beams[a] = beams[b]; beams[b] = tmp;
+        }
+
+        for (const beam of beams) drawBeam(beam, dt, t);
+        requestAnimationFrame(frame);
+    }
+
+    // Initialize
+    resize();
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, W, H);
+    while (beams.length < MAX_BEAMS) beams.push(newBeam());
+    requestAnimationFrame(frame);
+})();
+
+// Lightspeed Mode Toggle
+(() => {
+    // Default state: lightspeed mode OFF
+    let lightspeedMode = false;
+    
+    // Set initial state
+    document.body.classList.add('lightspeed-off');
+    
+    // Hide canvas initially since lightspeed is OFF by default
+    const canvas = document.getElementById('hyperspace-canvas');
+    if (canvas) {
+        canvas.style.display = 'none';
+    }
+    
+    // Get the toggle element
+    const toggle = document.getElementById('lightspeed-toggle');
+    if (!toggle) return;
+    
+    // Toggle function
+    function toggleLightspeed() {
+        lightspeedMode = !lightspeedMode;
+        
+        if (lightspeedMode) {
+            // Turn ON lightspeed mode
+            document.body.classList.remove('lightspeed-off');
+            document.body.classList.add('lightspeed-on');
+            
+            // Resume hyperspace animation
+            const canvas = document.getElementById('hyperspace-canvas');
+            if (canvas) {
+                canvas.style.display = 'block';
+            }
+        } else {
+            // Turn OFF lightspeed mode
+            document.body.classList.remove('lightspeed-on');
+            document.body.classList.add('lightspeed-off');
+            
+            // Hide hyperspace animation (dark background will show)
+            const canvas = document.getElementById('hyperspace-canvas');
+            if (canvas) {
+                canvas.style.display = 'none';
+            }
+        }
+    }
+    
+    // Add click event listener
+    toggle.addEventListener('click', toggleLightspeed);
+    
+    // Add subtle hover effect
+    toggle.addEventListener('mouseenter', () => {
+        toggle.style.transform = 'scale(1.05)';
+    });
+    
+    toggle.addEventListener('mouseleave', () => {
+        toggle.style.transform = 'scale(1)';
+    });
+})();
 </script>
 </body>
 </html>
