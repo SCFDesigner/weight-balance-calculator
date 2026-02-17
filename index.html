@@ -3997,13 +3997,6 @@
     </script>
 
     <script>
-        // Update tail number display when user types
-        document.getElementById('tailNumber').addEventListener('input', function() {
-            const tailNumberInput = this.value;
-            const display = document.getElementById('tailNumberDisplay');
-            display.textContent = 'N' + tailNumberInput;
-        });
-
         // Aircraft specifications for different types
         const aircraftSpecs = {
             'C-152': {
@@ -6358,6 +6351,19 @@ const P2006T_SE_PERFORMANCE = {
         function initializeInputFields() {
             const inputFields = document.querySelectorAll('.input-field');
             console.log('Found input fields:', inputFields.length);
+            
+            // Add tail number specific event listener
+            const tailNumberInput = document.getElementById('tailNumber');
+            if (tailNumberInput) {
+                tailNumberInput.addEventListener('input', function() {
+                    const tailNumberInput = this.value;
+                    const display = document.getElementById('tailNumberDisplay');
+                    if (display) {
+                        display.textContent = 'N' + tailNumberInput;
+                    }
+                });
+                console.log('Tail number listener added');
+            }
             
             // Convert NodeList to Array for easier manipulation
             const inputFieldsArray = Array.from(inputFields);
