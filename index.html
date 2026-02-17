@@ -431,6 +431,70 @@
             display: block;
         }
 
+        /* Performance Calculation Tooltips */
+        .performance-tooltip {
+            position: relative;
+            cursor: help;
+        }
+        
+        .performance-tooltip .tooltip-content {
+            visibility: hidden;
+            width: 300px;
+            background-color: #2a2a2a;
+            color: #ffffff;
+            border: 1px solid #555;
+            border-radius: 6px;
+            padding: 12px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-size: 11px;
+            line-height: 1.4;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .performance-tooltip .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #2a2a2a transparent transparent transparent;
+        }
+        
+        .performance-tooltip:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .tooltip-title {
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        
+        .tooltip-formula {
+            background-color: #1a1a1a;
+            padding: 6px;
+            border-radius: 4px;
+            margin: 4px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+        }
+        
+        .tooltip-note {
+            color: #cccccc;
+            font-style: italic;
+            margin-top: 6px;
+        }
+
         /* Right Column (Second Column) */
         .right-column {
             flex: 1;
@@ -447,6 +511,7 @@
             width: 650px;
             min-width: 650px;
             padding: 20px;
+            display: none; /* Hidden by default on web version */
             background-color: transparent;
             overflow-y: auto;
             height: 100vh;
@@ -1316,10 +1381,9 @@
                 z-index: 10;
             }
             
-            /* Show all columns on desktop */
+            /* Show all columns on desktop except risk column (hidden by default) */
             .left-panel,
             .right-column,
-            .risk-column,
             .settings-panel,
             .brain-panel {
                 display: block !important;
@@ -1971,21 +2035,80 @@
                     <span class="info-label">Runway Length</span>
                     <span class="info-value" data-field="runwayLength"></span>
                 </div>
-                <div class="info-item">
+                <div class="info-item performance-tooltip">
                     <span class="info-label">T/O Grnd Roll</span>
                     <span class="info-value" data-field="takeoffGR"></span>
+                    <div class="tooltip-content">
+                        <div class="tooltip-title">Takeoff Ground Roll Calculation</div>
+                        <div class="tooltip-formula">Base Distance × Headwind Correction</div>
+                        <div class="tooltip-formula">C-152: -8ft per knot headwind</div>
+                        <div class="tooltip-formula">P2006T: -8ft per knot headwind</div>
+                        <div class="tooltip-note">Interpolated from POH data tables based on temperature, pressure altitude, and aircraft weight. Headwind reduces required ground roll distance.</div>
+                    </div>
                 </div>
-                <div class="info-item">
+                <div class="info-item performance-tooltip">
                     <span class="info-label">LDG Grnd Roll</span>
                     <span class="info-value" data-field="landingGR"></span>
+                    <div class="tooltip-content">
+                        <div class="tooltip-title">Landing Ground Roll Calculation</div>
+                        <div class="tooltip-formula">Base Distance × Headwind Correction</div>
+                        <div class="tooltip-formula">C-152: +8ft per knot headwind</div>
+                        <div class="tooltip-formula">P2006T: +8ft per knot headwind</div>
+                        <div class="tooltip-note">Interpolated from POH landing data tables. Headwind increases landing distance due to float effect.</div>
+                    </div>
                 </div>
-                <div class="info-item">
+                <div class="info-item performance-tooltip">
                     <span class="info-label">T/O Dist. (50')</span>
                     <span class="info-value" data-field="takeoffDist50"></span>
+                    <div class="tooltip-content">
+                        <div class="tooltip-title">Takeoff Distance to 50ft Obstacle</div>
+                        <div class="tooltip-formula">Ground Roll + Obstacle Clearance Distance</div>
+                        <div class="tooltip-note">Total distance required to clear 50ft obstacle. Includes ground roll plus climb to 50ft altitude. Same headwind corrections as ground roll.</div>
+                    </div>
                 </div>
-                <div class="info-item">
+                <div class="info-item performance-tooltip">
                     <span class="info-label">LDG Dist. (50')</span>
                     <span class="info-value" data-field="landingDist50"></span>
+                    <div class="tooltip-content">
+                        <div class="tooltip-title">Landing Distance from 50ft Obstacle</div>
+                        <div class="tooltip-formula">Obstacle Distance + Ground Roll</div>
+                        <div class="tooltip-note">Total distance required from 50ft altitude to full stop on runway. Includes approach and landing roll.</div>
+                    </div>
+                </div>
+                
+                <!-- P2006T Specific Performance Data -->
+                <div id="p2006t-performance" style="display: none;">
+                    <div class="info-item performance-tooltip">
+                        <span class="info-label">Accelerate/Stop Dist</span>
+                        <span class="info-value" data-field="accelerateStopDist"></span>
+                        <div class="tooltip-content">
+                            <div class="tooltip-title">Accelerate/Stop Distance Calculation</div>
+                            <div class="tooltip-formula">|Takeoff GR - Landing GR|</div>
+                            <div class="tooltip-note">Absolute difference between takeoff ground roll and landing ground roll. Represents total runway distance needed to accelerate to takeoff speed and then stop abort.</div>
+                        </div>
+                    </div>
+                    <div class="info-item performance-tooltip">
+                        <span class="info-label">SE Service Ceiling</span>
+                        <span class="info-value" data-field="seServiceCeiling"></span>
+                        <div class="tooltip-content">
+                            <div class="tooltip-title">Single-Engine Service Ceiling</div>
+                            <div class="tooltip-formula">Altitude where ROC = 50 fpm</div>
+                            <div class="tooltip-formula">Interpolated from P2006T SE Performance Tables</div>
+                            <div class="tooltip-formula">Based on: Weight, Temperature, Pressure Altitude</div>
+                            <div class="tooltip-note">Maximum altitude at which aircraft can maintain 50 feet per minute climb rate with one engine inoperative. Uses weight category interpolation and temperature-based ROC selection.</div>
+                        </div>
+                    </div>
+                    <div class="info-item performance-tooltip">
+                        <span class="info-label">SE Climb Rate</span>
+                        <span class="info-value" data-field="seClimbRate"></span>
+                        <div class="tooltip-content">
+                            <div class="tooltip-title">Single-Engine Rate of Climb</div>
+                            <div class="tooltip-formula">Interpolated from P2006T SE Performance Tables</div>
+                            <div class="tooltip-formula">Temperature Column: -25°C, 0°C, 25°C, 50°C, ISA</div>
+                            <div class="tooltip-formula">Weight Categories: 2050, 2381, 2601 lbs</div>
+                            <div class="tooltip-note">Rate of climb in feet per minute with one engine inoperative at current pressure altitude and temperature. Linear interpolation between table data points.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3917,25 +4040,27 @@
             'P2006T': {
                 basicEmptyWeight: 1470,
                 basicEmptyArm: 2.477,
-                frontSeatArm: 2.477,
-                rearSeatArm: 2.477,
-                baggage1Arm: 2.477,
-                baggage2Arm: null,    // Baggage 2 arm (N/A)
-                fuelArm: 2.477,       // Fuel arm
-                groundFuelArm: 2.477, // Ground fuel use arm
-                estFuelBurnArm: 2.477, // Est fuel burn arm
+                frontSeatArm: -2.93,     // Front seats: -2.93 ft
+                rearSeatArm: 0.741,      // Rear seats: 0.741 ft
+                baggage1Arm: 3.986,      // Baggage 1: 3.986 ft
+                baggage2Arm: null,        // Baggage 2 arm (N/A)
+                fuelArm: 2.477,          // Fuel arm
+                groundFuelArm: 2.477,    // Ground fuel use arm
+                estFuelBurnArm: 2.477,   // Est fuel burn arm (+25%)
+                macConstant: 4.4,        // MAC constant for %MAC calculations (inches)
+                demoCrosswind: 17,       // Demo crosswind limit: 17 kt
                 fuelWeightMultiplier: 6, // 6 gallons per lb per tank
-                fuelBurnRate: 9,      // 9 gal per hour
-                groundFuelUse: -12,   // Always -12
+                fuelBurnRate: 9,         // 9 gal per hour
+                groundFuelUse: -12,      // Always -12
                 maxTakeoffWeight: 2712,
                 maxLandingWeight: 2712,
-                forwardLimit: 16.5,   // Forward CG limit up to 2712 lb, then 19.5% at 2844 lb
-                aftLimit: 31,         // Aft CG limit for all conditions
-                forwardLimitHigh: 19.5, // Forward limit at maximum weight (2844 lb)
+                forwardLimit: 16.5,      // Forward CG limit up to 2712 lb, then 19.5% at 2844 lb
+                aftLimit: 31,            // Aft CG limit for all conditions
+                forwardLimitHigh: 19.5,  // Forward limit at maximum weight (2844 lb)
                 forwardLimitWeight: 2712, // Weight at which forward limit changes
                 seats: 4,
                 fuelTanks: 2,
-                fuelCapacity: 92      // Total fuel capacity in gallons
+                fuelCapacity: 92         // Total fuel capacity in gallons
             },
             'P2010': {
                 frontSeatArm: 89.8,
@@ -4311,6 +4436,40 @@
                 ]
             }
         };
+
+// P2006T Single Engine Performance Data (from POH)
+const P2006T_SE_PERFORMANCE = {
+    // 1180 kg (2601 lb)
+    '2601': {
+        altitudes: [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000],
+        vyse: [80, 80, 80, 79, 79, 79, 79, 78],
+        roc_m25: [362, 324, 285, 247, 209, 171, 132, 94],
+        roc_0: [261, 224, 186, 148, 111, 74, 36, -1],
+        roc_25: [171, 134, 97, 60, 24, -13, -49, -86],
+        roc_50: [89, 53, 17, -19, -55, -91, -127, -163],
+        roc_isa: [206, 176, 146, 116, 85, 55, 25, -5]
+    },
+    // 1080 kg (2381 lb)
+    '2381': {
+        altitudes: [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000],
+        vyse: [80, 80, 79, 79, 79, 79, 78, 78],
+        roc_m25: [436, 396, 355, 315, 275, 234, 194, 154],
+        roc_0: [330, 290, 251, 211, 172, 132, 93, 54],
+        roc_25: [235, 196, 157, 118, 80, 41, 3, -35],
+        roc_50: [149, 111, 73, 35, -3, -41, -78, -116],
+        roc_isa: [271, 240, 208, 176, 145, 113, 81, 50]
+    },
+    // 930 kg (2050 lb)
+    '2050': {
+        altitudes: [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000],
+        vyse: [79, 79, 79, 78, 78, 78, 78, 77],
+        roc_m25: [574, 529, 483, 438, 393, 348, 304, 259],
+        roc_0: [455, 411, 367, 322, 278, 235, 191, 147],
+        roc_25: [349, 305, 262, 219, 176, 133, 90, 47],
+        roc_50: [253, 211, 168, 126, 83, 41, -1, -43],
+        roc_isa: [390, 355, 319, 284, 248, 213, 178, 142]
+    }
+};
 
         // P2006T Takeoff Performance Data (from POH) - Weight-based tables
         const P2006T_TAKEOFF_DATA = {
@@ -4717,12 +4876,14 @@
 
             // Calculate base takeoff performance based on aircraft type
             let performance;
+            let currentWeight = 0;
             if (aircraftType === 'C-152') {
                 performance = calculateTakeoffPerformance(temperature, pressureAltitude);
+                currentWeight = 1670; // Typical C-152 weight
             } else if (aircraftType === 'P2006T') {
                 // Get current aircraft weight for P2006T weight-based performance
                 const takeoffWeightElement = document.querySelector('.data-table tbody tr:nth-child(10) td:nth-child(2)');
-                const currentWeight = parseFloat(takeoffWeightElement?.textContent) || 2844;
+                currentWeight = parseFloat(takeoffWeightElement?.textContent) || 2844;
                 // P2006T data is in Celsius, no conversion needed
                 performance = calculateP2006TTakeoffPerformance(temperature, pressureAltitude, currentWeight);
             }
@@ -4730,6 +4891,7 @@
             // Apply headwind correction based on aircraft type
             const headwind = parseFloat(document.getElementById('headwind').value) || 0;
             let correctedGroundRoll, correctedObstacle50ft;
+            let correctionFormula = '';
             
             if (aircraftType === 'C-152') {
                 // C-152: decrease distances 10% for each 9 knots headwind
@@ -4737,13 +4899,26 @@
                 const correctionFactor = Math.max(headwindCorrection, 0.5); // Safety minimum
                 correctedGroundRoll = Math.round(performance.groundRoll * correctionFactor);
                 correctedObstacle50ft = Math.round(performance.obstacle50ft * correctionFactor);
+                correctionFormula = `Base × ${correctionFactor.toFixed(3)} (${headwind} kts headwind)`;
             } else if (aircraftType === 'P2006T') {
                 // P2006T: decrease distances 8ft per knot of headwind
                 correctedGroundRoll = Math.max(performance.groundRoll - (headwind * 8), performance.groundRoll * 0.5);
                 correctedObstacle50ft = Math.max(performance.obstacle50ft - (headwind * 8), performance.obstacle50ft * 0.5);
                 correctedGroundRoll = Math.round(correctedGroundRoll);
                 correctedObstacle50ft = Math.round(correctedObstacle50ft);
+                correctionFormula = `Base - (${headwind} × 8) ft`;
             }
+            
+            // Store calculation details for tooltips
+            calculationDetails.takeoff = {
+                baseDistance: performance.groundRoll,
+                headwind: headwind,
+                correction: correctionFormula,
+                temperature: temperature,
+                pressureAltitude: pressureAltitude,
+                weight: currentWeight,
+                interpolationNote: performance.selectedWeight ? `Weight category: ${performance.selectedWeight} lbs` : 'Standard interpolation'
+            };
             
             // Update display fields
             if (aircraftType === 'P2006T' && performance.selectedWeight) {
@@ -4757,6 +4932,12 @@
             // Update left panel input fields
             document.getElementById('takeoffGR').value = correctedGroundRoll;
             document.getElementById('fiftyFtObst').value = correctedObstacle50ft;
+            
+            // Update P2006T specific performance
+            updatePerformanceCalculations();
+            
+            // Update tooltips with actual values
+            updateTooltipContent();
         }
 
         function updateLandingPerformance() {
@@ -4777,33 +4958,48 @@
 
             // Calculate base landing performance based on aircraft type
             let performance;
+            let currentWeight = 0;
             if (aircraftType === 'C-152') {
                 performance = calculateLandingPerformance(temperature, pressureAltitude);
+                currentWeight = 1670; // Typical C-152 weight
             } else if (aircraftType === 'P2006T') {
                 // Get estimated landing weight for P2006T weight-based landing performance
                 const landingWeightElement = document.querySelector('.data-table tbody tr:nth-child(12) td:nth-child(2)');
-                const landingWeight = parseFloat(landingWeightElement?.textContent) || 2844;
+                currentWeight = parseFloat(landingWeightElement?.textContent) || 2844;
                 // P2006T data is now in Celsius, no conversion needed
-                performance = calculateP2006TLandingPerformance(temperature, pressureAltitude, landingWeight);
+                performance = calculateP2006TLandingPerformance(temperature, pressureAltitude, currentWeight);
             }
             
             // Apply headwind correction based on aircraft type
             const headwind = parseFloat(document.getElementById('headwind').value) || 0;
             let correctedGroundRoll, correctedObstacle50ft;
+            let correctionFormula = '';
             
             if (aircraftType === 'C-152') {
-                // C-152: decrease distances 10% for each 9 knots headwind
-                const headwindCorrection = 1 - (headwind / 9) * 0.1;
-                const correctionFactor = Math.max(headwindCorrection, 0.5); // Safety minimum
-                correctedGroundRoll = Math.round(performance.groundRoll * correctionFactor);
-                correctedObstacle50ft = Math.round(performance.obstacle50ft * correctionFactor);
+                // C-152: increase distances 10% for each 9 knots headwind
+                const headwindCorrection = 1 + (headwind / 9) * 0.1;
+                correctedGroundRoll = Math.round(performance.groundRoll * headwindCorrection);
+                correctedObstacle50ft = Math.round(performance.obstacle50ft * headwindCorrection);
+                correctionFormula = `Base × ${headwindCorrection.toFixed(3)} (${headwind} kts headwind)`;
             } else if (aircraftType === 'P2006T') {
-                // P2006T: decrease distances 16ft per knot of headwind
-                correctedGroundRoll = Math.max(performance.groundRoll - (headwind * 16), performance.groundRoll * 0.5);
-                correctedObstacle50ft = Math.max(performance.obstacle50ft - (headwind * 16), performance.obstacle50ft * 0.5);
+                // P2006T: increase distances 8ft per knot of headwind
+                correctedGroundRoll = performance.groundRoll + (headwind * 8);
+                correctedObstacle50ft = performance.obstacle50ft + (headwind * 8);
                 correctedGroundRoll = Math.round(correctedGroundRoll);
                 correctedObstacle50ft = Math.round(correctedObstacle50ft);
+                correctionFormula = `Base + (${headwind} × 8) ft`;
             }
+            
+            // Store calculation details for tooltips
+            calculationDetails.landing = {
+                baseDistance: performance.groundRoll,
+                headwind: headwind,
+                correction: correctionFormula,
+                temperature: temperature,
+                pressureAltitude: pressureAltitude,
+                weight: currentWeight,
+                interpolationNote: performance.selectedWeight ? `Weight category: ${performance.selectedWeight} lbs` : 'Standard interpolation'
+            };
             
             // Update display fields
             if (aircraftType === 'P2006T' && performance.selectedWeight) {
@@ -4817,6 +5013,253 @@
             // Update left panel input fields
             document.getElementById('landingGR').value = correctedGroundRoll;
             document.getElementById('landingDist50').value = correctedObstacle50ft;
+            
+            // Update P2006T specific performance
+            updatePerformanceCalculations();
+            
+            // Update tooltips with actual values
+            updateTooltipContent();
+        }
+
+        function updateP2006TPerformance() {
+            const aircraftType = document.getElementById('aircraftType').value;
+            if (aircraftType !== 'P2006T') return;
+            
+            // Show/hide P2006T specific performance section
+            const p2006tSection = document.getElementById('p2006t-performance');
+            if (p2006tSection) {
+                p2006tSection.style.display = 'block';
+            }
+            
+            // Get current performance data
+            const takeoffGR = parseFloat(document.getElementById('takeoffGR').value) || 0;
+            const landingGR = parseFloat(document.getElementById('landingGR').value) || 0;
+            
+            // Calculate Accelerate/Stop Distance
+            const accelerateStopDist = Math.abs(takeoffGR - landingGR);
+            document.querySelector('[data-field="accelerateStopDist"]').textContent = `${accelerateStopDist} ft`;
+            
+            // Get current weight for SE performance calculations
+            const currentWeightElement = document.querySelector('.data-table tbody tr:nth-child(10) td:nth-child(2)');
+            const currentWeight = parseFloat(currentWeightElement?.textContent) || 2381;
+            
+            // Get temperature and pressure altitude for SE performance
+            const temperature = parseFloat(document.getElementById('temperature').value) || 15;
+            const pressureAltitude = parseFloat(document.getElementById('pressureAltitude').value) || 0;
+            
+            // Calculate SE Service Ceiling and Climb Rate
+            const sePerformance = calculateP2006TSEPerformance(currentWeight, temperature, pressureAltitude);
+            
+            // Determine temperature column for tooltip
+            let tempColumn = 'ISA';
+            if (temperature <= -25) tempColumn = '-25°C';
+            else if (temperature <= 0) tempColumn = '0°C';
+            else if (temperature <= 25) tempColumn = '25°C';
+            else if (temperature <= 50) tempColumn = '50°C';
+            
+            // Determine weight category for tooltip
+            const weightCategories = [2050, 2381, 2601];
+            let closestWeight = weightCategories[0];
+            let minDiff = Math.abs(currentWeight - closestWeight);
+            for (const catWeight of weightCategories) {
+                const diff = Math.abs(currentWeight - catWeight);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestWeight = catWeight;
+                }
+            }
+            
+            // Store P2006T calculation details for tooltips
+            calculationDetails.p2006t = {
+                takeoffGR: takeoffGR,
+                landingGR: landingGR,
+                accelerateStop: accelerateStopDist,
+                weight: currentWeight,
+                weightCategory: closestWeight,
+                temperature: temperature,
+                tempColumn: tempColumn,
+                pressureAltitude: pressureAltitude,
+                serviceCeiling: sePerformance.serviceCeiling,
+                climbRate: sePerformance.climbRate
+            };
+            
+            if (sePerformance.serviceCeiling) {
+                document.querySelector('[data-field="seServiceCeiling"]').textContent = `${sePerformance.serviceCeiling} ft`;
+            } else {
+                document.querySelector('[data-field="seServiceCeiling"]').textContent = 'N/A';
+            }
+            
+            if (sePerformance.climbRate) {
+                document.querySelector('[data-field="seClimbRate"]').textContent = `${sePerformance.climbRate} fpm`;
+            } else {
+                document.querySelector('[data-field="seClimbRate"]').textContent = 'N/A';
+            }
+            
+            // Update tooltips with actual values
+            updateTooltipContent();
+        }
+
+        function calculateP2006TSEPerformance(weight, temperature, pressureAltitude) {
+            // Find the closest weight category
+            const weightCategories = [2050, 2381, 2601];
+            let closestWeight = weightCategories[0];
+            let minDiff = Math.abs(weight - closestWeight);
+            
+            for (const catWeight of weightCategories) {
+                const diff = Math.abs(weight - catWeight);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestWeight = catWeight;
+                }
+            }
+            
+            const performanceData = P2006T_SE_PERFORMANCE[closestWeight.toString()];
+            if (!performanceData) return { serviceCeiling: null, climbRate: null };
+            
+            // Find the closest temperature column
+            let tempColumn = 'roc_isa'; // Default to ISA
+            if (temperature <= -25) tempColumn = 'roc_m25';
+            else if (temperature <= 0) tempColumn = 'roc_0';
+            else if (temperature <= 25) tempColumn = 'roc_25';
+            else if (temperature <= 50) tempColumn = 'roc_50';
+            
+            // Calculate service ceiling (altitude where ROC = 50 fpm)
+            let serviceCeiling = null;
+            const rocData = performanceData[tempColumn];
+            
+            for (let i = 0; i < performanceData.altitudes.length - 1; i++) {
+                if (rocData[i] > 50 && rocData[i + 1] <= 50) {
+                    // Interpolate between these two points
+                    const alt1 = performanceData.altitudes[i];
+                    const alt2 = performanceData.altitudes[i + 1];
+                    const roc1 = rocData[i];
+                    const roc2 = rocData[i + 1];
+                    
+                    const ratio = (roc1 - 50) / (roc1 - roc2);
+                    serviceCeiling = Math.round(alt1 + ratio * (alt2 - alt1));
+                    break;
+                }
+            }
+            
+            // Calculate climb rate at current pressure altitude
+            let climbRate = null;
+            for (let i = 0; i < performanceData.altitudes.length; i++) {
+                if (performanceData.altitudes[i] >= pressureAltitude) {
+                    if (i === 0) {
+                        climbRate = rocData[i];
+                    } else {
+                        // Interpolate between two altitude points
+                        const alt1 = performanceData.altitudes[i - 1];
+                        const alt2 = performanceData.altitudes[i];
+                        const roc1 = rocData[i - 1];
+                        const roc2 = rocData[i];
+                        
+                        const ratio = (pressureAltitude - alt1) / (alt2 - alt1);
+                        climbRate = Math.round(roc1 + ratio * (roc2 - roc1));
+                    }
+                    break;
+                }
+            }
+            
+            return {
+                serviceCeiling: serviceCeiling,
+                climbRate: climbRate
+            };
+        }
+
+        // Store calculation details for tooltips
+        let calculationDetails = {
+            takeoff: {},
+            landing: {},
+            p2006t: {}
+        };
+
+        function updateTooltipContent() {
+            // Update takeoff ground roll tooltip
+            const takeoffTooltip = document.querySelector('[data-field="takeoffGR"]').parentElement.querySelector('.tooltip-content');
+            if (takeoffTooltip && calculationDetails.takeoff) {
+                takeoffTooltip.innerHTML = `
+                    <div class="tooltip-title">Takeoff Ground Roll Calculation</div>
+                    <div class="tooltip-formula">Base: ${calculationDetails.takeoff.baseDistance || 'N/A'} ft</div>
+                    <div class="tooltip-formula">Headwind: ${calculationDetails.takeoff.headwind || 0} kts</div>
+                    <div class="tooltip-formula">Correction: ${calculationDetails.takeoff.correction || 'N/A'}</div>
+                    <div class="tooltip-formula">Temperature: ${calculationDetails.takeoff.temperature || 'N/A'}°C</div>
+                    <div class="tooltip-formula">Pressure Alt: ${calculationDetails.takeoff.pressureAltitude || 'N/A'} ft</div>
+                    <div class="tooltip-formula">Weight: ${calculationDetails.takeoff.weight || 'N/A'} lbs</div>
+                    <div class="tooltip-note">Interpolated from POH data. ${calculationDetails.takeoff.interpolationNote || ''}</div>
+                `;
+            }
+
+            // Update landing ground roll tooltip
+            const landingTooltip = document.querySelector('[data-field="landingGR"]').parentElement.querySelector('.tooltip-content');
+            if (landingTooltip && calculationDetails.landing) {
+                landingTooltip.innerHTML = `
+                    <div class="tooltip-title">Landing Ground Roll Calculation</div>
+                    <div class="tooltip-formula">Base: ${calculationDetails.landing.baseDistance || 'N/A'} ft</div>
+                    <div class="tooltip-formula">Headwind: ${calculationDetails.landing.headwind || 0} kts</div>
+                    <div class="tooltip-formula">Correction: ${calculationDetails.landing.correction || 'N/A'}</div>
+                    <div class="tooltip-formula">Temperature: ${calculationDetails.landing.temperature || 'N/A'}°C</div>
+                    <div class="tooltip-formula">Pressure Alt: ${calculationDetails.landing.pressureAltitude || 'N/A'} ft</div>
+                    <div class="tooltip-formula">Weight: ${calculationDetails.landing.weight || 'N/A'} lbs</div>
+                    <div class="tooltip-note">Interpolated from POH data. ${calculationDetails.landing.interpolationNote || ''}</div>
+                `;
+            }
+
+            // Update P2006T specific tooltips
+            if (calculationDetails.p2006t) {
+                const accelStopTooltip = document.querySelector('[data-field="accelerateStopDist"]').parentElement.querySelector('.tooltip-content');
+                if (accelStopTooltip) {
+                    accelStopTooltip.innerHTML = `
+                        <div class="tooltip-title">Accelerate/Stop Distance Calculation</div>
+                        <div class="tooltip-formula">|${calculationDetails.p2006t.takeoffGR || 0} - ${calculationDetails.p2006t.landingGR || 0}| = ${calculationDetails.p2006t.accelerateStop || 0} ft</div>
+                        <div class="tooltip-formula">Takeoff GR: ${calculationDetails.p2006t.takeoffGR || 0} ft</div>
+                        <div class="tooltip-formula">Landing GR: ${calculationDetails.p2006t.landingGR || 0} ft</div>
+                        <div class="tooltip-note">Absolute difference between takeoff and landing ground roll.</div>
+                    `;
+                }
+
+                const seCeilingTooltip = document.querySelector('[data-field="seServiceCeiling"]').parentElement.querySelector('.tooltip-content');
+                if (seCeilingTooltip) {
+                    seCeilingTooltip.innerHTML = `
+                        <div class="tooltip-title">Single-Engine Service Ceiling</div>
+                        <div class="tooltip-formula">Weight: ${calculationDetails.p2006t.weight || 'N/A'} lbs (closest to ${calculationDetails.p2006t.weightCategory || 'N/A'} lbs)</div>
+                        <div class="tooltip-formula">Temperature: ${calculationDetails.p2006t.temperature || 'N/A'}°C → ${calculationDetails.p2006t.tempColumn || 'N/A'} column</div>
+                        <div class="tooltip-formula">Service Ceiling: ${calculationDetails.p2006t.serviceCeiling || 'N/A'} ft</div>
+                        <div class="tooltip-note">Altitude where ROC = 50 fpm. Interpolated from P2006T SE performance tables.</div>
+                    `;
+                }
+
+                const seClimbTooltip = document.querySelector('[data-field="seClimbRate"]').parentElement.querySelector('.tooltip-content');
+                if (seClimbTooltip) {
+                    seClimbTooltip.innerHTML = `
+                        <div class="tooltip-title">Single-Engine Rate of Climb</div>
+                        <div class="tooltip-formula">Weight: ${calculationDetails.p2006t.weight || 'N/A'} lbs → ${calculationDetails.p2006t.weightCategory || 'N/A'} lbs category</div>
+                        <div class="tooltip-formula">Temperature: ${calculationDetails.p2006t.temperature || 'N/A'}°C → ${calculationDetails.p2006t.tempColumn || 'N/A'} column</div>
+                        <div class="tooltip-formula">Pressure Alt: ${calculationDetails.p2006t.pressureAltitude || 'N/A'} ft</div>
+                        <div class="tooltip-formula">Climb Rate: ${calculationDetails.p2006t.climbRate || 'N/A'} fpm</div>
+                        <div class="tooltip-note">Linear interpolation between table data points.</div>
+                    `;
+                }
+            }
+        }
+
+        function updatePerformanceCalculations() {
+            const aircraftType = document.getElementById('aircraftType').value;
+            
+            // Hide P2006T specific performance section for other aircraft
+            const p2006tSection = document.getElementById('p2006t-performance');
+            if (p2006tSection) {
+                if (aircraftType === 'P2006T') {
+                    p2006tSection.style.display = 'block';
+                } else {
+                    p2006tSection.style.display = 'none';
+                }
+            }
+            
+            // Update P2006T specific performance if applicable
+            if (aircraftType === 'P2006T') {
+                updateP2006TPerformance();
+            }
         }
 
         function updateCGLimitsDisplay() {
@@ -6079,11 +6522,27 @@
             
             // Trigger initial calculations
             setTimeout(() => {
-                updateDisplays();
-                updateWeightBalanceCalculations();
-                updateTakeoffPerformance();
-                updateLandingPerformance();
-            }, 200);
+                // Ensure aircraft type is properly set and ARMs are populated
+                const aircraftType = document.getElementById('aircraftType').value;
+                if (aircraftType && aircraftSpecs[aircraftType]) {
+                    console.log('Triggering calculations for aircraft:', aircraftType);
+                    populateAircraftSpecificValues(aircraftType);
+                    setTimeout(() => {
+                        updateDisplays();
+                        updateWeightBalanceCalculations();
+                        updateTakeoffPerformance();
+                        updateLandingPerformance();
+                        updatePerformanceCalculations();
+                    }, 100);
+                } else {
+                    console.log('No aircraft type set, running default calculations');
+                    updateDisplays();
+                    updateWeightBalanceCalculations();
+                    updateTakeoffPerformance();
+                    updateLandingPerformance();
+                    updatePerformanceCalculations();
+                }
+            }, 300);
         }
         
         function syncDesktopMobileFields() {
@@ -6351,7 +6810,10 @@ function loadUserProfile(silent = false) {
                 aircraftSelects.forEach(select => {
                     if (select) select.value = profile.defaultAircraft;
                 });
-                // updateAircraftSpecifications(); // Function not needed - calculations handled by updateWeightBalanceCalculations
+                // Populate aircraft specific values after setting default aircraft
+                if (profile.defaultAircraft && aircraftSpecs[profile.defaultAircraft]) {
+                    populateAircraftSpecificValues(profile.defaultAircraft);
+                }
             }
             
             // Set default airport and fetch its data
@@ -6615,6 +7077,14 @@ function loadSavedAircraft(aircraftName) {
                 // updateAircraftSpecifications(); // Function not needed - calculations handled by updateWeightBalanceCalculations
             } else {
                 console.log('updateAircraftSpecifications not needed - using updateWeightBalanceCalculations instead');
+            }
+            
+            console.log('Calling populateAircraftSpecificValues...');
+            // Populate aircraft specific values (ARMs, etc.)
+            if (typeof populateAircraftSpecificValues === 'function') {
+                populateAircraftSpecificValues(aircraft.aircraftType);
+            } else {
+                console.error('populateAircraftSpecificValues is not defined');
             }
             
             console.log('Calling updateWeightBalanceCalculations...');
@@ -7508,40 +7978,82 @@ async function fetchWeatherFromAPIs(airportCode) {
         const upperCode = airportCode.toUpperCase();
         let weatherData = null;
         
-        // Try CORS proxy with Aviation Weather Center
-        try {
-            const proxyUrl = 'https://api.allorigins.win/raw?url=';
-            const awcUrl = `https://aviationweather.gov/api/data/metar?ids=${upperCode}&format=json`;
-            const response = await fetch(proxyUrl + encodeURIComponent(awcUrl));
-            
-            if (response.ok) {
-                const data = await response.json();
-                if (data && data.length > 0) {
-                    weatherData = convertAWCData(data[0]);
-                    console.log('Current weather data from AWC:', weatherData);
-                }
-            }
-        } catch (proxyError) {
-            console.log('CORS proxy failed, trying alternative...');
-        }
+        // Try multiple CORS proxies with Aviation Weather Center
+        const proxies = [
+            'https://api.allorigins.win/raw?url=',
+            'https://corsproxy.io/?',
+            'https://api.codetabs.com/v1/proxy?quest='
+        ];
         
-        // Try direct METAR text parsing from another source
-        if (!weatherData) {
+        const awcUrl = `https://aviationweather.gov/api/data/metar?ids=${upperCode}&format=json`;
+        
+        for (const proxy of proxies) {
             try {
-                const metarUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://tgftp.nws.noaa.gov/data/observations/metar/stations/${upperCode}.TXT`)}`;
-                const response = await fetch(metarUrl);
+                const response = await fetch(proxy + encodeURIComponent(awcUrl));
                 
                 if (response.ok) {
-                    const metarText = await response.text();
-                    const lines = metarText.trim().split('\n');
-                    if (lines.length >= 2) {
-                        const rawMetar = lines[1].trim(); // Second line contains the METAR
-                        weatherData = parseRawMETAR(rawMetar);
-                        console.log('Current weather data from NOAA:', weatherData);
+                    const data = await response.json();
+                    if (data && data.length > 0) {
+                        weatherData = convertAWCData(data[0]);
+                        console.log('Current weather data from AWC via', proxy, ':', weatherData);
+                        break;
                     }
                 }
-            } catch (noaaError) {
-                console.log('NOAA METAR failed, using fallback...');
+            } catch (proxyError) {
+                console.log(`Proxy ${proxy} failed, trying next...`);
+            }
+        }
+        
+        // Try NOAA METAR text with proxies if AWC failed
+        if (!weatherData) {
+            const noaaUrl = `https://tgftp.nws.noaa.gov/data/observations/metar/stations/${upperCode}.TXT`;
+            
+            for (const proxy of proxies) {
+                try {
+                    const response = await fetch(proxy + encodeURIComponent(noaaUrl));
+                    
+                    if (response.ok) {
+                        const metarText = await response.text();
+                        const lines = metarText.trim().split('\n');
+                        if (lines.length >= 2) {
+                            const rawMetar = lines[1].trim();
+                            weatherData = parseRawMETAR(rawMetar);
+                            console.log('Current weather data from NOAA via', proxy, ':', weatherData);
+                            break;
+                        }
+                    }
+                } catch (noaaError) {
+                    console.log(`NOAA via ${proxy} failed...`);
+                }
+            }
+        }
+        
+        // Try direct fetch (might work for some browsers/environments)
+        if (!weatherData) {
+            try {
+                const response = await fetch(awcUrl);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0) {
+                        weatherData = convertAWCData(data[0]);
+                        console.log('Current weather data from AWC direct:', weatherData);
+                    }
+                }
+            } catch (directError) {
+                console.log('Direct AWC fetch failed...');
+            }
+        }
+        
+        // Try OpenWeatherMap API as fallback (free tier)
+        if (!weatherData) {
+            try {
+                // Note: This requires a free API key from openweathermap.org
+                // For now, we'll use it to demonstrate the structure
+                const owmUrl = `https://api.openweathermap.org/data/2.5/weather?q=${upperCode}&appid=YOUR_API_KEY&units=metric`;
+                console.log('OpenWeatherMap would require API key setup');
+            } catch (owmError) {
+                console.log('OpenWeatherMap not configured...');
             }
         }
         
