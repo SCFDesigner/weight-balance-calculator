@@ -1298,7 +1298,8 @@
             /* Hide settings, brain, and risk toggle on mobile */
             .settings-toggle,
             .brain-toggle,
-            .risk-toggle {
+            .risk-toggle,
+            .emergency-toggle {
                 display: none !important;
             }
 
@@ -1367,7 +1368,8 @@
             /* Show floating toggle buttons on desktop */
             .settings-toggle,
             .brain-toggle,
-            .risk-toggle {
+            .risk-toggle,
+            .emergency-toggle {
                 display: flex !important;
             }
 
@@ -1978,7 +1980,12 @@
 
         <!-- Weather Panel -->
         <div class="right-panel">
-            <div class="panel-title">Current Conditions</div>
+            <div class="panel-title" style="display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;">
+                <a href="https://aviationweather.gov/" target="_blank" rel="noopener" style="font-size:9px; padding:3px 7px; border:1px solid #555; border-radius:4px; color:#aaa; text-decoration:none; font-family:'Segoe UI',sans-serif; font-weight:normal; background:rgba(255,255,255,0.04); transition:all 0.2s; white-space:nowrap;" onmouseover="this.style.borderColor='#4CAF50';this.style.color='#4CAF50'" onmouseout="this.style.borderColor='#555';this.style.color='#aaa'">AviationWeather</a>
+                <a href="https://www.1800wxbrief.com/Website/#!/" target="_blank" rel="noopener" style="font-size:9px; padding:3px 7px; border:1px solid #555; border-radius:4px; color:#aaa; text-decoration:none; font-family:'Segoe UI',sans-serif; font-weight:normal; background:rgba(255,255,255,0.04); transition:all 0.2s; white-space:nowrap;" onmouseover="this.style.borderColor='#4CAF50';this.style.color='#4CAF50'" onmouseout="this.style.borderColor='#555';this.style.color='#aaa'">1800WxBrief</a>
+                <span style="color:#4CAF50;">Current Conditions</span>
+                <a href="https://plan.foreflight.com/map" target="_blank" rel="noopener" style="font-size:9px; padding:3px 7px; border:1px solid #555; border-radius:4px; color:#aaa; text-decoration:none; font-family:'Segoe UI',sans-serif; font-weight:normal; background:rgba(255,255,255,0.04); transition:all 0.2s; white-space:nowrap;" onmouseover="this.style.borderColor='#4CAF50';this.style.color='#4CAF50'" onmouseout="this.style.borderColor='#555';this.style.color='#aaa'">ForeFlight</a>
+            </div>
             <div class="info-grid">
                 <div class="info-item">
                     <span class="info-label">Aprt. Wx. Observation</span>
@@ -3010,450 +3017,6 @@
         </div>
     </div>
 
-    <!-- Column Resizer between Settings Panel and Brain Column -->
-    <div class="column-resizer" data-resize="settings-brain"></div>
-
-    <!-- Brain Column (Column E) -->
-    <div class="brain-panel brain-hidden" style="padding: 20px; overflow-y: auto; height: 100vh; display: none;">
-        <h2 style="color: #4CAF50; margin-bottom: 20px; font-size: 18px;">🧠 Brain</h2>
-        
-        <!-- Mnemonics Section -->
-        <div class="input-section">
-            <button onclick="toggleMnemonics()" style="
-                background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%);
-                color: white;
-                border: 1px solid #4CAF50;
-                padding: 12px 20px;
-                border-radius: 8px;
-                cursor: pointer;
-                font-size: 14px;
-                font-weight: bold;
-                width: 100%;
-                margin-bottom: 15px;
-                box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
-            ">📚 Mnemonics</button>
-            
-            <div id="mnemonicsContainer" style="display: none;">
-                <!-- Required Aircraft Documents -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('aircraft-docs')">
-                        <span>✈️ Required Aircraft Documents (ARROW)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="aircraft-docs" class="mnemonic-detail" style="display: none;">
-                        <p><strong>A</strong> – Airworthiness Certificate</p>
-                        <p><strong>R</strong> – Registration</p>
-                        <p><strong>R</strong> – Radio Operators License (International flights)</p>
-                        <p><strong>O</strong> – Operating Limitations</p>
-                        <p><strong>W</strong> – Weight and Balance Information</p>
-                    </div>
-                </div>
-
-                <!-- Required Equipment for Day VFR -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('day-vfr')">
-                        <span>☀️ Required Equipment for Day VFR (91.205b) (ATOMS2 FLEAF)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="day-vfr" class="mnemonic-detail" style="display: none;">
-                        <p><strong>A</strong> – Airspeed Indicator</p>
-                        <p><strong>A</strong> – Altimeter</p>
-                        <p><strong>T</strong> – Temperature Gauge (each liquid cooled engine)</p>
-                        <p><strong>T</strong> – Tachometer (each engine)</p>
-                        <p><strong>O</strong> – Oil Temperature Gauge (each air cooled engine)</p>
-                        <p><strong>O</strong> – Oil Pressure Gauge (each engine using the pressure system)</p>
-                        <p><strong>M</strong> – Manifold Pressure Gauge (each altitude engine)</p>
-                        <p><strong>M</strong> – Magnetic Compass</p>
-                        <p><strong>S</strong> – Seatbelt</p>
-                        <p><strong>S</strong> – Shoulder Harness (man. after July 18, 1978)</p>
-                        <p><strong>F</strong> – Fuel Quantity Indicator (each tank)</p>
-                        <p><strong>L</strong> – Landing Gear Position Indicator</p>
-                        <p><strong>E</strong> – Emergency Locator Transmitter (ELT)</p>
-                        <p><strong>A</strong> – Anti-Collision Lights (man. after March 11, 1996)</p>
-                        <p><strong>F</strong> – Flotation Device (for hire beyond power off glide distance from shore)</p>
-                    </div>
-                </div>
-
-                <!-- Required Equipment for IFR Flight -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('ifr-equipment')">
-                        <span>🛩️ Required Equipment for IFR Flight (91.205d) (GRAB CARD)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="ifr-equipment" class="mnemonic-detail" style="display: none;">
-                        <p><strong>G</strong> – Generator / Alternator</p>
-                        <p><strong>R</strong> – Radios (two-way) and Nav. Equipment</p>
-                        <p><strong>A</strong> – Altimeter (pressure sensitive)</p>
-                        <p><strong>B</strong> – Ball (Inclonometer)</p>
-                        <p><strong>C</strong> – Clock (must have sweeping seconds or digital display and must be installed in a/c)</p>
-                        <p><strong>R</strong> – Rate of Turn Indicator</p>
-                        <p><strong>A</strong> – Attitude Indicator</p>
-                        <p><strong>D</strong> – Direction Gyro</p>
-                        <p><strong>D</strong> – DME (above FL240)</p>
-                    </div>
-                </div>
-
-                <!-- Required Inspections -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('inspections')">
-                        <span>🔧 Required Inspections (GAVIATES)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="inspections" class="mnemonic-detail" style="display: none;">
-                        <p><strong>G</strong> – GPS (every 28 days)</p>
-                        <p><strong>A</strong> – Annual (every 12 calendar months)</p>
-                        <p><strong>V</strong> – VOR (every 30 days for IFR)</p>
-                        <p><strong>I</strong> – 100-hour Inspection (for hire)</p>
-                        <p><strong>A</strong> – Altimeter (every 24 calendar months for IFR)</p>
-                        <p><strong>T</strong> – Transponder (every 24 calendar months)</p>
-                        <p><strong>E</strong> – ELT (every 12 calendar months)</p>
-                        <p><strong>S</strong> – Static/Pitot System (every 24 calendar months for IFR)</p>
-                        <p><strong>A</strong> – Airworthiness Directives (as required)</p>
-                    </div>
-                </div>
-
-                <!-- Pre-Flight Action -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('preflight')">
-                        <span>📋 Pre-Flight Action (91.103) (WKRAFTN)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="preflight" class="mnemonic-detail" style="display: none;">
-                        <p><strong>W</strong> – Weather and Forecasts</p>
-                        <p><strong>K</strong> – Known ATC Delays (IFR Flight)</p>
-                        <p><strong>R</strong> – Runway lengths of intended use</p>
-                        <p><strong>A</strong> – Alternates (IFR Flight)</p>
-                        <p><strong>F</strong> – Fuel Requirements</p>
-                        <p><strong>T</strong> – T/O and LDG Distances</p>
-                        <p><strong>N</strong> – NOTAMs</p>
-                    </div>
-                </div>
-
-                <!-- VOR Receiver Checks -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('vor-checks')">
-                        <span>📡 VOR Receiver Checks (91.171) (BAD VAG)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="vor-checks" class="mnemonic-detail" style="display: none;">
-                        <p><strong>B</strong> – Bench (+/- 4)</p>
-                        <p><strong>A</strong> – Airway (+/- 6)</p>
-                        <p><strong>D</strong> – Dual (+/- 4)</p>
-                        <p><strong>V</strong> – VOT (+/- 4)</p>
-                        <p><strong>A</strong> – Airborne (+/- 6)</p>
-                        <p><strong>G</strong> – Ground (+/- 4)</p>
-                    </div>
-                </div>
-
-                <!-- Clearance Information -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('clearance')">
-                        <span>📻 Clearance Information (IFR Flight) (CRAFTT)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="clearance" class="mnemonic-detail" style="display: none;">
-                        <p><strong>C</strong> – Clearance limit</p>
-                        <p><strong>R</strong> – Route of flight</p>
-                        <p><strong>A</strong> – Altitudes</p>
-                        <p><strong>F</strong> – Frequency</p>
-                        <p><strong>T</strong> – Transponder Code</p>
-                        <p><strong>T</strong> – Time of Void</p>
-                    </div>
-                </div>
-
-                <!-- Lost Procedures -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('lost')">
-                        <span>🧭 Lost Procedures (VFR) (5 C's)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="lost" class="mnemonic-detail" style="display: none;">
-                        <p><strong>C</strong> – Climb</p>
-                        <p><strong>C</strong> – Communicate</p>
-                        <p><strong>C</strong> – Confess</p>
-                        <p><strong>C</strong> – Comply</p>
-                        <p><strong>C</strong> – Conserve</p>
-                    </div>
-                </div>
-
-                <!-- Types of Altitudes -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('altitude-types')">
-                        <span>📏 Types of Altitudes (IPDAT)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="altitude-types" class="mnemonic-detail" style="display: none;">
-                        <p><strong>I</strong> – Indicated – Read off your Altimeter</p>
-                        <p><strong>P</strong> – Pressure – Height above standard datum plane (29.92")</p>
-                        <p><strong>D</strong> – Density – Pressure altitude corrected for non standard temperature</p>
-                        <p><strong>A</strong> – Absolute – Height above the ground (AGL)</p>
-                        <p><strong>T</strong> – True – Height above mean sea level (MSL)</p>
-                    </div>
-                </div>
-
-                <!-- IFR Altitudes -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('ifr-altitudes')">
-                        <span>🛩️ IFR Altitudes (MOMMAD)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="ifr-altitudes" class="mnemonic-detail" style="display: none;">
-                        <p><strong>M</strong> – MEA – Minimum Enroute Altitude</p>
-                        <p><strong>O</strong> – MOCA – Minimum Obstruction Clearance Altitude</p>
-                        <p><strong>M</strong> – OROCA – Off Route Obstruction Clearance Altitude or MORA – Minimum Off-Route Altitude</p>
-                        <p><strong>M</strong> – MAA – Maximum Authorized Altitude</p>
-                        <p><strong>A</strong> – MCA – Minimum Crossing Altitude</p>
-                        <p><strong>D</strong> – MRA – Minimum Reception Altitude</p>
-                        <p><strong>M</strong> – MSA – Minimum Safe Altitude</p>
-                        <p><strong>A</strong> – MVA – Minimum Vectoring Altitude</p>
-                        <p><strong>D</strong> – DH – Decision Height (AGL)</p>
-                        <p><strong>A</strong> – DA – Decision Altitude (MSL)</p>
-                        <p><strong>M</strong> – MDA – Minimum Descent Altitude (MSL)</p>
-                    </div>
-                </div>
-
-                <!-- Pre-landing Check -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('gumps')">
-                        <span>🛬 Pre-landing Check (GUMPS)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="gumps" class="mnemonic-detail" style="display: none;">
-                        <p><strong>G</strong> – Gas (fuel pump on)</p>
-                        <p><strong>U</strong> – Undercarriage (Down and VERIFY 3-green)</p>
-                        <p><strong>M</strong> – Mixture (full rich)</p>
-                        <p><strong>P</strong> – Propeller (full forward)</p>
-                        <p><strong>P</strong> – Power (set)</p>
-                        <p><strong>P</strong> – Brake pressure (check for resistance)</p>
-                        <p><strong>S</strong> – Systems (engines instruments in the green)</p>
-                        <p><strong>S</strong> – Seatbelts (fastened)</p>
-                    </div>
-                </div>
-
-                <!-- Night VFR Equipment -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('night-vfr')">
-                        <span>🌙 Night VFR Equipment (FLAPS)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="night-vfr" class="mnemonic-detail" style="display: none;">
-                        <p><strong>F</strong> – Fuses (1 set or 3 of each – in reach of pilot)</p>
-                        <p><strong>L</strong> – Landing Light (for hire)</p>
-                        <p><strong>A</strong> – Anti-Collision Lights (man. after August 11, 1971)</p>
-                        <p><strong>P</strong> – Position Lights</p>
-                        <p><strong>S</strong> – Source of electrical power</p>
-                    </div>
-                </div>
-
-                <!-- CRM Principles -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('crm')">
-                        <span>⚠️ Critical Engine Inoperative Vmc (CRMALOFT)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="crm" class="mnemonic-detail" style="display: none;">
-                        <p><strong>C</strong> – Critical Engine Inoperative (failed engine windmilling, creating high drag)</p>
-                        <p><strong>R</strong> – Rearward Center of Gravity (reduces rudder effectiveness, increases Vmc)</p>
-                        <p><strong>M</strong> – Most Unfavorable Weight (lighter weight can increase Vmc due to less horizontal lift component)</p>
-                        <p><strong>A</strong> – Airborne/Out of Ground Effect (allows more rudder effectiveness but higher Vmc due to accelerated slipstream)</p>
-                        <p><strong>L</strong> – Landing Gear Up (removes drag on failed side, allows faster yaw and higher Vmc)</p>
-                        <p><strong>O</strong> – Operating Engine at Max Power (maximum yaw on good engine increases Vmc)</p>
-                        <p><strong>F</strong> – Flaps Up (flaps up position allows for higher Vmc)</p>
-                        <p><strong>T</strong> – Trimmed for Takeoff (rudder trim set for takeoff increases Vmc)</p>
-                    </div>
-                </div>
-
-                <!-- Multi-Engine Operations -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('multi-engine')">
-                        <span>🛩️ Critical Engine Determination (PAST)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="multi-engine" class="mnemonic-detail" style="display: none;">
-                        <p><strong>P</strong> – P-Factor (Asymmetric Thrust - descending propeller blade produces more thrust, center of thrust on right engine further from CG)</p>
-                        <p><strong>A</strong> – Accelerated Slipstream (Roll - right engine creates accelerated airflow over wing, more lift further from CG causes severe roll when left engine fails)</p>
-                        <p><strong>S</strong> – Spiraling Slipstream (Yaw - left engine slipstream strikes vertical stabilizer from left, helping counteract yaw from failed right engine)</p>
-                        <p><strong>T</strong> – Torque (Roll - clockwise torque from right engine causes greater roll toward dead engine in left engine failure)</p>
-                    </div>
-                </div>
-
-                <!-- Pre-Maneuver Checklist -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('pre-maneuver')">
-                        <span>🔄 Pre-Maneuver Checklist (CCMALS)</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="pre-maneuver" class="mnemonic-detail" style="display: none;">
-                        <p><strong>C</strong> – Clearing Turns (visually checking for traffic)</p>
-                        <p><strong>C</strong> – Configuration (setting aircraft - flaps, power)</p>
-                        <p><strong>M</strong> – Minimum Safe Altitude (ensuring required altitude - 1,500' or 2,000' AGL)</p>
-                        <p><strong>A</strong> – Airspeed (establishing proper speed)</p>
-                        <p><strong>L</strong> – Landing Area (identifying emergency landing spot)</p>
-                        <p><strong>S</strong> – Scan/Seatbelts (scanning for traffic and securing belts)</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- General Aviation Knowledge Section -->
-        <div class="input-section">
-            <button onclick="toggleGeneralKnowledge()" style="
-                background: linear-gradient(135deg, rgba(156, 39, 176, 0.3) 0%, rgba(156, 39, 176, 0.1) 100%);
-                color: white;
-                border: 1px solid #9C27B0;
-                padding: 12px 20px;
-                border-radius: 8px;
-                cursor: pointer;
-                font-size: 14px;
-                font-weight: bold;
-                width: 100%;
-                margin-bottom: 15px;
-                box-shadow: 0 2px 4px rgba(156, 39, 176, 0.2);
-            ">📚 General Aviation Knowledge</button>
-            
-            <div id="generalKnowledgeContainer" style="display: none;">
-                <!-- Required Documents & Currency -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('docs-currency')">
-                        <span>📋 Documents & Currency</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="docs-currency" class="mnemonic-detail" style="display: none;">
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
-                            <h4 style="color: #9C27B0; margin-bottom: 8px;">👨‍✈️ Required Pilot Documents</h4>
-                            <p>• Valid Government Issued Photo I.D.</p>
-                            <p>• Current Pilot's Certificate</p>
-                            <p>• Current Medical Certificate</p>
-                            <p>• Logbook (student pilots only)</p>
-                        </div>
-
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
-                            <h4 style="color: #9C27B0; margin-bottom: 8px;">⏰ Pilot Currency Requirements</h4>
-                            <p><strong>General:</strong> Flight Review, FAA Checkride, or WINGS program within preceding 24 calendar months</p>
-                            <p><strong>With PAX:</strong> 3 T/O and LDGs within preceding 90 (must be full stop if flight will be at night or in a tailwheel aircraft)</p>
-                            <p><strong>IFR Flight:</strong> 6 Instrument Approaches, Holding, Intercepting, and Tracking Course within preceding 6 months (or Instrument Proficiency Check)</p>
-                        </div>
-
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
-                            <h4 style="color: #9C27B0; margin-bottom: 8px;">🏥 Medical Certificates</h4>
-                            <p><strong>1st Class:</strong> Valid for 12 calendar months (6 if over 40)</p>
-                            <p><strong>2nd Class:</strong> Valid for 12 calendar months</p>
-                            <p><strong>3rd Class:</strong> Valid for 60 calendar months (24 if over 40)</p>
-                            <p><em>*1st reverts to 2nd which reverts to 3rd</em></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Equipment Requirements -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('equipment-reqs')">
-                        <span>🛩️ Equipment Requirements</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="equipment-reqs" class="mnemonic-detail" style="display: none;">
-                    </div>
-                </div>
-
-                <!-- Airspace & Weather -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('airspace-weather')">
-                        <span>☁️ Airspace & Weather</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="airspace-weather" class="mnemonic-detail" style="display: none;">
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
-                            <h4 style="color: #9C27B0; margin-bottom: 8px;">🗺️ Airspace Dimensions</h4>
-                            <p><strong>Class A:</strong> FL180 to FL600 and over the entire U.S. and extends 12 NM off the coast line</p>
-                            <p><strong>Class B:</strong> Extends from the surface to 10,000MSL in multiple shelves. Generally extends laterally from the airport to 30NM.</p>
-                            <p><strong>Class C:</strong> Extends from the surface to 4,000AGL with 1 shelf (lower shelf starts at 1,200AGL). Generally extends laterally from the airport to 10NM.</p>
-                            <p><strong>Class D:</strong> Extends from the surface to 2,500AGL. Generally extends laterally from the airport to 4NM.</p>
-                            <p><strong>Class E:</strong> Extends from either SFC, 700AGL, or 1,200AGL to 17,999MSL.</p>
-                            <p><strong>Class G:</strong> Extends from SFC to 700AGL or 1200AGL. Maximum altitude is 14,500MSL (out west)</p>
-                            <p><em>*Class A > B > C > D > E > G in hierarchy.</em></p>
-                        </div>
-
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
-                            <h4 style="color: #9C27B0; margin-bottom: 8px;">📡 Airspace Equipment Requirements</h4>
-                            <p><strong>Class A:</strong> IFR flight plan, A/C IFR equip, IFR current</p>
-                            <p><strong>Class B:</strong> Two-way radio, Mode C transponder, clearance into specific Class B airspace</p>
-                            <p><strong>Class C:</strong> Two-way radio, Mode C transponder, est. 2 way radio contact</p>
-                            <p><strong>Class D:</strong> Two-way radio. Establish 2 way radio contact</p>
-                            <p><strong>Class E:</strong> None</p>
-                            <p><strong>Class G:</strong> None</p>
-                        </div>
-
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
-                            <h4 style="color: #9C27B0; margin-bottom: 8px;">☁️ VFR Weather Requirements</h4>
-                            <p><strong>Class A:</strong> VFR N/A</p>
-                            <p><strong>Class B:</strong> 3SM visibility, Clear of clouds</p>
-                            <p><strong>Class C:</strong> 3SM visibility, 1000 above, 500 below, 2000 horizontal from any clouds (3-152)</p>
-                            <p><strong>Class D:</strong> 3SM visibility, 1000 above, 500 below, 2000 horizontal from any clouds (3-152)</p>
-                            <p><strong>Class E below 10k:</strong> 3SM visibility, 1000 above, 500 below, 2000 horizontal from any clouds (3-152)</p>
-                            <p><strong>Class E >10k:</strong> 5SM visibility, 1000 above, 1000 below, 1 SM horizontal from any clouds (5-111)</p>
-                            <p><strong>Class G <1200AGL day:</strong> 1SM visibility, Clear of clouds</p>
-                            <p><strong>Class G >1200AGL, <10k MSL:</strong> 1SM 1000 above, 500 below, 2000 horizontal from any clouds (3-152)</p>
-                            <p><strong>Class G >1200AGL, >10k MSL:</strong> 5SM visibility, 1000 above, 1000 below, 1 SM horizontal from any clouds (5-111)</p>
-                            <p><strong>Class G during night:</strong> 3SM visibility, 1000 above, 500 below, 2000 horizontal from any clouds (3-152)</p>
-                        </div>
-
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
-                            <h4 style="color: #9C27B0; margin-bottom: 8px;">⛰️ Minimum Safe Altitudes (91.119)</h4>
-                            <p><strong>Anywhere:</strong> Altitude at which should a powerplant fail, a safe landing can be made without undue harm to persons or property on the surface.</p>
-                            <p><strong>Congested areas:</strong> 2000ft horizontal, 1000ft above the highest obstacle</p>
-                            <p><strong>Other than congested area:</strong> 500ft above the surface</p>
-                            <p><strong>Over water or sparse areas:</strong> 500ft from any person, vessel, vehicle, or structure</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Regulations & Procedures -->
-                <div class="mnemonic-item">
-                    <div class="mnemonic-title" onclick="toggleMnemonicDetail('regulations')">
-                        <span>⚖️ Regulations & Procedures</span>
-                        <span class="expand-icon">+</span>
-                    </div>
-                    <div id="regulations" class="mnemonic-detail" style="display: none;">
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
-                            <h4 style="color: #9C27B0; margin-bottom: 8px;">⚠️ Inoperative Equipment Test (91.213)</h4>
-                            <p><strong>1.</strong> VFR Day Type Certificate</p>
-                            <p><strong>2.</strong> Kinds of Operations List</p>
-                            <p><strong>3.</strong> 91.205 Requirements</p>
-                            <p><strong>4.</strong> Airworthiness Directives</p>
-                            <p><em>---If item passes all 4 steps</em></p>
-                            <p><strong>1.</strong> Deactivate and Placard INOPERATIVE (entire word)</p>
-                            <p><strong>2.</strong> Remove Item and redo weight and balance</p>
-                            <p><em>*Minimum Equipment List DO NOT require use of the 4-step test. MELs contain items that can break and not affect airworthiness of the aircraft. MELs are tail number specific.</em></p>
-                        </div>
-
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
-                            <h4 style="color: #9C27B0; margin-bottom: 8px;">🎛️ Instrument Cockpit Check</h4>
-                            <p><strong>Airspeed:</strong> Reading 0kts</p>
-                            <p><strong>Altimeter:</strong> +/- 75 ft of field elevation</p>
-                            <p><strong>Attitude:</strong> Erect, bank no more than 5°</p>
-                            <p><strong>Compass:</strong> Swinging feely, full of fluid, known headings</p>
-                            <p><strong>D.G.:</strong> Matches compass, known headings, moving in the right direction during turns</p>
-                            <p><strong>Turn and Bank:</strong> Ball to outside of turn, coordinator goes with turn</p>
-                            <p><strong>Vertical Speed:</strong> Value read will be 0fpm for the flight</p>
-                        </div>
-
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
-                            <h4 style="color: #9C27B0; margin-bottom: 8px;">🫁 Supplemental Oxygen Requirements (91.211)</h4>
-                            <p><strong>12,500:</strong> Minimum flight crew must use supp. oxygen for time period greater than 30 minutes</p>
-                            <p><strong>14,000:</strong> Minimum flight crew must use supp. oxygen.</p>
-                            <p><strong>15,000:</strong> All flight crew must use supp. oxygen. Passengers must be supplied with supp. oxygen.</p>
-                        </div>
-
-                        <div style="margin-bottom: 15px; padding: 10px; background: rgba(156, 39, 176, 0.1); border-radius: 6px;">
-                            <h4 style="color: #9C27B0; margin-bottom: 8px;">⚖️ Aircraft Load Factors</h4>
-                            <p><strong>Normal:</strong> + 3.8 g's - 1.52 g's</p>
-                            <p><strong>Utility:</strong> + 4.4 g's - 1.76 g's</p>
-                            <p><strong>Acrobatic:</strong> + 6.0 g's - 3.00 g's</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     </div> <!-- Close desktop-layout div -->
 
@@ -3501,26 +3064,26 @@
         ⚙️
     </div>
 
-    <!-- Floating Brain Toggle (Desktop Only) -->
-    <div class="brain-toggle" onclick="toggleBrainPanel()" style="
+    <!-- Floating Emergency Toggle (Desktop Only) -->
+    <div class="emergency-toggle" onclick="window.location.href='emergency.html'" style="
         position: fixed;
         top: 20px;
-        right: 140px;
+        right: 200px;
         width: 50px;
         height: 50px;
-        background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%);
-        border: 1px solid #4CAF50;
+        background: linear-gradient(135deg, rgba(244, 67, 54, 0.4) 0%, rgba(244, 67, 54, 0.15) 100%);
+        border: 2px solid #f44336;
         border-radius: 50%;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 24px;
+        font-size: 22px;
         z-index: 1000;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
         transition: all 0.3s ease;
-    " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-        🧠
+    " onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 6px 20px rgba(244, 67, 54, 0.6)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 12px rgba(244, 67, 54, 0.4)'" title="Multi-Engine Study">
+        🚨
     </div>
 
     <!-- Mobile Navigation (Mobile Only) -->
@@ -3556,9 +3119,9 @@
             <div class="nav-icon">⚙️</div>
             <div>Settings</div>
         </button>
-        <button class="mobile-nav-btn" onclick="showMobileColumn('brain')">
-            <div class="nav-icon">🧠</div>
-            <div>Brain</div>
+        <button class="mobile-nav-btn" onclick="window.location.href='emergency.html'" style="border-color: #f44336;">
+            <div class="nav-icon">🚨</div>
+            <div>Study</div>
         </button>
     </div>
 
@@ -3586,7 +3149,7 @@
             }
             
             // Remove all mobile column classes
-            desktopLayout.classList.remove('mobile-show-left', 'mobile-show-right', 'mobile-show-risk', 'mobile-show-settings', 'mobile-show-brain');
+            desktopLayout.classList.remove('mobile-show-left', 'mobile-show-right', 'mobile-show-risk', 'mobile-show-settings');
             
             // Add appropriate mobile column class
             switch(column) {
@@ -3614,35 +3177,9 @@
                 case 'settings':
                     desktopLayout.classList.add('mobile-show-settings');
                     break;
-                case 'brain':
-                    desktopLayout.classList.add('mobile-show-brain');
-                    break;
             }
         }
 
-        // Toggle brain panel visibility (desktop only)
-        function toggleBrainPanel() {
-            const brainPanel = document.querySelector('.brain-panel');
-            const desktopLayout = document.querySelector('.desktop-layout');
-            
-            if (!brainPanel || !desktopLayout) return;
-            
-            // Check if brain panel is currently visible
-            const isVisible = brainPanel.classList.contains('brain-visible') || 
-                             (window.getComputedStyle(brainPanel).display !== 'none');
-            
-            if (isVisible) {
-                // Hide the brain panel
-                brainPanel.classList.add('brain-hidden');
-                brainPanel.classList.remove('brain-visible');
-                desktopLayout.classList.add('brain-collapsed');
-            } else {
-                // Show the brain panel
-                brainPanel.classList.remove('brain-hidden');
-                brainPanel.classList.add('brain-visible');
-                desktopLayout.classList.remove('brain-collapsed');
-            }
-        }
 
         // Toggle risk panel visibility (desktop only)
         function toggleRiskPanel() {

@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>P2006T Multi-Engine Study</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0d0d0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Top bar */
+        .top-bar {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: 56px;
+            background: linear-gradient(135deg, #1a1a1e 0%, #111114 100%);
+            border-bottom: 1px solid #333;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 100;
+        }
+        .top-bar .back-btn {
+            background: none; border: 1px solid #555; color: #e0e0e0;
+            padding: 6px 14px; border-radius: 6px; cursor: pointer;
+            font-size: 13px; transition: all 0.2s;
+        }
+        .top-bar .back-btn:hover { border-color: #4CAF50; color: #4CAF50; }
+        .top-bar h1 {
+            font-size: 18px; font-family: 'Courier New', monospace;
+            color: #f44336; letter-spacing: 2px;
+        }
+        .top-bar .aircraft-badge {
+            background: rgba(76,175,80,0.15); border: 1px solid #4CAF50;
+            color: #4CAF50; padding: 4px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: bold;
+        }
+
+        /* Main tab bar */
+        .tab-bar {
+            position: fixed; top: 56px; left: 0; right: 0;
+            height: 48px;
+            background: #1a1a1e;
+            border-bottom: 1px solid #333;
+            display: flex; align-items: center;
+            padding: 0 10px; gap: 4px; z-index: 99;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            background: none; border: 1px solid transparent; color: #888888;
+            padding: 8px 18px; border-radius: 8px; cursor: pointer;
+            font-size: 13px; font-weight: 600; white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover { color: #ffffff; background: rgba(255,255,255,0.05); }
+        .tab-btn.active {
+            color: #fff; background: rgba(76,175,80,0.2);
+            border-color: #4CAF50;
+        }
+
+        /* Content area */
+        .content { margin-top: 104px; padding: 20px; padding-bottom: 40px; }
+        .tab-page { display: none; }
+        .tab-page.active { display: block; }
+
+        /* Sub-tab bar for Information page */
+        .sub-tab-bar {
+            display: flex; gap: 4px; margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .sub-tab-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid #444; color: #888888;
+            padding: 6px 14px; border-radius: 6px; cursor: pointer;
+            font-size: 12px; font-weight: 600; transition: all 0.2s;
+        }
+        .sub-tab-btn:hover { color: #ffffff; border-color: #888888; }
+        .sub-tab-btn.active {
+            color: #fff; background: rgba(76,175,80,0.15);
+            border-color: #4CAF50;
+        }
+        .sub-page { display: none; }
+        .sub-page.active { display: block; }
+
+        /* Flash card styles */
+        .card-controls {
+            display: flex; align-items: center; justify-content: center;
+            gap: 16px; margin-bottom: 20px;
+        }
+        .card-controls button {
+            background: rgba(255,255,255,0.08); border: 1px solid #555;
+            color: #e0e0e0; padding: 8px 20px; border-radius: 8px;
+            cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        .card-controls button:hover { border-color: #4CAF50; color: #fff; }
+        .card-counter { color: #888888; font-size: 14px; font-family: 'Courier New', monospace; }
+
+        .flashcard {
+            max-width: 700px; margin: 0 auto;
+            min-height: 300px;
+            background: linear-gradient(135deg, #1e1e22 0%, #16161a 100%);
+            border: 1px solid #333; border-radius: 16px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 40px; cursor: pointer;
+            transition: all 0.3s; position: relative;
+            user-select: none;
+        }
+        .flashcard:hover { border-color: #555; }
+        .flashcard .card-label {
+            position: absolute; top: 16px; left: 20px;
+            font-size: 11px; color: #666666; text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .flashcard .card-category {
+            position: absolute; top: 16px; right: 20px;
+            font-size: 10px; color: #4CAF50; background: rgba(76,175,80,0.1);
+            padding: 2px 8px; border-radius: 10px;
+        }
+        .flashcard .card-text {
+            font-size: 18px; text-align: center; line-height: 1.6;
+        }
+        .flashcard .card-text .hoverable {
+            color: #4CAF50; cursor: help; border-bottom: 1px dashed #4CAF50;
+            position: relative; display: inline-block;
+        }
+        .hoverable .hover-detail {
+            display: none; position: absolute; bottom: 130%; left: 50%;
+            transform: translateX(-50%); width: 320px;
+            background: #1a1a1e; border: 1px solid #4CAF50;
+            border-radius: 10px; padding: 14px; font-size: 13px;
+            color: #e0e0e0; line-height: 1.5; z-index: 50;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            text-align: left;
+        }
+        .hoverable .hover-detail::after {
+            content: ''; position: absolute; top: 100%; left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent; border-top-color: #4CAF50;
+        }
+        .hoverable:hover .hover-detail { display: block; }
+        .flashcard.flipped { background: linear-gradient(135deg, #1a2020 0%, #141a1a 100%); border-color: #4CAF50; }
+        .flashcard.flipped .card-label { color: #4CAF50; }
+
+        /* Study mode (Q+A on one side) */
+        .flashcard.study-mode {
+            cursor: default; min-height: auto; align-items: flex-start;
+            text-align: left; padding: 28px 32px;
+        }
+        .flashcard.study-mode .card-label { display: none; }
+        .flashcard.study-mode .card-text { text-align: left; width: 100%; font-size: 15px; }
+        .study-question { color: #4CAF50; font-weight: 600; margin-bottom: 10px; font-size: 16px; }
+        .study-divider { border: none; border-top: 1px solid #333; margin: 10px 0; }
+        .study-answer { color: #e0e0e0; line-height: 1.7; }
+        .study-answer .hoverable { color: #4CAF50; cursor: help; border-bottom: 1px dashed #4CAF50; position: relative; display: inline-block; }
+
+        /* Mode toggle button */
+        .mode-toggle {
+            background: rgba(255,255,255,0.06); border: 1px solid #555;
+            color: #888888; padding: 5px 14px; border-radius: 20px;
+            cursor: pointer; font-size: 11px; transition: all 0.2s;
+        }
+        .mode-toggle:hover { border-color: #4CAF50; color: #fff; }
+        .mode-toggle.active { background: rgba(76,175,80,0.15); border-color: #4CAF50; color: #fff; }
+
+        /* Filter pills for flashcards */
+        .filter-pills {
+            display: flex; gap: 6px; justify-content: center;
+            margin-bottom: 16px; flex-wrap: wrap;
+        }
+        .filter-pill {
+            background: rgba(255,255,255,0.05); border: 1px solid #444;
+            color: #888888; padding: 4px 12px; border-radius: 20px;
+            cursor: pointer; font-size: 11px; transition: all 0.2s;
+        }
+        .filter-pill:hover { border-color: #888888; color: #ffffff; }
+        .filter-pill.active { background: rgba(76,175,80,0.15); border-color: #4CAF50; color: #fff; }
+
+        /* Info section cards */
+        .info-card {
+            background: linear-gradient(135deg, #1e1e22 0%, #16161a 100%);
+            border: 1px solid #333; border-radius: 12px;
+            padding: 20px; margin-bottom: 16px;
+        }
+        .info-card h3 {
+            color: #4CAF50; font-size: 15px; margin-bottom: 12px;
+            font-family: 'Courier New', monospace;
+        }
+        .info-card p, .info-card li {
+            color: #e0e0e0; font-size: 13px; line-height: 1.7; margin-bottom: 6px;
+        }
+        .info-card ul { padding-left: 20px; }
+        .info-card .highlight { color: #4CAF50; font-weight: bold; }
+        .info-card .qa-pair {
+            background: rgba(255,255,255,0.03); border-left: 3px solid #4CAF50;
+            padding: 10px 14px; margin: 8px 0; border-radius: 0 8px 8px 0;
+        }
+        .info-card .qa-pair .q { color: #4CAF50; font-weight: bold; font-size: 13px; }
+        .info-card .qa-pair .a { color: #e0e0e0; margin-top: 4px; font-size: 13px; }
+
+        /* Definitions list */
+        .def-list { max-width: 800px; }
+        .def-item {
+            background: linear-gradient(135deg, #1e1e22 0%, #16161a 100%);
+            border: 1px solid #333; border-radius: 10px;
+            padding: 14px 18px; margin-bottom: 8px;
+        }
+        .def-item .def-term {
+            color: #4CAF50; font-weight: bold; font-size: 14px; margin-bottom: 4px;
+        }
+        .def-item .def-desc { color: #e0e0e0; font-size: 13px; line-height: 1.5; }
+        .def-search {
+            background: #1a1a1e; border: 1px solid #444; color: #e0e0e0;
+            padding: 10px 16px; border-radius: 8px; font-size: 14px;
+            width: 100%; max-width: 400px; margin-bottom: 16px;
+        }
+        .def-search:focus { outline: none; border-color: #4CAF50; }
+
+        /* Airspeeds table */
+        .speed-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px; max-width: 800px;
+        }
+        .speed-card {
+            background: linear-gradient(135deg, #1e1e22 0%, #16161a 100%);
+            border: 1px solid #333; border-radius: 10px;
+            padding: 14px; text-align: center;
+        }
+        .speed-card .speed-name { color: #4CAF50; font-weight: bold; font-size: 14px; }
+        .speed-card .speed-val { color: #ffffff; font-size: 22px; font-weight: bold; font-family: 'Courier New', monospace; margin: 6px 0; }
+        .speed-card .speed-desc { color: #666666; font-size: 11px; }
+
+        /* Quiz styles */
+        .quiz-container { max-width: 700px; margin: 0 auto; }
+        .quiz-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
+        }
+        .quiz-score {
+            font-family: 'Courier New', monospace; font-size: 16px;
+            color: #4CAF50;
+        }
+        .quiz-question {
+            background: linear-gradient(135deg, #1e1e22 0%, #16161a 100%);
+            border: 1px solid #333; border-radius: 12px;
+            padding: 24px; margin-bottom: 16px;
+        }
+        .quiz-question .q-text {
+            font-size: 16px; color: #ffffff; margin-bottom: 16px; line-height: 1.5;
+        }
+        .quiz-question .q-num {
+            font-size: 11px; color: #666666; margin-bottom: 8px; text-transform: uppercase;
+        }
+        .quiz-option {
+            display: block; width: 100%;
+            background: rgba(255,255,255,0.04); border: 1px solid #444;
+            color: #e0e0e0; padding: 12px 16px; border-radius: 8px;
+            cursor: pointer; font-size: 14px; text-align: left;
+            margin-bottom: 8px; transition: all 0.2s;
+        }
+        .quiz-option:hover { border-color: #888888; color: #ffffff; }
+        .quiz-option.correct {
+            border-color: #4CAF50; background: rgba(76,175,80,0.15); color: #4CAF50;
+        }
+        .quiz-option.incorrect {
+            border-color: #f44336; background: rgba(244,67,54,0.15); color: #f44336;
+        }
+        .quiz-option:disabled { cursor: default; opacity: 0.7; }
+        .quiz-explanation {
+            margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.04);
+            border-radius: 8px; font-size: 13px; color: #aaaaaa;
+            display: none;
+        }
+        .quiz-next-btn {
+            background: rgba(76,175,80,0.2); border: 1px solid #4CAF50;
+            color: #fff; padding: 10px 24px; border-radius: 8px;
+            cursor: pointer; font-size: 14px; display: none;
+        }
+        .quiz-next-btn:hover { background: rgba(76,175,80,0.35); }
+
+        /* Quiz category selection */
+        .quiz-cats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        .quiz-cat-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid #444;
+            color: #888888; padding: 6px 14px; border-radius: 6px;
+            cursor: pointer; font-size: 12px; transition: all 0.2s;
+        }
+        .quiz-cat-btn:hover { border-color: #888888; color: #ffffff; }
+        .quiz-cat-btn.active { background: rgba(76,175,80,0.15); border-color: #4CAF50; color: #fff; }
+
+        @media (max-width: 768px) {
+            .top-bar h1 { font-size: 14px; }
+            .flashcard { min-height: 250px; padding: 24px; }
+            .flashcard .card-text { font-size: 15px; }
+            .content { padding: 12px; }
+            .hoverable .hover-detail { width: 260px; }
+        }
+
+        /* ===== Checklists ===== */
+        .cl-section-title {
+            color: #4CAF50; font-family: 'Courier New', monospace;
+            font-size: 12px; font-weight: bold; letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 14px; margin-top: 4px;
+            padding-bottom: 8px; border-bottom: 1px solid #1e2e1e;
+        }
+        .cl-section-title.emg { color: #4CAF50; border-bottom-color: #1e2e1e; }
+        .checklist-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 12px; margin-bottom: 36px;
+        }
+        .cl-panel {
+            background: linear-gradient(160deg, #1a1a1e 0%, #111114 100%);
+            border: 1px solid #333; border-radius: 10px; padding: 12px 14px;
+        }
+        .cl-panel.emergency {
+            background: linear-gradient(160deg, #1a1010 0%, #140b0b 100%);
+            border-color: #3a1818;
+        }
+        .cl-title {
+            color: #4CAF50; font-size: 10.5px; font-weight: bold;
+            font-family: 'Courier New', monospace; text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 8px; padding-bottom: 5px;
+            border-bottom: 1px solid #1a2e1a;
+        }
+        .cl-panel.emergency .cl-title { color: #4CAF50; border-bottom-color: #2a2a2a; }
+        .cl-item {
+            display: flex; gap: 6px; align-items: flex-start;
+            padding: 2px 0; font-size: 11px; color: #d0d0d0; line-height: 1.45;
+        }
+        .cl-item.emg { color: #d0d0d0; }
+        .cl-item b { color: #ffffff; }
+        .cl-item.emg b { color: #4CAF50; font-weight: bold; }
+        .cl-num {
+            color: #555555; font-family: 'Courier New', monospace;
+            min-width: 22px; font-size: 10px; padding-top: 1px; flex-shrink: 0;
+        }
+        .cl-item.emg .cl-num { color: #666666; }
+        .cl-sub { padding: 1px 0 1px 28px; font-size: 10px; color: #666666; line-height: 1.4; }
+        @media (max-width: 900px) { .checklist-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .checklist-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <button class="back-btn" onclick="window.location.href='emergency.html'">← Hub</button>
+        <h1>MULTI-ENGINE STUDY</h1>
+        <span class="aircraft-badge">P2006T</span>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('flashcards')">Flash Cards</button>
+        <button class="tab-btn" onclick="switchTab('information')">Information</button>
+        <button class="tab-btn" onclick="switchTab('definitions')">Definitions</button>
+        <button class="tab-btn" onclick="switchTab('airspeeds')">Airspeeds</button>
+        <button class="tab-btn" onclick="switchTab('quiz')">Quiz</button>
+        <button class="tab-btn" onclick="switchTab('checklists')">Checklists</button>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- ==================== FLASH CARDS ==================== -->
+        <div id="tab-flashcards" class="tab-page active">
+            <div class="filter-pills" id="cardFilters"></div>
+            <div class="card-controls">
+                <button onclick="prevCard()">← Prev</button>
+                <span class="card-counter" id="cardCounter">1 / 1</span>
+                <button onclick="nextCard()">Next →</button>
+                <button onclick="shuffleCards()" style="margin-left:12px">🔀 Shuffle</button>
+                <button class="mode-toggle" id="modeToggle" onclick="toggleStudyMode()">📖 Study Mode</button>
+            </div>
+            <div class="flashcard" id="flashcard" onclick="flipCard()">
+                <div class="card-label" id="cardLabel">QUESTION</div>
+                <div class="card-category" id="cardCat"></div>
+                <div class="card-text" id="cardText"></div>
+            </div>
+            <p style="text-align:center; color:#555; font-size:12px; margin-top:12px;" id="cardHint">Click card to flip · Hover highlighted terms for details</p>
+        </div>
+
+        <!-- ==================== INFORMATION ==================== -->
+        <div id="tab-information" class="tab-page">
+            <div class="sub-tab-bar" id="infoSubTabs">
+                <button class="sub-tab-btn active" onclick="switchInfoSub('aero')">Aerodynamics</button>
+                <button class="sub-tab-btn" onclick="switchInfoSub('systems')">Systems</button>
+                <button class="sub-tab-btn" onclick="switchInfoSub('procedures')">Procedures</button>
+                <button class="sub-tab-btn" onclick="switchInfoSub('performance')">Performance</button>
+                <button class="sub-tab-btn" onclick="switchInfoSub('limitations')">Limitations</button>
+            </div>
+
+            <!-- Aerodynamics -->
+            <div id="info-aero" class="sub-page active">
+                <div class="info-card">
+                    <h3>Aerodynamic Effects of Engine Failure</h3>
+                    <p><span class="highlight">Pitch Down (Lateral Axis):</span> Loss of accelerated slipstream over the horizontal stabilizer causes it to produce less negative lift → aircraft pitches down. Compensate: increase back pressure on yoke.</p>
+                    <p><span class="highlight">Roll Toward Dead Engine (Longitudinal Axis):</span> Loss of accelerated slipstream over the dead engine's wing causes loss of lift → roll toward dead engine. Compensate: bank slightly into operating engine.</p>
+                    <p><span class="highlight">Yaw Toward Dead Engine (Vertical Axis):</span> Asymmetric thrust causes yaw toward dead engine. Windmilling prop creates significant drag. Compensate: rudder toward operating engine.</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>The Critical Engine (PAST)</h3>
+                    <p>The engine whose failure most adversely affects performance and handling. In most twins, the <span class="highlight">left engine</span> is critical.</p>
+                    <ul>
+                        <li><span class="highlight">P-Factor:</span> Asymmetric thrust at high AOA. Descending blade (right side) produces more thrust. Left engine's descending blade thrust arm is farther from centerline → more adverse yaw when lost.</li>
+                        <li><span class="highlight">Accelerated Slipstream:</span> Prop slipstream increases lift over wing. Loss of slipstream on dead engine side → roll toward dead engine. Also reduces horizontal stabilizer effectiveness → pitch down.</li>
+                        <li><span class="highlight">Spiraling Slipstream:</span> Corkscrew airflow striking vertical stabilizer creates yaw tendency. Loss of spiraling slipstream decreases rudder effectiveness.</li>
+                        <li><span class="highlight">Torque:</span> Aircraft tends to rotate opposite propeller rotation. With one engine out, torque from operating engine creates additional rolling moment.</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Asymmetrical Thrust</h3>
+                    <p>Unequal thrust from engines creates yaw toward dead engine. Dead engine's windmilling prop adds significant drag, increasing yaw. Rudder toward operating engine counteracts yaw. More rudder needed as airspeed decreases — at Vmc, full rudder may be required.</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Zero Sideslip</h3>
+                    <p><span class="highlight">Sideslip (undesirable):</span> Wings level + rudder to hold heading → sideward lift from vertical stabilizer → aircraft sideslips → increased drag → vicious cycle requiring more rudder.</p>
+                    <p><span class="highlight">Zero sideslip (desirable):</span></p>
+                    <ul>
+                        <li>Apply rudder toward operating engine (dead foot, dead engine)</li>
+                        <li>Bank 2–5° into operating engine</li>
+                        <li>Lift vector horizontal component counteracts yaw → less rudder needed → less drag</li>
+                        <li>Ball should be deflected ½ ball width toward operating engine</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Vmc — Minimum Controllable Airspeed</h3>
+                    <p>Manufacturer-determined speed below which directional control cannot be maintained with critical engine inoperative and operating engine at takeoff power.</p>
+                    <p><span class="highlight">Certification requirements:</span> Maintain heading within 20°; after recovery, maintain straight flight with ≤5° bank.</p>
+                    <p><span class="highlight">Vmc Factors (CRMALOFT):</span></p>
+                    <ul>
+                        <li><span class="highlight">C</span> — Critical engine windmilling (more drag → higher Vmc)</li>
+                        <li><span class="highlight">R</span> — Rearward CG (less rudder leverage → higher Vmc)</li>
+                        <li><span class="highlight">M</span> — Max takeoff power (most asymmetric thrust → higher Vmc)</li>
+                        <li><span class="highlight">A</span> — Aft CG (same as rearward → higher Vmc)</li>
+                        <li><span class="highlight">L</span> — Landing gear up (less keel effect → higher Vmc)</li>
+                        <li><span class="highlight">O</span> — Out of ground effect (more induced drag → higher Vmc)</li>
+                        <li><span class="highlight">F</span> — Flaps in takeoff position (increased yawing moment → higher Vmc)</li>
+                        <li><span class="highlight">T</span> — Trim set for takeoff (reduced control forces → higher Vmc)</li>
+                    </ul>
+                    <p>Vmc <span class="highlight">decreases</span> with altitude because the operating engine produces less power. Published as IAS; TAS at Vmc increases with altitude.</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Single Engine Performance</h3>
+                    <p>Loss of one engine = 50% power loss but <span class="highlight">≥80% performance loss</span> because remaining engine must overcome drag from failed engine.</p>
+                    <p><span class="highlight">Best SE performance requires:</span> Max power on operating engine, minimum drag (gear up, flaps up, feather prop), zero sideslip.</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Flaps — General Effects</h3>
+                    <ul>
+                        <li>Low settings (5°–15°): significant lift increase, slight drag increase</li>
+                        <li>High settings (15°–30°): significant drag increase</li>
+                        <li>Increase coefficient of lift, wing camber, nose-down pitch tendency</li>
+                        <li>Reduce stall speed at low settings; increase descent angle without increasing airspeed</li>
+                        <li>Increase lift/drag ratio at low settings; decrease at high settings</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Systems -->
+            <div id="info-systems" class="sub-page">
+                <div class="info-card">
+                    <h3>Electrical System</h3>
+                    <ul>
+                        <li><span class="highlight">Primary power:</span> Two engine-driven generators (40A, 14VDC each), operating in parallel with voltage regulators and automatic overvoltage protection</li>
+                        <li><span class="highlight">Secondary power:</span> Main battery 12V/23Ah + Secondary battery 12V/13Ah</li>
+                        <li><span class="highlight">5 Buses:</span> Battery Bus, LH Generator Bus, RH Generator Bus, LH Avionics Bus, RH Avionics Bus</li>
+                        <li>Cross-bus switches isolate L/R sides; FIELD switches control generators</li>
+                        <li>Battery emergency power: 30 minutes</li>
+                        <li>System is DC; Voltmeter normal range: 12–14V</li>
+                        <li>External DC power feeds Battery Bus regardless of master switch position (starters can engage with master off)</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Engines</h3>
+                    <ul>
+                        <li><span class="highlight">Type:</span> Bombardier-Rotax 912 S3 — 4-stroke, 4-cylinder horizontally opposed, spark ignition</li>
+                        <li>Single central camshaft, pushrods, OHV</li>
+                        <li><span class="highlight">Cooling:</span> Cylinder heads liquid-cooled, cylinders ram-air cooled</li>
+                        <li>Dry-sump forced lubrication system</li>
+                        <li>Dual breakerless CDI ignition; firing order: 1-4-2-3</li>
+                        <li>Two constant-depression carburetors per engine</li>
+                        <li>Reduction gearbox (2.27:1) with shock absorber and overload clutch</li>
+                        <li><span class="highlight">Max power:</span> 98.6 HP @ 2,388 RPM (5 min limit); Max continuous: 92.5 HP @ 2,265 RPM</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Cooling System (Rotax)</h3>
+                    <ul>
+                        <li>Closed liquid circuit with expansion tank; water pump driven from camshaft</li>
+                        <li>Flow: Radiator → pump → cylinder heads → expansion tank → back to radiator</li>
+                        <li>Overflow bottle: excess coolant flows there when hot; vacuum sucks it back when cooling</li>
+                        <li>Pressure cap with excess pressure valve + return valve</li>
+                        <li>Coolant temp sensors at cylinder heads 2 and 3 (hottest)</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Oil System (Rotax)</h3>
+                    <ul>
+                        <li>Dry sump forced lubrication; camshaft-driven oil pump with integrated pressure regulator</li>
+                        <li>Flow: Oil tank → oil cooler → oil filter → lubrication points → crankcase → oil tank (via piston blow-by)</li>
+                        <li>Oil temperature sensor on oil pump housing</li>
+                        <li>Circuit venting via bore on oil tank</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Propeller & Governor</h3>
+                    <ul>
+                        <li><span class="highlight">Propeller:</span> MT MTV-21-A-C-F-/CF178-05 — wood/composite 2-blade, variable pitch, fully featherable, diameter 1780mm</li>
+                        <li><span class="highlight">Governor:</span> MT P-875-12 — hydraulically controlled; oil pressure reduces pitch</li>
+                        <li>If hub loses oil pressure → blades move to high-pitch/low-RPM (feather direction)</li>
+                        <li><span class="highlight">Power change:</span> Increase: Prop FIRST, then MAP. Decrease: MAP FIRST, then Prop</li>
+                        <li>Governor check: 3 purge cycles, 400–500 RPM drop each; push lever if >500 RPM drop</li>
+                        <li>RPM: Green 580–2265, Yellow 2265–2388, Red line 2388</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Fuel System</h3>
+                    <ul>
+                        <li>Two integrated wing tanks: 26.42 US gal each (52.84 gal total); usable: 51.35 gal</li>
+                        <li>4 drain points: 1 gascolator + 1 wing sump per side</li>
+                        <li><span class="highlight">No fuel transfer</span> — cross-feed only (supply engine from opposite tank)</li>
+                        <li>Each selector: Left, Right, Off (Off requires pull + rotate)</li>
+                        <li>Electric backup fuel pump for engine-driven pump failure</li>
+                        <li>Gascolator below engine nacelle at lowest point</li>
+                        <li>100LL may increase valve seat wear (MOGAS preferred for engine longevity)</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Landing Gear</h3>
+                    <ul>
+                        <li>3 wheels; electro-hydraulic retractable</li>
+                        <li><span class="highlight">Normal:</span> Reversible electric hydraulic pump; extension aided by gravity</li>
+                        <li><span class="highlight">Emergency:</span> Pressurized accumulator (min 20 bar) forces gear down via shuttle valves</li>
+                        <li>Inadvertent retraction protection: knob must be pulled before pushing UP</li>
+                        <li>Accumulator gauge: left side of tail cone; red push-button to recharge if low</li>
+                        <li>Emergency extension: two distributors on cabin floor under removable cover near pilot seat</li>
+                        <li>Set gear knob to DOWN before emergency extension so lights work normally</li>
+                        <li>Indications: 3 green (down-locked), 1 red (transit), amber "GEAR PUMP ON" caution</li>
+                        <li>Warning horn: gear UP + throttle idle or flaps LAND</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Flight Controls & Trim</h3>
+                    <ul>
+                        <li>Primary controls: ailerons, rudder, stabilator — manual via cables/pulleys/rods</li>
+                        <li><span class="highlight">No</span> reversible flight controls, <span class="highlight">no</span> aileron-rudder interconnect</li>
+                        <li><span class="highlight">Has:</span> rudder trim, aileron trim (ground-adjustable tab), and elevator trim (control wheel between seats)</li>
+                        <li>Stabilator with anti-tab winglet (also functions as trim tab)</li>
+                        <li>Flaps: single electric actuator, continuous mode; markings: 0°, T/O, FULL</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Ignition System (Rotax)</h3>
+                    <ul>
+                        <li>Dual, breakerless <span class="highlight">capacitor discharge ignition (CDI)</span> with integrated generator</li>
+                        <li>Two independent charging coils supply the ignition circuits</li>
+                        <li>Energy stored in capacitors; external trigger coils actuate discharge to ignition coils</li>
+                        <li>Firing order: <span class="highlight">1-4-2-3</span></li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Fuel Delivery (Rotax)</h3>
+                    <ul>
+                        <li>Fuel flow path (engine-side): <span class="highlight">Tank → coarse filter → fire cock → fine filter → mechanical fuel pump → fuel manifold → two carburetors</span></li>
+                        <li>A return line routes surplus fuel back to the tank and suction side to help prevent <span class="highlight">vapour lock</span></li>
+                        <li>Mechanical fuel pump is engine-driven; electric backup pump available for pump failure</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Electrical System Details</h3>
+                    <ul>
+                        <li>Each generator rated <span class="highlight">40A, 14VDC</span></li>
+                        <li>Battery: <span class="highlight">12V, 23Ah</span> (main) + <span class="highlight">12V, 13Ah</span> (secondary)</li>
+                        <li>Avionics buses powered by their respective Generator Bus</li>
+                        <li>FIELD switches control generator excitation — OFF puts generator off-line</li>
+                        <li>Integrated generator regulator maintains constant output voltage + automatic overvoltage protection</li>
+                        <li>Ammeter (G1000) can display current from either L or R generator via selector</li>
+                        <li>System is <span class="highlight">DC</span></li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Preflight & Towing</h3>
+                    <ul>
+                        <li>Tow using the <span class="highlight">nose gear tow bar</span></li>
+                        <li>Preflight gear check: inspect for damage, proper extension, and brake condition</li>
+                        <li>4 drain points: 1 gascolator + 1 wing sump per side</li>
+                        <li>Check emergency gear accumulator pressure gauge (left side of tail cone) — min 20 bar</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Procedures -->
+            <div id="info-procedures" class="sub-page">
+                <div class="info-card">
+                    <h3>Normal Takeoff</h3>
+                    <p>Use manufacturer's Vr or VLOF. If not published: minimum of Vmc or 1.05 × Vs0, whichever is greater.</p>
+                    <p>P2006T: Rotate at <span class="highlight">65 KIAS</span>. Short field: use takeoff flaps, rotate at 65, climb at Vx (72 KIAS).</p>
+                    <p>Critical speed on takeoff is Vmc — below it, directional control may be lost.</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Engine Failure After Takeoff</h3>
+                    <p><span class="highlight">Immediate:</span> Maintain control, pitch for VYSE (84 KIAS)</p>
+                    <p><span class="highlight">Procedure:</span></p>
+                    <ol style="padding-left:20px; color:#ccc; font-size:13px; line-height:1.8;">
+                        <li>Maintain directional control</li>
+                        <li>Power up (max on operating engine)</li>
+                        <li>Clean up (gear up, flaps up)</li>
+                        <li>Identify (dead foot = dead engine)</li>
+                        <li>Verify (retard throttle of suspected engine)</li>
+                        <li>Feather the failed engine</li>
+                        <li>Secure (mixture, prop, throttle, fuel, ignition)</li>
+                        <li>Checklist</li>
+                    </ol>
+                </div>
+
+                <div class="info-card">
+                    <h3>Engine Failure In Flight</h3>
+                    <ol style="padding-left:20px; color:#ccc; font-size:13px; line-height:1.8;">
+                        <li>Maintain control</li>
+                        <li>Pitch for VYSE</li>
+                        <li>Identify</li>
+                        <li>Verify</li>
+                        <li>Feather</li>
+                        <li>Secure</li>
+                        <li>Troubleshoot if time permits</li>
+                    </ol>
+                </div>
+
+                <div class="info-card">
+                    <h3>Engine Restart</h3>
+                    <ol style="padding-left:20px; color:#ccc; font-size:13px; line-height:1.8;">
+                        <li>Fuel selector ON</li>
+                        <li>Mixture RICH</li>
+                        <li>Prop FULL FORWARD</li>
+                        <li>Throttle CRACKED</li>
+                        <li>Starter ENGAGE</li>
+                    </ol>
+                </div>
+
+                <div class="info-card">
+                    <h3>Vmc Demonstration</h3>
+                    <p><span class="highlight">Setup:</span> Safe altitude, takeoff config (gear up, flaps takeoff), takeoff power both engines.</p>
+                    <p><span class="highlight">Procedure:</span> Reduce power on critical engine, maintain heading with rudder + bank into operating engine, slowly reduce airspeed.</p>
+                    <p><span class="highlight">Recovery:</span> At first sign of loss of directional control (stall warning, rudder pedal to stop) → reduce power on operating engine → decrease AOA → recover to safe airspeed → reestablish normal flight.</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Landing</h3>
+                    <p>Final approach (Flaps LND): <span class="highlight">80 KIAS</span>. Short final/short field: <span class="highlight">75 KIAS</span>. Touchdown: <span class="highlight">65 KIAS</span>.</p>
+                    <p>Single engine final approach speed: <span class="highlight">84 KIAS</span>.</p>
+                    <p>Do NOT alter airplane configuration on runway after landing unless clear operational need (gear retraction accidents happen during after-landing roll).</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Traffic Pattern Speeds</h3>
+                    <ul>
+                        <li>Downwind: <span class="highlight">100 KIAS</span></li>
+                        <li>Downwind Abeam (Flaps T/O): <span class="highlight">90 KIAS</span></li>
+                        <li>Base: <span class="highlight">90 KIAS</span></li>
+                        <li>Final Approach (Flaps LND): <span class="highlight">80 KIAS</span></li>
+                        <li>Short Final / Short Field: <span class="highlight">75 KIAS</span></li>
+                        <li>Touchdown: <span class="highlight">65 KIAS</span></li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Steep Turns</h3>
+                    <p>Recommended speed for steep turns: <span class="highlight">110 KIAS</span> (VA 122 KIAS max).</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Drag Demonstration</h3>
+                    <p>Purpose: Show the effects of drag with gear and flaps changes on aircraft performance OEI.</p>
+                    <p>Demonstrates the importance of cleaning up (gear up, flaps up) to minimize drag for best single-engine performance.</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Approach & Instrument Speeds</h3>
+                    <ul>
+                        <li>Holding: <span class="highlight">100 KIAS</span></li>
+                        <li>Precision Approach: <span class="highlight">100 KIAS</span></li>
+                        <li>Non-Precision Approach: <span class="highlight">100 KIAS</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Performance -->
+            <div id="info-performance" class="sub-page">
+                <div class="info-card">
+                    <h3>Runway Requirements</h3>
+                    <p><span class="highlight">Accelerate-Stop Distance:</span> Runway needed to accelerate to V1/VR, then (engine fails) bring to a complete stop.</p>
+                    <p><span class="highlight">Accelerate-Go Distance:</span> Runway needed to accelerate to V1/VR, then (engine fails) continue takeoff and climb to 50 ft.</p>
+                </div>
+                <div class="info-card">
+                    <h3>P2006T Takeoff & Landing</h3>
+                    <p>T/O distance over 50' obstacle at max gross, SL, std day: ~<span class="highlight">1,775 ft</span></p>
+                    <p>Landing distance over 50' obstacle at max gross, SL, std day: ~<span class="highlight">1,705 ft</span></p>
+                    <p>Cruise speed: ~141 KTAS. Range: ~690 NM.</p>
+                </div>
+                <div class="info-card">
+                    <h3>Weight & Balance</h3>
+                    <p>Max takeoff weight: <span class="highlight">2,712 lbs</span> (SUPP G19 MTOW 1230kg)</p>
+                    <p>Max landing weight: <span class="highlight">2,646 lbs</span></p>
+                    <p>Empty weight: ~1,940 lbs. Useful load: ~750 lbs.</p>
+                    <p>Forward CG limit: 16.5% MAC.</p>
+                    <p>Demonstrated crosswind component: <span class="highlight">17 kts</span>.</p>
+                </div>
+                <div class="info-card">
+                    <h3>Unique P2006T Considerations</h3>
+                    <p>Performance calculations likely include error due to <span class="highlight">metric units</span> in AFM.</p>
+                    <p>Max operating altitude: <span class="highlight">14,000 ft</span>. Min operating temp: <span class="highlight">-25°C</span>.</p>
+                </div>
+            </div>
+
+            <!-- Limitations -->
+            <div id="info-limitations" class="sub-page">
+                <div class="info-card">
+                    <h3>P2006T Operating Limitations</h3>
+                    <ul>
+                        <li>Approved for: <span class="highlight">Day and Night VFR and IFR</span></li>
+                        <li>Max operating altitude: <span class="highlight">14,000 ft</span></li>
+                        <li>Min operating temperature: <span class="highlight">-25°C</span></li>
+                        <li>Spins: <span class="highlight">NOT permitted</span></li>
+                        <li>Whip stalls: <span class="highlight">NOT permitted</span></li>
+                        <li>Stalls with OEI: <span class="highlight">NOT permitted</span></li>
+                        <li>Flaps up load factors: <span class="highlight">+3.8G / -1.78G</span></li>
+                        <li>Flaps down load factors: <span class="highlight">+2G / -0G</span></li>
+                        <li>Max takeoff weight: <span class="highlight">2,712 lbs</span> (SUPP G19)</li>
+                        <li>Max landing weight: <span class="highlight">2,646 lbs</span></li>
+                        <li>Max fuel: <span class="highlight">52.8 gal</span> (usable 51.35 gal)</li>
+                        <li>Emergency gear accumulator min pressure: <span class="highlight">20 bar</span></li>
+                        <li>Max power: 98.6 HP @ 2,388 RPM (5 min); Max continuous: 92.5 HP @ 2,265 RPM</li>
+                        <li>Cold weather start oil pressure: 102 PSI allowed briefly</li>
+                        <li>Voltmeter range: 12–14V</li>
+                        <li>Forward CG limit: <span class="highlight">16.5% MAC</span></li>
+                        <li>Demonstrated crosswind: <span class="highlight">17 kts</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== DEFINITIONS ==================== -->
+        <div id="tab-definitions" class="tab-page">
+            <input type="text" class="def-search" id="defSearch" placeholder="Search definitions..." oninput="filterDefs()">
+            <div class="def-list" id="defList"></div>
+        </div>
+
+        <!-- ==================== AIRSPEEDS ==================== -->
+        <div id="tab-airspeeds" class="tab-page">
+            <h3 style="color:#4CAF50; margin-bottom:16px; font-family:'Courier New',monospace;">P2006T V-Speeds</h3>
+            <div class="speed-grid" id="speedGrid"></div>
+        </div>
+
+        <!-- ==================== QUIZ ==================== -->
+        <div id="tab-quiz" class="tab-page">
+            <div class="quiz-cats" id="quizCats"></div>
+            <div class="quiz-container" id="quizContainer">
+                <div class="quiz-header">
+                    <span class="quiz-score" id="quizScore">Score: 0 / 0</span>
+                    <button class="quiz-next-btn" id="quizNextBtn" onclick="nextQuizQuestion()">Next Question →</button>
+                    <button onclick="resetQuiz()" style="background:none; border:1px solid #555; color:#aaa; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12px;">Reset</button>
+                </div>
+                <div id="quizQuestionArea"></div>
+            </div>
+        </div>
+
+        <!-- ==================== CHECKLISTS ==================== -->
+        <div id="tab-checklists" class="tab-page">
+
+            <!-- NORMAL PROCEDURES -->
+            <div class="cl-section-title">▸ Normal Procedures</div>
+            <div class="checklist-grid">
+
+                <div class="cl-panel">
+                    <div class="cl-title">Before Starting Engine</div>
+                    <div class="cl-item"><span class="cl-num">1.</span><span>Preflight Inspection – <b>COMPLETE</b></span></div>
+                    <div class="cl-item"><span class="cl-num">2.</span><span>Pax Briefing / Control Exchange – <b>COMPLETE</b></span></div>
+                    <div class="cl-item"><span class="cl-num">3.</span><span>Seats, Belts, Doors – <b>ADJUST and LOCK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">4.</span><span>Parking Brake – <b>SET</b></span></div>
+                    <div class="cl-item"><span class="cl-num">5.</span><span>Gear Handle – <b>DOWN</b></span></div>
+                    <div class="cl-item"><span class="cl-num">6.</span><span>Alternate Static – <b>CLOSED</b></span></div>
+                    <div class="cl-item"><span class="cl-num">7.</span><span>Circuit Breakers – <b>CHECK IN</b></span></div>
+                    <div class="cl-item"><span class="cl-num">8.</span><span>Flight Controls – <b>FREE and CORRECT</b></span></div>
+                    <div class="cl-item"><span class="cl-num">9.</span><span>Master Switch – <b>ON</b></span></div>
+                    <div class="cl-item"><span class="cl-num">10.</span><span>Strobe Lights – <b>ON</b></span></div>
+                    <div class="cl-item"><span class="cl-num">11.</span><span>Fuel Quantity – <b>CHECK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">12.</span><span>Fuel Selectors – <b>OWN TANK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">13.</span><span>Trims – Check Travel, then <b>NEUTRAL</b></span></div>
+                    <div class="cl-item"><span class="cl-num">14.</span><span>ELT – <b>ARM</b></span></div>
+                    <div class="cl-item"><span class="cl-num">15.</span><span>Fire Detector – <b>TEST</b></span></div>
+                    <div class="cl-item"><span class="cl-num">16.</span><span>Battery Volts – <b>12–14 V</b></span></div>
+                    <div class="cl-item"><span class="cl-num">17.</span><span>Nav Lights – <b>ON</b> (night)</span></div>
+                </div>
+
+                <div class="cl-panel">
+                    <div class="cl-title">Starting Engine <span style="color:#3a6a3a; font-weight:normal; text-transform:none;">*one at a time</span></div>
+                    <div class="cl-item"><span class="cl-num">18.</span><span>Gear Position – <b>3 GREEN</b></span></div>
+                    <div class="cl-item"><span class="cl-num">19.</span><span>CAS / PFD Annunciations – <b>CONSIDER</b></span></div>
+                    <div class="cl-item"><span class="cl-num">20.</span><span>Timer – <b>START</b></span></div>
+                    <div class="cl-item"><span class="cl-num">21.</span><span>Throttles – <b>IDLE to ¼" OPEN</b></span></div>
+                    <div class="cl-item"><span class="cl-num">22.</span><span>Propellers – <b>FULL FORWARD</b></span></div>
+                    <div class="cl-item"><span class="cl-num">23.</span><span>Carb Heat – <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">24.</span><span>Fuel Pumps – <b>ON</b>, Check Press, <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">25.*</span><span>Choke – <b>AS REQUIRED</b></span></div>
+                    <div class="cl-item"><span class="cl-num">26.*</span><span>Fuel Pump – <b>ON</b></span></div>
+                    <div class="cl-item"><span class="cl-num">27.*</span><span>Ignition Switches – <b>ON</b></span></div>
+                    <div class="cl-item"><span class="cl-num">28.*</span><span>Propeller Area – <b>CLEAR</b></span></div>
+                    <div class="cl-item"><span class="cl-num">29.*</span><span>Start Button – <b>ENGAGE</b> (max 10s, 2min cool)</span></div>
+                    <div class="cl-item"><span class="cl-num">30.*</span><span>Throttle – <b>1200 RPM</b></span></div>
+                    <div class="cl-item"><span class="cl-num">31.*</span><span>Oil Pressure – <b>CHECK</b> (max 7 Bar)</span></div>
+                    <div class="cl-item"><span class="cl-num">32.*</span><span>Field – <b>ON</b></span></div>
+                    <div class="cl-item"><span class="cl-num">33.*</span><span>Avionics / Cross Bus – <b>ON</b></span></div>
+                    <div class="cl-item"><span class="cl-num">34.*</span><span>Fuel Pump – <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">35.</span><span>Ammeter &amp; Voltmeter – <b>CHECK MFD</b></span></div>
+                </div>
+
+                <div class="cl-panel">
+                    <div class="cl-title">After Start</div>
+                    <div class="cl-item"><span class="cl-num">36.</span><span>Fuel Selectors – RH→<b>LEFT</b>; LH→<b>RIGHT</b></span></div>
+                    <div class="cl-item"><span class="cl-num">37.</span><span>Flaps – <b>UP</b></span></div>
+                    <div class="cl-item"><span class="cl-num">38.</span><span>Autopilot Master – <b>ON</b></span></div>
+                    <div class="cl-item"><span class="cl-num">39.</span><span>Fuel Totalizer – <b>FOB SYNC</b> or Enter Manually</span></div>
+                    <div class="cl-item"><span class="cl-num">40.</span><span>Traffic – <b>TEST</b></span></div>
+                    <div class="cl-item"><span class="cl-num">41.</span><span>WAAS &amp; RAIM – <b>VERIFY</b></span></div>
+                    <div class="cl-item"><span class="cl-num">42.</span><span>ANN Test Softkey – <b>PRESS</b></span></div>
+                    <div class="cl-item"><span class="cl-num">43.</span><span>COM/NAV Radios – <b>SET</b></span></div>
+                    <div class="cl-item"><span class="cl-num">44.</span><span>Altimeter – <b>SET</b></span></div>
+                    <div class="cl-item"><span class="cl-num">45.</span><span>Flight Instr &amp; FMA – <b>CHECK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">46.</span><span>Transponder – <b>SET</b></span></div>
+                    <div class="cl-item"><span class="cl-num">47.</span><span>Heater and Defrost – <b>CHECKED</b></span></div>
+                    <div class="cl-item"><span class="cl-num">48.</span><span>Engine Instruments – <b>CHECK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">49.</span><span>Taxi Light – <b>ON</b></span></div>
+                    <div class="cl-item"><span class="cl-num">50.</span><span>Parking Brake – <b>RELEASE</b></span></div>
+                    <div class="cl-item"><span class="cl-num">51.</span><span>Brakes – <b>TEST</b></span></div>
+                    <div class="cl-item"><span class="cl-num">52.</span><span>Taxi Check – <b>INSTRUMENTS IN LIMITS</b></span></div>
+                </div>
+
+                <div class="cl-panel">
+                    <div class="cl-title">Engine Run-Up</div>
+                    <div class="cl-item"><span class="cl-num">1.</span><span>Parking Brake – <b>SET</b></span></div>
+                    <div class="cl-item"><span class="cl-num">2.</span><span>Tower/CTAF – <b>MONITOR</b></span></div>
+                    <div class="cl-item"><span class="cl-num">3.</span><span>Seats, Belts, Doors – <b>CHECK SECURE</b></span></div>
+                    <div class="cl-item"><span class="cl-num">4.</span><span>Fuel Selectors – RH→<b>RIGHT</b>; LH→<b>LEFT</b></span></div>
+                    <div class="cl-item"><span class="cl-num">5.</span><span>Engine Instruments – <b>CHECK IN LIMITS</b></span></div>
+                    <div class="cl-item"><span class="cl-num">6.</span><span>Oil Temp – <b>OVER 50°C</b></span></div>
+                    <div class="cl-item"><span class="cl-num">7.</span><span>Autopilot – <b>TEST</b></span></div>
+                    <div class="cl-item"><span class="cl-num">8.</span><span>CAS / PFD Annunciations – <b>CONSIDER</b></span></div>
+                    <div class="cl-item"><span class="cl-num">9.</span><span>Propellers – <b>FULL FORWARD</b></span></div>
+                    <div class="cl-item"><span class="cl-num">10.</span><span>Throttle – <b>1650 RPM</b></span></div>
+                    <div class="cl-sub">a. Ignition Check (max 210 RPM drop / 65 RPM diff)</div>
+                    <div class="cl-sub">b. Carb Heat Check (max 100 RPM drop)</div>
+                    <div class="cl-item"><span class="cl-num">11.</span><span>Propellers – <b>CYCLE ×3</b> (min 1150 RPM)</span></div>
+                    <div class="cl-item"><span class="cl-num">12.</span><span>Throttle – <b>IDLE CHECK</b> (850 RPM)</span></div>
+                    <div class="cl-item"><span class="cl-num">13.</span><span>Throttle – <b>1200 RPM</b></span></div>
+                    <div class="cl-item"><span class="cl-num">14.</span><span>Oil Temp &amp; Pressure – <b>CHECK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">15.</span><span>Engine Instruments – <b>CHECK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">16.</span><span>Alternator Load Sharing – <b>CHECK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">17.</span><span>Flaps – <b>TAKEOFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">18.</span><span>Trims: Pitch &amp; Rudder – <b>NEUTRAL</b></span></div>
+                    <div class="cl-item"><span class="cl-num">19.</span><span>Friction Lock – <b>ADJUST</b></span></div>
+                </div>
+
+                <div class="cl-panel">
+                    <div class="cl-title">Before Takeoff</div>
+                    <div class="cl-item"><span class="cl-num">20.</span><span>T/O &amp; Emergency Briefing – <b>COMPLETE</b></span></div>
+                    <div class="cl-item"><span class="cl-num">21.</span><span>Flight Instruments – <b>CHECK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">22.</span><span>Engine Instruments – <b>CHECK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">23.</span><span>Seats, Belts, Doors – <b>LOCKED and SECURE</b></span></div>
+                    <div class="cl-item"><span class="cl-num">24.</span><span>Fuel Pumps – <b>ON</b></span></div>
+                    <div class="cl-item"><span class="cl-num">25.</span><span>Fuel Selectors – <b>OWN TANK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">26.</span><span>Carb Heat – <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">27.</span><span>Props – <b>FULL FORWARD</b></span></div>
+                    <div class="cl-item"><span class="cl-num">28.</span><span>CAS / PFD Annunciations – <b>CONSIDER</b></span></div>
+                    <div class="cl-item"><span class="cl-num">29.</span><span>COM/NAV/GPS – <b>SET</b></span></div>
+                    <div class="cl-item"><span class="cl-num">30.</span><span>Transponder – <b>ALT</b> (Squawk Verified)</span></div>
+                    <div class="cl-item"><span class="cl-num">31.</span><span>Fuel Quantity – <b>CHECK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">32.</span><span>Pitot Heat – <b>AS REQUIRED</b></span></div>
+                    <div class="cl-item"><span class="cl-num">33.</span><span>Lights – <b>ON</b></span></div>
+                    <div class="cl-item"><span class="cl-num">34.</span><span>Autopilot – <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">35.</span><span>Cabin Doors – <b>CLOSED and LOCKED</b></span></div>
+                    <div class="cl-item"><span class="cl-num">36.</span><span>Parking Brake – <b>RELEASE</b></span></div>
+                    <div class="cl-item"><span class="cl-num">37.</span><span>Set Timer – <b>5 MINS</b></span></div>
+                </div>
+
+                <div class="cl-panel">
+                    <div class="cl-title">Enroute Climb</div>
+                    <div class="cl-item"><span class="cl-num">38.</span><span>Airborne – <b>Brakes apply</b></span></div>
+                    <div class="cl-item"><span class="cl-num">39.</span><span>Out of usable runway – <b>GEAR UP</b></span></div>
+                    <div class="cl-item"><span class="cl-num">40.</span><span>Airspeed – <b>95 KIAS</b></span></div>
+                    <div class="cl-item"><span class="cl-num">41.</span><span>Flaps – <b>VERIFY UP</b></span></div>
+                    <div class="cl-item"><span class="cl-num">42.</span><span>Power – <b>25" Hg</b></span></div>
+                    <div class="cl-item"><span class="cl-num">43.</span><span>Propeller – <b>2250 RPM</b></span></div>
+                    <div class="cl-item"><span class="cl-num">44.</span><span>Engine Instruments – <b>IN LIMITS</b></span></div>
+                    <div class="cl-item"><span class="cl-num">45.</span><span>Fuel Pumps – <b>OFF</b> (one at a time)</span></div>
+                    <div class="cl-item"><span class="cl-num">46.</span><span>Landing &amp; Taxi Lights – <b>OFF</b></span></div>
+                </div>
+
+                <div class="cl-panel">
+                    <div class="cl-title">Cruise</div>
+                    <div class="cl-item"><span class="cl-num">1.</span><span>Power – <b>18"–25" Hg</b> &amp; <b>1900–2250 RPM</b></span></div>
+                    <div class="cl-item"><span class="cl-num">2.</span><span>Fuel Pumps – Verify <b>OFF</b> (one at a time)</span></div>
+                    <div class="cl-item"><span class="cl-num">3.</span><span>Engine Instruments – <b>IN LIMITS</b></span></div>
+                    <div class="cl-item"><span class="cl-num">4.</span><span>Fuel Balance – <b>AS REQUIRED</b> – Set Timer</span></div>
+                </div>
+
+                <div class="cl-panel">
+                    <div class="cl-title">Descent</div>
+                    <div class="cl-item"><span class="cl-num">5.</span><span>Power – <b>AS DESIRED</b></span></div>
+                    <div class="cl-item"><span class="cl-num">6.</span><span>Carb Heat – <b>AS REQUIRED</b></span></div>
+                    <div class="cl-item"><span class="cl-num">7.</span><span>Engine Instruments – <b>IN LIMITS</b></span></div>
+                    <div class="cl-item"><span class="cl-num">8.</span><span>Approach Briefing – <b>COMPLETE (WARNBIF)</b></span></div>
+                </div>
+
+                <div class="cl-panel">
+                    <div class="cl-title">Before Landing</div>
+                    <div class="cl-item"><span class="cl-num">9.</span><span>Seats, Belts, Doors – <b>ADJUST and LOCK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">10.</span><span>Rear Seats – <b>FULL AFT POSITION</b></span></div>
+                    <div class="cl-item"><span class="cl-num">11.</span><span>Fuel Pumps – <b>ON</b></span></div>
+                    <div class="cl-item"><span class="cl-num">12.</span><span>Fuel Selectors – <b>OWN TANK</b></span></div>
+                    <div class="cl-item"><span class="cl-num">13.</span><span>Lights – <b>ON</b></span></div>
+                    <div class="cl-item"><span class="cl-num">14.</span><span>Flaps – Set <b>TAKEOFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">15.</span><span>Carb Heat – <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">16.</span><span>Propellers – <b>2250 RPM</b></span></div>
+                    <div class="cl-item"><span class="cl-num">17.</span><span>Throttles – Retard for Warning Alert, then <b>SET</b></span></div>
+                    <div class="cl-item"><span class="cl-num">18.</span><span>Landing Gear – <b>DOWN (3 GREEN)</b></span></div>
+                    <div class="cl-item"><span class="cl-num">19.</span><span>Engine Instruments – <b>IN LIMITS</b></span></div>
+                    <div class="cl-item"><span class="cl-num">20.</span><span>Propellers – <b>FULL FORWARD</b> (final / FAF)</span></div>
+                    <div class="cl-item"><span class="cl-num">21.</span><span>Flaps – Set <b>LANDING</b> (on final)</span></div>
+                    <div class="cl-item"><span class="cl-num">22.</span><span>GUMPS – <b>COMPLETE</b></span></div>
+                </div>
+
+                <div class="cl-panel">
+                    <div class="cl-title">After Landing &amp; Clear of Runway</div>
+                    <div class="cl-item"><span class="cl-num">23.</span><span>Throttle – <b>1200 RPM</b></span></div>
+                    <div class="cl-item"><span class="cl-num">24.</span><span>Flaps – <b>UP</b></span></div>
+                    <div class="cl-item"><span class="cl-num">25.</span><span>Pitot Heat – <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">26.</span><span>Lights – <b>AS REQUIRED</b></span></div>
+                    <div class="cl-item"><span class="cl-num">27.</span><span>Fuel Pumps – <b>OFF</b> (one at a time)</span></div>
+                </div>
+
+                <div class="cl-panel">
+                    <div class="cl-title">Engine Shutdown</div>
+                    <div class="cl-item"><span class="cl-num">28.</span><span>Throttle – <b>IDLE</b> (1 min cool down)</span></div>
+                    <div class="cl-item"><span class="cl-num">29.</span><span>Trims – <b>NEUTRAL</b></span></div>
+                    <div class="cl-item"><span class="cl-num">30.</span><span>All Electrical Equipment – <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">31.</span><span>Ignition Switches – <b>OFF</b> (Right to Left)</span></div>
+                    <div class="cl-item"><span class="cl-num">32.</span><span>Hobbs / Tach – <b>RECORD</b></span></div>
+                    <div class="cl-item"><span class="cl-num">33.</span><span>Avionics Bus – <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">34.</span><span>Cross Buses – <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">35.</span><span>Fields – <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">36.</span><span>Lights – <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">37.</span><span>Master Switch – <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">38.</span><span>Emg Batt / Emg Cockpit Light / Emg ADI – <b>OFF</b></span></div>
+                    <div class="cl-item"><span class="cl-num">39.</span><span>Fuel Selectors – <b>OFF</b></span></div>
+                </div>
+
+                <div class="cl-panel">
+                    <div class="cl-title">Securing Aircraft</div>
+                    <div class="cl-item"><span class="cl-num">40.</span><span>Cabin / Seats / Belts – <b>CLEAN/SECURE</b></span></div>
+                    <div class="cl-item"><span class="cl-num">41.</span><span>Windows – <b>CLOSED</b></span></div>
+                    <div class="cl-item"><span class="cl-num">42.</span><span>Tow Bar – <b>SECURED</b></span></div>
+                    <div class="cl-item"><span class="cl-num">43.</span><span>Doors – <b>SECURED</b></span></div>
+                    <div class="cl-item"><span class="cl-num">44.</span><span>Tie-Downs &amp; Chocks – <b>IN PLACE and SECURE</b></span></div>
+                    <div class="cl-item"><span class="cl-num">45.</span><span>Propeller Blades – <b>SET</b></span></div>
+                    <div class="cl-item"><span class="cl-num">46.</span><span>Postflight Walk Around – <b>COMPLETE/SECURE</b></span></div>
+                </div>
+
+            </div><!-- end normal grid -->
+
+            <!-- EMERGENCY PROCEDURES -->
+            <div class="cl-section-title emg">⚠ Emergency Procedures</div>
+            <div class="checklist-grid">
+
+                <div class="cl-panel emergency">
+                    <div class="cl-title">Engine Failure – Takeoff Run</div>
+                    <div class="cl-item emg"><span class="cl-num">1.</span><span>Throttle – <b>IDLE</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">2.</span><span>Brakes – <b>APPLY MAXIMUM</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">3.</span><span>Directional Control – <b>MAINTAIN</b></span></div>
+                </div>
+
+                <div class="cl-panel emergency">
+                    <div class="cl-title">Engine Failure – After T/O (Gear Down)</div>
+                    <div class="cl-item emg"><span class="cl-num">1.</span><span>Airspeed – Pitch <b>BLUE LINE (84 KIAS)</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">2.</span><span>Throttles – <b>FULL FORWARD</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">3.</span><span>Propellers – <b>FULL FORWARD</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">4.</span><span>Directional Control – <b>MAINTAIN</b> Throughout</span></div>
+                    <div class="cl-item emg"><span class="cl-num">5.</span><span>Throttles – <b>RETARD</b> for landing</span></div>
+                </div>
+
+                <div class="cl-panel emergency">
+                    <div class="cl-title">Engine Failure – After T/O (Gear Up)</div>
+                    <div class="cl-item emg"><span class="cl-num">1.</span><span>Auto Pilot – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">2.</span><span>Airspeed – Pitch <b>BLUE LINE (84 KIAS)</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">3.</span><span>Throttles – <b>FULL FORWARD</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">4.</span><span>Propellers – <b>FULL FORWARD</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">5.</span><span>Directional Control – <b>MAINTAIN</b> Throughout</span></div>
+                    <div class="cl-item emg"><span class="cl-num">6.</span><span>Gear Up – <b>VERIFIED</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">7.</span><span>Flaps – <b>VERIFIED</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">8.</span><span>Fuel Pumps – <b>ON</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">9.</span><span>Feather Procedure (below 3,000' AGL)</span></div>
+                </div>
+
+                <div class="cl-panel emergency">
+                    <div class="cl-title">Engine Failure – During Flight</div>
+                    <div class="cl-item emg"><span class="cl-num">1.</span><span>Auto Pilot – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">2.</span><span>Airspeed – Pitch <b>BLUE LINE (84 KIAS)</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">3.</span><span>Directional Control – <b>MAINTAIN</b> Throughout</span></div>
+                    <div class="cl-item emg"><span class="cl-num">4.</span><span>Throttles – <b>FULL FORWARD</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">5.</span><span>Propellers – <b>FULL FORWARD</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">6.</span><span>Flaps – <b>UP</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">7.</span><span>Landing Gear – <b>UP</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">8.</span><span>Fuel Pumps – <b>ON</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">9.</span><span>Fuel Selector – <b>VERIFY CORRECT</b></span></div>
+                </div>
+
+                <div class="cl-panel emergency">
+                    <div class="cl-title">Fix Inoperative Engine (above 3000' AGL)</div>
+                    <div class="cl-item emg"><span class="cl-num">1.</span><span>Fuel Selector – <b>SWITCH TANK</b> to Operative side</span></div>
+                    <div class="cl-item emg"><span class="cl-num">2.</span><span>Carb Heat – <b>ON</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">3.</span><span>Fuel Pump – <b>ON</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">4.</span><span>Field – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">5.</span><span>Throttle – <b>OPEN ¼"</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">6.</span><span>Ignition Switches – <b>BOTH ON</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">7.</span><span>Start Button – <b>ENGAGE</b></span></div>
+                </div>
+
+                <div class="cl-panel emergency">
+                    <div class="cl-title">Feathering / Securing INOP Engine</div>
+                    <div class="cl-item emg"><span class="cl-num">1.</span><span>INOP Throttle – <b>IDENTIFY, VERIFY, CLOSED</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">2.</span><span>INOP Prop – <b>IDENTIFY, VERIFY, FEATHER</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">3.</span><span>INOP Ignition – <b>IDENTIFY, VERIFY, OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">4.</span><span>INOP Fuel Pump – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">5.</span><span>INOP Fuel Selector – <b>IDENTIFY, VERIFY, OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">6.</span><span>INOP Field – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">7.</span><span>INOP Carb Heat – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">8.</span><span>Engine Instruments – <b>MONITOR</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">9.</span><span>OPER Fuel Selector – <b>AS REQUIRED / MONITOR</b></span></div>
+                </div>
+
+                <div class="cl-panel emergency">
+                    <div class="cl-title">Unfeathering (Restart)</div>
+                    <div class="cl-item emg"><span class="cl-num">1.</span><span>Fuel Selectors – Qty Checked, <b>SET AS REQUIRED</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">2.</span><span>Carb Heat – <b>ON</b> (if required)</span></div>
+                    <div class="cl-item emg"><span class="cl-num">3.</span><span>INOP Fuel Pump – <b>ON</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">4.</span><span>Field – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">5.</span><span>Ignition Switches – <b>ON</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">6.</span><span>INOP Throttle – <b>IDLE</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">7.</span><span>Pitch – <b>95 KIAS</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">8.</span><span>INOP Prop – <b>FULL FORWARD</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">9.</span><span>Starter – <b>ENGAGE</b> until windmills (30s max)</span></div>
+                    <div class="cl-item emg"><span class="cl-num">10.</span><span>Fuel Flow – <b>VERIFY</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">11.</span><span>Throttle / Props – <b>AS REQUIRED</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">12.</span><span>Field – <b>ON</b></span></div>
+                    <div class="cl-item emg" style="margin-top:5px; font-size:10.5px;"><span class="cl-num" style="color:#666;">↳</span><span><b>Fails:</b> Wait 2 min, Emg Batt ON, repeat 1–9</span></div>
+                    <div class="cl-item emg" style="font-size:10.5px;"><span class="cl-num" style="color:#666;">↳</span><span><b>Still fails:</b> Secure engine, Land ASAP</span></div>
+                </div>
+
+                <div class="cl-panel emergency">
+                    <div class="cl-title">Gear Up Emergency Landing</div>
+                    <div class="cl-item emg"><span class="cl-num">1.</span><span>Verify condition in AFM</span></div>
+                    <div class="cl-item emg"><span class="cl-num">2.</span><span>Airspeed – <b>AS REQUIRED</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">3.</span><span>Gear Selector – <b>UP</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">4.</span><span>Flaps – <b>LANDING</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">5.</span><span>Throttle – <b>IDLE</b> just before T/D</span></div>
+                    <div class="cl-item emg"><span class="cl-num">6.</span><span>LH &amp; RH Fuel Selectors – <b>OFF</b> just before T/D</span></div>
+                    <div class="cl-item emg"><span class="cl-num">7.</span><span>LH &amp; RH Fuel Pumps – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">8.</span><span>Ignition Switches – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">9.</span><span>Master Switch – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">10.</span><span>Touchdown – <b>SLIGHTLY NOSE UP</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">11.</span><span>After stop: Fields &amp; Master – <b>OFF</b></span></div>
+                </div>
+
+                <div class="cl-panel emergency">
+                    <div class="cl-title">Fire During Start (Ground)</div>
+                    <div class="cl-item emg"><span class="cl-num">1.</span><span>Fuel Selectors – <b>BOTH OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">2.</span><span>Ignitions – <b>ALL OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">3.</span><span>Electric Fuel Pumps – <b>BOTH OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">4.</span><span>Cabin Heat &amp; Defrost – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">5.</span><span>Master Switch – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">6.</span><span>Parking Brake – <b>ENGAGED</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">7.</span><span>Aircraft – <b>EVACUATE IMMEDIATELY</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">8.</span><span>Fire Extinguisher – <b>ACTIVATE</b></span></div>
+                </div>
+
+                <div class="cl-panel emergency">
+                    <div class="cl-title">Engine Fire In Flight</div>
+                    <div class="cl-item emg"><span class="cl-num">1.</span><span>Cabin Heat &amp; Defrost – <b>BOTH OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">2.</span><span>Auto Pilot – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">3.</span><span>Affected Fuel Selector – <b>IDENTIFY, VERIFY, OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">4.</span><span>Affected Ignition – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">5.</span><span>Affected Throttle – <b>FULL FORWARD</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">6.</span><span>Affected Prop – <b>IDENTIFY, VERIFY, FEATHER</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">7.</span><span>Affected Fuel Pump – <b>IDENTIFY, VERIFY, OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">8.</span><span>Airspeed – <b>INCREASE</b> (above 84 KIAS)</span></div>
+                    <div class="cl-item emg"><span class="cl-num">9.</span><span>Cabin Ventilation – <b>OPEN</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">10.</span><span>Land – <b>AS SOON AS PRACTICAL</b></span></div>
+                </div>
+
+                <div class="cl-panel emergency">
+                    <div class="cl-title">Propeller Overspeed</div>
+                    <div class="cl-item emg"><span class="cl-num">1.</span><span>Throttle – <b>IDLE</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">2.</span><span>Airspeed – <b>AT OR ABOVE 84 KIAS</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">3.</span><span>Prop – <b>REDUCE</b> to low setting (above feather)</span></div>
+                    <div class="cl-item emg"><span class="cl-num">4.</span><span>RPM – <b>CHECK</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">5.</span><span>Throttle – <b>INCREASE SLOWLY</b> until governor engages</span></div>
+                    <div class="cl-item emg"><span class="cl-num">6.</span><span>Prop – <b>INCREASE SLOWLY</b>, check RPM</span></div>
+                    <div class="cl-item emg"><span class="cl-num">7.</span><span>If continues – <b>SECURE ENGINE</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">8.</span><span>Terminate flight – <b>ASAP</b></span></div>
+                </div>
+
+                <div class="cl-panel emergency">
+                    <div class="cl-title">Alternator Failure</div>
+                    <div class="cl-item emg"><span class="cl-num">1.</span><span>Annunciation – <b>VERIFY FAILURE</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">2.</span><span>FIELD LH/RH – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">3.</span><span>FIELD LH/RH – <b>ON</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">4.</span><span>If ALT Caution remains:</span></div>
+                    <div class="cl-item emg"><span class="cl-num">5.</span><span>FIELD LH/RH – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">6.</span><span>Avionic LH/RH – <b>OFF</b> (sheds non-essential pwr)</span></div>
+                    <div class="cl-item emg"><span class="cl-num">7.</span><span>CROSS BUS LH/RH – <b>OFF</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">8.</span><span>Circuit Breakers – <b>CHECK and RESET</b> (once)</span></div>
+                    <div class="cl-item emg"><span class="cl-num">9.</span><span>Ammeters – <b>MONITOR</b></span></div>
+                    <div class="cl-item emg"><span class="cl-num">10.</span><span>Terminate flight – <b>AS SOON AS PRACTICAL</b></span></div>
+                </div>
+
+            </div><!-- end emergency grid -->
+        </div><!-- end tab-checklists -->
+
+    </div>
+
+<script>
+// ===================== TAB SWITCHING =====================
+function switchTab(tab) {
+    document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    event.target.classList.add('active');
+}
+function switchInfoSub(sub) {
+    document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('info-' + sub).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// ===================== FLASH CARD DATA =====================
+const allCards = [
+    // === AERODYNAMICS ===
+    {cat:'Aerodynamics', q:'What does PAST stand for? (Critical Engine)', a:'<span class="hoverable">P-Factor<span class="hover-detail"><b>P-Factor</b><br>Asymmetric thrust at high AOA. Descending blade produces more thrust. Left engine\'s thrust arm is farther from centerline → more adverse yaw when left engine fails.</span></span>, <span class="hoverable">Accelerated Slipstream<span class="hover-detail"><b>Accelerated Slipstream</b><br>Prop slipstream increases lift over wing. Loss on dead engine side → roll toward dead engine. Also reduces horizontal stab effectiveness → pitch down.</span></span>, <span class="hoverable">Spiraling Slipstream<span class="hover-detail"><b>Spiraling Slipstream</b><br>Corkscrew airflow around fuselage strikes vertical stabilizer, creating yaw. Loss of spiral slipstream → decreased rudder effectiveness.</span></span>, <span class="hoverable">Torque<span class="hover-detail"><b>Torque</b><br>Aircraft tends to rotate opposite prop rotation. With one engine out, torque from operating engine creates additional rolling moment.</span></span>'},
+    {cat:'Aerodynamics', q:'What is the critical engine?', a:'The engine whose failure most adversely affects aircraft performance and handling. In most twins (including P2006T), the <b>left engine</b> is critical.'},
+    {cat:'Aerodynamics', q:'What happens aerodynamically when an engine fails?', a:'<b>Pitch down</b> (loss of stab effectiveness), <b>Roll</b> toward dead engine (loss of lift), <b>Yaw</b> toward dead engine (asymmetric thrust + windmill drag)'},
+    {cat:'Aerodynamics', q:'What is zero sideslip and how do you achieve it?', a:'Minimizes drag OEI. Apply rudder toward operating engine + bank 2–5° into operating engine. Ball ½ width toward operating engine.'},
+    {cat:'Aerodynamics', q:'What is the sideslip condition (undesirable)?', a:'Wings level + rudder to hold heading → sideward lift from vertical stab → aircraft sideslips → increased drag → vicious cycle requiring more rudder → more drag.'},
+    {cat:'Aerodynamics', q:'What does CRMALOFT stand for? (Vmc Factors)', a:'<span class="hoverable">Critical engine windmilling<span class="hover-detail">Windmilling prop creates high drag, increasing yaw → higher Vmc</span></span>, <span class="hoverable">Rearward CG<span class="hover-detail">Less rudder leverage due to shorter moment arm → higher Vmc</span></span>, <span class="hoverable">Max takeoff power<span class="hover-detail">Greatest asymmetric thrust → higher Vmc</span></span>, <span class="hoverable">Aft CG<span class="hover-detail">Same as rearward — reduced rudder effectiveness</span></span>, <span class="hoverable">Landing gear up<span class="hover-detail">Removes keel effect/drag stabilization → higher Vmc</span></span>, <span class="hoverable">Out of ground effect<span class="hover-detail">More induced drag → higher Vmc</span></span>, <span class="hoverable">Flaps takeoff<span class="hover-detail">Increased yawing moment from flap drag → higher Vmc</span></span>, <span class="hoverable">Trim for takeoff<span class="hover-detail">Reduces control forces, limiting corrective input → higher Vmc</span></span>'},
+    {cat:'Aerodynamics', q:'How does Vmc change with altitude?', a:'Vmc <b>decreases</b> with altitude because the operating engine produces less power (less asymmetric thrust). Published as IAS; TAS at Vmc increases with altitude.'},
+    {cat:'Aerodynamics', q:'How much performance is lost with one engine inoperative?', a:'50% power loss but <b>≥80% performance loss</b>. Remaining engine must overcome drag from failed engine. Best SE performance: max power, min drag (gear up, flaps up, feather), zero sideslip.'},
+    {cat:'Aerodynamics', q:'What are the Vmc certification requirements?', a:'Maintain heading within <b>20°</b> of original heading. After recovery, maintain straight flight with not more than <b>5° bank</b>.'},
+    {cat:'Aerodynamics', q:'What is the effect of flaps at low settings (5°–15°)?', a:'Significant <b>increase in lift</b> with only a <b>slight increase in drag</b>. Reduces stall speed. Increases lift/drag ratio.'},
+    {cat:'Aerodynamics', q:'What is the effect of flaps at high settings (15°–30°)?', a:'Significant <b>increase in drag</b>. Decreases lift/drag ratio. Increases descent angle without increasing airspeed.'},
+    {cat:'Aerodynamics', q:'What do flaps generally do?', a:'Increase coefficient of lift, wing camber, nose-down pitch tendency. Reduce stall speed (low settings). Increase required power to maintain altitude. Reduce T/O and landing distance.'},
+    {cat:'Aerodynamics', q:'What is Vyse?', a:'Best single-engine <b>rate of climb</b> speed (blue line). Provides greatest altitude gain per unit of <b>time</b>. P2006T: <b>84 KIAS</b>.'},
+    {cat:'Aerodynamics', q:'What is Vxse?', a:'Best single-engine <b>angle of climb</b> speed. Provides greatest altitude gain per unit of <b>distance</b>. P2006T: <b>83 KIAS</b>.'},
+    {cat:'Aerodynamics', q:'What is the difference between accelerate-stop and accelerate-go distance?', a:'<b>Accelerate-stop:</b> runway to accelerate to V1/VR then stop. <b>Accelerate-go:</b> runway to accelerate to V1/VR then continue takeoff and climb to 50 ft.'},
+    // === P2006T SPECIFIC ===
+    {cat:'P2006T', q:'Does the P2006T have a critical engine?', a:'Yes. The <b>left engine</b> is critical.'},
+    {cat:'P2006T', q:'Are the P2006T engines direct drive?', a:'No. They use a <b>reduction gearbox</b> (2.27:1) to reduce propeller RPM.'},
+    {cat:'P2006T', q:'What is unique about the P2006T door lock?', a:'Uses an <b>oil pressure sensor</b> to lock the door when engines are running to prevent injury from exiting with running engines.'},
+    {cat:'P2006T', q:'Does the P2006T use fuel transfer?', a:'No. <b>Cross-feed only</b> — supply an engine from the opposite tank.'},
+    {cat:'P2006T', q:'What is the P2006T emergency gear extension system?', a:'Uses a <b>pressurized accumulator</b> (min 20 bar) to force gear down through shuttle valves.'},
+    {cat:'P2006T', q:'What ATOMATOFLAMES item is different for the P2006T?', a:'<b>Temperature Gauge</b> — because the P2006T has liquid-cooled engines (unlike most trainers).'},
+    {cat:'P2006T', q:'What unique aspect makes P2006T performance calculations likely to include error?', a:'<b>Metric units</b> in the AFM.'},
+    {cat:'P2006T', q:'What is the difference between fuel cross-feed and fuel transfer?', a:'<b>Fuel transfer:</b> pumping fuel from one tank to the other. <b>Cross-feed:</b> supplying an engine from the opposite-side tank. P2006T has cross-feed only.'},
+    {cat:'P2006T', q:'What is the P2006T gear system exception?', a:'The <b>emergency extension system</b> uses a pressurized accumulator — not a manual hand pump like most twins.'},
+    {cat:'P2006T', q:'Why is the Rotax 912 liquid-cooled?', a:'The Rotax 912 operates at such <b>high RPMs</b> that very high temperatures are generated, necessitating liquid-cooling of cylinder heads.'},
+    {cat:'P2006T', q:'What advantage does MOGAS provide over 100LL?', a:'<b>Improved engine wear</b> over time. 100LL may increase valve seat wear and combustion deposits due to lead content.'},
+    // === SYSTEMS ===
+    {cat:'Systems', q:'Describe the P2006T electrical system buses.', a:'<b>5 buses:</b> Battery Bus, LH Generator Bus, RH Generator Bus, LH Avionics Bus, RH Avionics Bus. Normally in parallel. Cross-bus switches can isolate L/R.'},
+    {cat:'Systems', q:'How long can the P2006T battery provide emergency power?', a:'<b>30 minutes</b>.'},
+    {cat:'Systems', q:'Can the starters engage with master switch off?', a:'Yes — if powered by <b>External DC power</b>, which feeds the Battery Bus directly regardless of master switch position.'},
+    {cat:'Systems', q:'What is the battery voltage and amperage?', a:'Main battery: <b>12V, 23Ah</b>. Secondary battery: <b>12V, 13Ah</b>.'},
+    {cat:'Systems', q:'How are the avionics buses powered?', a:'By their respective <b>Generator Bus</b>.'},
+    {cat:'Systems', q:'What is the function of the FIELD switches?', a:'To allow the respective generator to supply power to the electrical system. OFF puts that generator <b>off-line</b>.'},
+    {cat:'Systems', q:'What is the purpose of the integrated generator regulator?', a:'To maintain a <b>constant output voltage</b> and provide <b>automatic over-voltage protection</b>.'},
+    {cat:'Systems', q:'Is the P2006T electrical system AC or DC?', a:'<b>DC</b>.'},
+    {cat:'Systems', q:'What do the cross-bus switches do?', a:'They <b>isolate</b> the L or R sides from the rest of the electrical system.'},
+    {cat:'Systems', q:'Under normal conditions, how are buses powered?', a:'In <b>parallel</b>. Power is supplied by both generators and the battery.'},
+    {cat:'Systems', q:'Describe the P2006T engine system.', a:'Bombardier-Rotax 912 S3 — 4-stroke, 4-cyl horizontally opposed, spark ignition. Single central camshaft, pushrods, OHV. Cylinder heads liquid-cooled, cylinders air-cooled. Dry-sump lubrication. Dual CDI ignition. Two carbs per engine. Reduction gearbox 2.27:1.'},
+    {cat:'Systems', q:'Describe the P2006T cooling system.', a:'Cylinder heads are <b>liquid-cooled</b>, cylinders are <b>air-cooled</b>. Closed liquid circuit with expansion tank. Water pump driven from camshaft. Overflow container for excess coolant. Vacuum sucks coolant back when temp drops. Sensors at cylinder heads 2 and 3 (hottest).'},
+    {cat:'Systems', q:'What is the purpose of the expansion tank?', a:'To allow coolant to <b>expand and cool</b>.'},
+    {cat:'Systems', q:'What is the purpose of the overflow container?', a:'When pressure is too high in the expansion tank, excess coolant can flow to the overflow container and further <b>expand and cool</b>.'},
+    {cat:'Systems', q:'What force moves coolant from overflow container back to expansion tank?', a:'<b>Vacuum pressure</b> created by a drop in coolant temperature/pressure.'},
+    {cat:'Systems', q:'Describe the coolant transit starting at the radiator.', a:'Radiator → engine-driven coolant pump → cylinder heads → expansion tank. Some flows to overflow container and back; some flows directly back to radiator.'},
+    {cat:'Systems', q:'Describe the oil transit starting at the radiator.', a:'Engine-driven oil pump pulls oil from reservoir to engine. Some passes through the <b>radiator to cool</b>. After lubricating engine, oil returns to reservoir.'},
+    {cat:'Systems', q:'How many carburetors per engine?', a:'<b>Two</b> constant-depression carburetors per engine.'},
+    {cat:'Systems', q:'Describe the oil system.', a:'<b>Dry-sump</b> with camshaft-driven oil pump + integrated pressure regulator. Oil flows: tank → cooler → filter → lubrication → crankcase → tank via piston blow-by. Temp sensor on oil pump housing.'},
+    {cat:'Systems', q:'If a propeller hub loses oil pressure, what happens?', a:'Blades move to <b>high-pitch, low-RPM</b> (feather direction) to reduce drag and prepare engine to be secured.'},
+    {cat:'Systems', q:'What is the power change order for prop/manifold?', a:'<b>Increase:</b> Prop FIRST, then MAP. <b>Decrease:</b> MAP FIRST, then Prop.'},
+    {cat:'Systems', q:'How is propeller pitch controlled?', a:'Using a <b>hydraulic-mechanical system</b>. The propeller lever sets spring tension which meters oil flow to/from the hub to maintain constant speed.'},
+    {cat:'Systems', q:'Describe the governor ground check.', a:'Slowly pull prop lever, repeat purging cycle <b>3 times</b>. Each RPM drop should be <b>400–500 RPM</b>. Push lever if drop exceeds 500 RPM.'},
+    {cat:'Systems', q:'What are the propeller RPM limits?', a:'Green arc: <b>580–2265</b>. Yellow arc: <b>2265–2388</b>. Red line: <b>2388 RPM</b>.'},
+    {cat:'Systems', q:'Describe the P2006T fuel system.', a:'Two wing tanks (26.42 gal each, 52.84 total, 51.35 usable). <b>Cross-feed only, no transfer.</b> 4 drains (1 gascolator + 1 wing sump per side). OFF position requires pull + rotate. Electric backup fuel pump.'},
+    {cat:'Systems', q:'What is the total fuel capacity? Usable?', a:'Total: <b>52.8 gallons</b>. Usable: <b>51.35 gallons</b>.'},
+    {cat:'Systems', q:'What is cross feeding?', a:'Supplying one engine from the <b>opposite wing fuel tank</b>. Pilots direct the engine\'s fuel selector to the cross-side tank.'},
+    {cat:'Systems', q:'Describe the fuel selector positions.', a:'Each selector has 3 positions: <b>Left, Right, Off</b>. L/R determines which tank supplies that engine. OFF requires <b>pull + rotate</b> to reduce unintentional operation.'},
+    {cat:'Systems', q:'What are the P2006T gear indications?', a:'3 green (down-locked), 1 red (transit), amber "GEAR PUMP ON." Warning horn when gear UP + throttle idle/flaps LAND.'},
+    {cat:'Systems', q:'Is the P2006T gear electrically or hydraulically actuated?', a:'<b>Electrically</b> — an electric motor drives a hydraulic pump (electro-hydraulic system).'},
+    {cat:'Systems', q:'Where is the accumulator pressure gauge?', a:'<b>Left side of the tail cone</b>. A red push-button below it allows recharging if pressure is low.'},
+    {cat:'Systems', q:'Where are the emergency gear extension controls?', a:'Two distributors on the <b>cabin floor</b> under a removable cover near the <b>pilot seat</b>.'},
+    {cat:'Systems', q:'What should you do before emergency gear extension?', a:'Set the gear control knob to <b>DOWN</b> so the lights behave normally.'},
+    {cat:'Systems', q:'Does the P2006T have rudder trim?', a:'<b>Yes.</b> The P2006T has rudder trim, elevator trim (control wheel between seats), and ground-adjustable aileron trim.'},
+    {cat:'Systems', q:'Does the P2006T have reversible flight controls?', a:'<b>No.</b>'},
+    {cat:'Systems', q:'Does the P2006T have aileron-rudder interconnect?', a:'<b>No.</b>'},
+    {cat:'Systems', q:'Does the P2006T have aileron trim?', a:'<b>Yes</b> — a trim tab on the left aileron, adjustable on the ground.'},
+    {cat:'Systems', q:'What is the P2006T ignition system?', a:'Dual breakerless <b>CDI</b> (capacitor discharge ignition). Two independent charging coils, energy in capacitors, external trigger coils. Firing order: <b>1-4-2-3</b>.'},
+    {cat:'Systems', q:'Describe the Rotax fuel delivery path (engine-side).', a:'Tank → coarse filter → fire cock → fine filter → mechanical fuel pump → fuel manifold → two carburetors. A return line prevents <b>vapour lock</b>.'},
+    {cat:'Systems', q:'What is the propeller model?', a:'<b>MT MTV-21-A-C-F-/CF178-05</b> — wood/composite 2-blade, variable pitch, fully featherable, 1780mm diameter.'},
+    {cat:'Systems', q:'What is the purpose of the overload clutch?', a:'Limits sudden torque loads (prop strike, abrupt changes) to prevent undue load to the crankshaft.'},
+    {cat:'Systems', q:'What are the reduction gearbox ratios available?', a:'<b>2.27:1</b> (standard) and <b>2.43:1</b> (optional).'},
+    // === PROCEDURES ===
+    {cat:'Procedures', q:'What is the P2006T engine failure after takeoff procedure?', a:'Maintain control → Power up → Clean up → Identify → Verify → Feather → Secure → Checklist'},
+    {cat:'Procedures', q:'What is the engine restart procedure?', a:'Fuel ON → Mixture RICH → Prop FULL FWD → Throttle CRACKED → Starter ENGAGE'},
+    {cat:'Procedures', q:'What is the Vmc demo recovery?', a:'Reduce power on operating engine → Decrease AOA → Recover to safe airspeed → Reestablish normal flight'},
+    {cat:'Procedures', q:'What is the Vmc demo procedure?', a:'Establish takeoff config (gear up, flaps T/O) → takeoff power both engines → reduce power on critical engine → maintain heading with rudder + bank → slowly reduce airspeed → recover at first sign of loss of directional control.'},
+    {cat:'Procedures', q:'What is the normal takeoff procedure?', a:'Rotate at <b>65 KIAS</b>. Climb at VY (84 KIAS).'},
+    {cat:'Procedures', q:'What is the short field takeoff procedure?', a:'Use takeoff flaps, rotate at <b>65 KIAS</b>, climb at VX (<b>72 KIAS</b>).'},
+    {cat:'Procedures', q:'What is the normal landing approach speed?', a:'Final approach (Flaps LND): <b>80 KIAS</b>. Short final/short field: <b>75 KIAS</b>. Touchdown: <b>65 KIAS</b>.'},
+    {cat:'Procedures', q:'What is the single engine final approach speed?', a:'<b>84 KIAS</b>.'},
+    {cat:'Procedures', q:'What is the proper towing procedure?', a:'Tow using the <b>nose gear tow bar</b>.'},
+    {cat:'Procedures', q:'What should you check during preflight regarding landing gear?', a:'Check for <b>damage, proper extension, and brake condition</b>.'},
+    {cat:'Procedures', q:'What is the drag demonstration?', a:'Shows the effects of drag with gear and flaps changes on OEI performance. Demonstrates importance of cleaning up for best single-engine performance.'},
+    {cat:'Procedures', q:'What is the recommended speed for steep turns?', a:'<b>110 KIAS</b>.'},
+    {cat:'Procedures', q:'What are the traffic pattern speeds?', a:'Downwind: <b>100</b> → Abeam (Flaps T/O): <b>90</b> → Base: <b>90</b> → Final (Flaps LND): <b>80</b> → Short final: <b>75</b> → Touchdown: <b>65 KIAS</b>.'},
+    // === LIMITATIONS ===
+    {cat:'Limitations', q:'What operations is the P2006T approved for?', a:'<b>Day and Night VFR and IFR.</b>'},
+    {cat:'Limitations', q:'What is the P2006T max operating altitude?', a:'<b>14,000 feet</b>.'},
+    {cat:'Limitations', q:'What is the minimum operating temperature?', a:'<b>-25°C</b>.'},
+    {cat:'Limitations', q:'What are the flaps-up load factor limits?', a:'<b>+3.8G and -1.78G</b>.'},
+    {cat:'Limitations', q:'What are the flaps-down load factor limits?', a:'<b>+2G and -0G</b>.'},
+    {cat:'Limitations', q:'What stalls are NOT permitted in the P2006T?', a:'<b>Whip stalls</b> and <b>stalls with one engine inoperative</b>. Spins also not permitted.'},
+    {cat:'Limitations', q:'What is the P2006T max takeoff weight?', a:'<b>2,712 lbs</b> (SUPP G19 MTOW 1230kg).'},
+    {cat:'Limitations', q:'What is the max landing weight?', a:'<b>2,646 lbs</b>.'},
+    {cat:'Limitations', q:'What is P2006T max power?', a:'<b>98.6 HP @ 2,388 RPM</b> (5 min limit). Max continuous: <b>92.5 HP @ 2,265 RPM</b>.'},
+    {cat:'Limitations', q:'What is the max fuel capacity?', a:'<b>52.8 gallons</b> total. Usable: 51.35 gallons.'},
+    {cat:'Limitations', q:'What is the normal voltmeter range?', a:'<b>12–14 Volts</b>.'},
+    {cat:'Limitations', q:'When can oil pressure be 102 PSI indicated?', a:'For a <b>short period during a cold weather start</b>.'},
+    {cat:'Limitations', q:'What is the forward CG limit?', a:'<b>16.5% MAC</b>.'},
+    {cat:'Limitations', q:'What is the minimum emergency gear accumulator pressure?', a:'<b>20 bar</b>.'},
+    // === SPEEDS ===
+    {cat:'Speeds', q:'What is VMC for the P2006T?', a:'<b>62 KIAS</b>.'},
+    {cat:'Speeds', q:'What is VYSE (blue line) for the P2006T?', a:'<b>84 KIAS</b> (at max weight 2712 lbs).'},
+    {cat:'Speeds', q:'What is VXSE for the P2006T?', a:'<b>83 KIAS</b> (at max weight 2712 lbs).'},
+    {cat:'Speeds', q:'What is VSSE for the P2006T?', a:'<b>80 KIAS</b> (clean). <b>70 KIAS</b> (with T/O flaps).'},
+    {cat:'Speeds', q:'What is VR for the P2006T?', a:'<b>65 KIAS</b>.'},
+    {cat:'Speeds', q:'What is VY for the P2006T?', a:'<b>84 KIAS</b>.'},
+    {cat:'Speeds', q:'What is VX for the P2006T?', a:'<b>72 KIAS</b>.'},
+    {cat:'Speeds', q:'What is VA for the P2006T at max weight?', a:'<b>122 KIAS</b> (at 2712 lbs). <b>118 KIAS</b> at 2600 lbs.'},
+    {cat:'Speeds', q:'What is VNE for the P2006T?', a:'<b>171 KIAS</b>.'},
+    {cat:'Speeds', q:'What is VNO for the P2006T?', a:'<b>138 KIAS</b>.'},
+    {cat:'Speeds', q:'What is VG (best glide) for the P2006T?', a:'<b>84 KIAS</b>.'},
+    {cat:'Speeds', q:'What is the obstacle clearance (barrier) speed?', a:'<b>70 KIAS</b>.'},
+    {cat:'Speeds', q:'What is the demonstrated crosswind component?', a:'<b>17 kts</b>.'},
+    {cat:'Speeds', q:'What is the holding speed?', a:'<b>100 KIAS</b>.'},
+    {cat:'Speeds', q:'What is the steep turns speed?', a:'<b>110 KIAS</b>.'},
+    {cat:'Speeds', q:'What is VCC (cruise climb speed)?', a:'<b>95 KIAS</b>.'},
+    {cat:'Speeds', q:'What is VS (stall speed, clean) for the P2006T?', a:'<b>66 KIAS</b>.'},
+    {cat:'Speeds', q:'What is VS0 (stall speed, flaps down) for the P2006T?', a:'<b>54 KIAS</b>.'},
+    {cat:'Speeds', q:'What is VFE for T/O flaps?', a:'<b>122 KIAS</b> (max speed with T/O flaps extended).'},
+    {cat:'Speeds', q:'What is VFE for landing flaps?', a:'<b>93 KIAS</b> (max speed with landing flaps extended).'},
+    {cat:'Speeds', q:'What is VLE for the P2006T?', a:'<b>122 KIAS</b> — max speed with gear <b>extended</b>.'},
+    {cat:'Speeds', q:'What is VLO for the P2006T?', a:'<b>122 KIAS</b> — max speed during gear <b>operation</b> (retraction/extension).'},
+    {cat:'Speeds', q:'What is the max speed for emergency gear extension?', a:'<b>122 KIAS</b>.'},
+    {cat:'Speeds', q:'What is the normal downwind leg speed?', a:'<b>100 KIAS</b>.'},
+    {cat:'Speeds', q:'What is the downwind abeam speed (with T/O flaps)?', a:'<b>90 KIAS</b>.'},
+    {cat:'Speeds', q:'What is the base leg speed?', a:'<b>90 KIAS</b>.'},
+    {cat:'Speeds', q:'What is the final approach speed (flaps LND)?', a:'<b>80 KIAS</b>.'},
+    {cat:'Speeds', q:'What is the short final / short field speed?', a:'<b>75 KIAS</b>.'},
+    {cat:'Speeds', q:'What is the touchdown speed?', a:'<b>65 KIAS</b>.'},
+    {cat:'Speeds', q:'What is the single engine final approach speed?', a:'<b>84 KIAS</b> (VYSE — maintain blue line OEI).'},
+    {cat:'Speeds', q:'What is the precision approach speed?', a:'<b>100 KIAS</b>.'},
+    {cat:'Speeds', q:'What is the non-precision approach speed?', a:'<b>100 KIAS</b>.'},
+];
+
+let filteredCards = [...allCards];
+let cardIdx = 0;
+let flipped = false;
+let studyMode = false;
+
+function buildFilters() {
+    const cats = [...new Set(allCards.map(c => c.cat))];
+    const el = document.getElementById('cardFilters');
+    el.innerHTML = '<span class="filter-pill active" onclick="filterCards(\'all\',this)">All</span>';
+    cats.forEach(c => {
+        el.innerHTML += `<span class="filter-pill" onclick="filterCards('${c}',this)">${c}</span>`;
+    });
+}
+function filterCards(cat, el) {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    filteredCards = cat === 'all' ? [...allCards] : allCards.filter(c => c.cat === cat);
+    cardIdx = 0; flipped = false; renderCard();
+}
+function renderCard() {
+    if (filteredCards.length === 0) { document.getElementById('cardText').innerHTML = 'No cards in this category'; return; }
+    const c = filteredCards[cardIdx];
+    const fc = document.getElementById('flashcard');
+    document.getElementById('cardCounter').textContent = `${cardIdx+1} / ${filteredCards.length}`;
+    if (studyMode) {
+        fc.classList.remove('flipped');
+        fc.classList.add('study-mode');
+        document.getElementById('cardCat').textContent = c.cat;
+        document.getElementById('cardText').innerHTML =
+            `<div class="study-question">${c.q}</div><hr class="study-divider"><div class="study-answer">${c.a}</div>`;
+    } else {
+        fc.classList.remove('study-mode');
+        document.getElementById('cardLabel').textContent = flipped ? 'ANSWER' : 'QUESTION';
+        document.getElementById('cardCat').textContent = c.cat;
+        document.getElementById('cardText').innerHTML = flipped ? c.a : c.q;
+        fc.classList.toggle('flipped', flipped);
+    }
+}
+function flipCard() { if (studyMode) return; flipped = !flipped; renderCard(); }
+function toggleStudyMode() {
+    studyMode = !studyMode;
+    const btn = document.getElementById('modeToggle');
+    btn.classList.toggle('active', studyMode);
+    btn.textContent = studyMode ? '🃏 Flip Mode' : '📖 Study Mode';
+    document.getElementById('cardHint').textContent = studyMode
+        ? 'Question and answer shown together · Hover highlighted terms for details'
+        : 'Click card to flip · Hover highlighted terms for details';
+    flipped = false;
+    renderCard();
+}
+function nextCard() { cardIdx = (cardIdx + 1) % filteredCards.length; flipped = false; renderCard(); }
+function prevCard() { cardIdx = (cardIdx - 1 + filteredCards.length) % filteredCards.length; flipped = false; renderCard(); }
+function shuffleCards() {
+    for (let i = filteredCards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filteredCards[i], filteredCards[j]] = [filteredCards[j], filteredCards[i]];
+    }
+    cardIdx = 0; flipped = false; renderCard();
+}
+
+// ===================== DEFINITIONS =====================
+const definitions = [
+    // Key Multi-Engine Definitions
+    {term:'Critical Engine', desc:'The engine whose failure most adversely affects the aircraft\'s performance and handling qualities. In most twins, the left engine.'},
+    {term:'Asymmetrical Thrust', desc:'Unequal thrust produced by engines (commonly from engine failure), creating yaw toward the dead engine. Rudder toward operating engine counteracts yaw.'},
+    {term:'Sideslip (OEI)', desc:'Wings level with rudder applied to hold heading creates a sideslip and extra drag. Creates a vicious cycle: more rudder → more drag → more rudder needed.'},
+    {term:'Zero Sideslip (OEI)', desc:'Minimizes drag: rudder toward operating engine + 2–5° bank into operating engine. Ball ½ width toward operating engine. Reduces rudder needed and drag.'},
+    {term:'Vmc', desc:'Minimum controllable airspeed (manufacturer determined) with critical engine inoperative and operative engine at takeoff power. Below this speed, directional control cannot be maintained. P2006T: 62 KIAS.'},
+    {term:'Vyse', desc:'Best single-engine rate of climb speed (blue line). Greatest altitude gain per unit of time. P2006T: 84 KIAS.'},
+    {term:'Vxse', desc:'Best single-engine angle of climb speed. Greatest altitude gain per unit of distance. P2006T: 83 KIAS.'},
+    {term:'VSSE', desc:'Intentional one-engine-inoperative speed — minimum speed for intentionally rendering one engine inoperative. P2006T: 80 KIAS (70 KIAS with T/O flaps).'},
+    {term:'Accelerate-Stop Distance', desc:'Runway required to accelerate to V1 (or VR if no V1 published), then (engine failure at that point) bring the airplane to a complete stop.'},
+    {term:'Accelerate-Go Distance', desc:'Runway required to accelerate to V1 (or VR if no V1 published), then (engine failure at that point) continue takeoff and climb to 50 feet.'},
+    // Aerodynamic Effects
+    {term:'P-Factor', desc:'Asymmetric thrust from propeller at high angles of attack. Descending blade (right side) produces more thrust than ascending blade. Left engine\'s descending blade thrust arm is farther from centerline.'},
+    {term:'Accelerated Slipstream', desc:'Increased airflow over wing from propeller slipstream increasing lift. Loss causes roll toward dead engine and pitch down (reduced horizontal stab effectiveness).'},
+    {term:'Spiraling Slipstream', desc:'Corkscrew airflow around fuselage striking the vertical stabilizer, creating yaw. Loss of spiral slipstream reduces rudder effectiveness.'},
+    {term:'Torque', desc:'Tendency of aircraft to rotate opposite propeller rotation. With one engine out, torque from operating engine creates additional rolling moment.'},
+    {term:'Feathering', desc:'Rotating propeller blades to a very high pitch/low drag position to minimize drag from a failed engine. Oil pressure is used to reduce pitch; loss of oil pressure moves blades toward feather.'},
+    {term:'Windmilling', desc:'A propeller rotating due to airflow rather than engine power, typically producing significant drag that increases the yawing moment.'},
+    {term:'Keel Effect', desc:'Directional stability provided by side area (fuselage, extended gear) that resists yaw. Gear down increases keel effect and can lower Vmc.'},
+    // Aircraft Components
+    {term:'Stabilator', desc:'An all-moving horizontal tail surface used for pitch control. The P2006T uses a stabilator with an anti-tab winglet.'},
+    {term:'Anti-Servo Tab (Anti-Tab)', desc:'A tab linked to an all-moving stabilator that provides control feel and prevents over-control by moving to oppose stabilator motion. In the P2006T, also functions as a trim tab.'},
+    {term:'Gear Reduction Box (Reduction Gearbox)', desc:'A gearbox between the engine crankshaft and propeller that reduces prop RPM relative to engine RPM, allowing the engine to run at higher RPM while keeping propeller RPM in an efficient/safe range. P2006T ratio: 2.27:1 (2.43:1 optional).'},
+    {term:'Overload Clutch', desc:'A protective clutch in the propeller gearbox designed to limit sudden torque loads (prop strike, abrupt load changes) to prevent undue load to the crankshaft.'},
+    {term:'Torsional Shock Absorber', desc:'A mechanism in the gearbox that cushions twisting (torsional) vibrations/impacts, reducing shock transmitted through the drivetrain.'},
+    {term:'Accumulator (Landing Gear)', desc:'A pressurized reservoir (nitrogen/oil system) that stores hydraulic energy to drive gear extension during an emergency. P2006T min pressure: 20 bar.'},
+    {term:'Shuttle Valve', desc:'A valve that automatically selects between two pressure sources (e.g., normal hydraulic pressure vs. emergency accumulator pressure) to feed the same actuator line.'},
+    {term:'Electro-Hydraulic System', desc:'A system where an electric motor drives a hydraulic pump to create hydraulic pressure for actuators (e.g., landing gear jacks).'},
+    {term:'Hydraulic Jack (Actuator)', desc:'A cylinder/piston assembly that converts hydraulic pressure into mechanical movement (extends/retracts the gear).'},
+    {term:'Hydraulic Power Pack', desc:'A reversible electrically powered hydraulic pump that pressurizes hydraulic lines to drive the gear UP or DOWN through hydraulic jacks.'},
+    {term:'Limit Micro-Switch', desc:'A position switch that changes state when a component reaches a specific position (e.g., gear up/down) for indication and system control. P2006T has 6 couples (2 per leg).'},
+    {term:'Constant-Speed Propeller', desc:'A propeller system that automatically adjusts blade angle to hold a selected RPM under changing power/airspeed conditions.'},
+    {term:'Propeller Governor', desc:'The control unit that senses RPM and meters oil to/from the prop hub to change blade pitch and maintain selected RPM. P2006T: MT P-875-12.'},
+    // Electrical System
+    {term:'Bus (Electrical)', desc:'A common electrical distribution point that feeds multiple loads. P2006T has 5: Battery Bus, LH/RH Generator Bus, LH/RH Avionics Bus.'},
+    {term:'Voltage Regulator', desc:'A device that maintains generator output voltage within a specified range (12–14V for P2006T).'},
+    {term:'Overvoltage Protection', desc:'Protection that disconnects or limits generator output if voltage exceeds safe limits. Automatic in P2006T.'},
+    {term:'Rectifier-Regulator', desc:'Converts AC output from a generator/alternator to DC and regulates the voltage.'},
+    {term:'FIELD Switch (Field Circuit)', desc:'The generator control circuit that energizes the generator\'s field. Turning FIELD OFF removes excitation and takes that generator off-line.'},
+    {term:'Cross-Bus (Tie) Switch', desc:'A switch that connects or isolates left/right electrical bus segments to allow load sharing or isolation during failures.'},
+    // Fuel System
+    {term:'Cross-Feed', desc:'Supplying one engine from the opposite wing fuel tank by directing the fuel selector to the cross-side tank. P2006T has cross-feed only, NO fuel transfer.'},
+    {term:'Fuel Transfer', desc:'Pumping fuel from one side tank to the other side tank (e.g., left to right). The P2006T does NOT have fuel transfer capability.'},
+    {term:'Gascolator', desc:'Located beneath the engine nacelle between the tank and the electric pump, at the lowest point. Has a drain valve for overall fuel line drainage.'},
+    {term:'Vapour Lock', desc:'A condition where fuel vaporizes in the fuel lines, blocking liquid fuel flow. The Rotax return line helps prevent this.'},
+    // Ignition
+    {term:'CDI (Capacitor Discharge Ignition)', desc:'Breakerless ignition system where energy is stored in capacitors and discharged through ignition coils via trigger coils. P2006T uses dual independent CDI systems.'},
+    // V-Speed Definitions
+    {term:'VEF', desc:'Speed at which the critical engine is assumed to fail during takeoff.'},
+    {term:'VR', desc:'Rotation speed — speed at which the pilot begins to raise the nose. P2006T: 65 KIAS.'},
+    {term:'VLOF', desc:'Lift-off speed — speed at which the airplane leaves the ground. Often 10% higher than VR.'},
+    {term:'VX', desc:'Best angle of climb speed — greatest altitude gain per unit of distance. P2006T: 72 KIAS.'},
+    {term:'VY', desc:'Best rate of climb speed — greatest altitude gain per unit of time. P2006T: 84 KIAS.'},
+    {term:'VA (VO)', desc:'Maneuvering speed — maximum speed for full control deflection without structural damage. P2006T: 122 KIAS (max wt), 118 KIAS (2600 lbs).'},
+    {term:'VS', desc:'Stall speed in clean configuration. P2006T: 66 KIAS.'},
+    {term:'VS0', desc:'Stall speed in landing configuration (flaps down). P2006T: 54 KIAS.'},
+    {term:'VFE', desc:'Maximum flap extended speed. P2006T: 122 KIAS (T/O), 93 KIAS (LND).'},
+    {term:'VLE', desc:'Maximum speed with landing gear extended. P2006T: 122 KIAS.'},
+    {term:'VLO', desc:'Maximum speed at which landing gear can be extended or retracted. P2006T: 122 KIAS.'},
+    {term:'VNO', desc:'Maximum structural cruising speed — do not exceed except in smooth air. P2006T: 138 KIAS.'},
+    {term:'VNE', desc:'Never-exceed speed — maximum speed the aircraft may be operated. P2006T: 171 KIAS.'},
+    {term:'VCC', desc:'Normal cruise climb speed. P2006T: 95 KIAS.'},
+    {term:'VG', desc:'Best glide speed — maximum distance per unit of altitude lost. P2006T: 84 KIAS.'},
+    {term:'VMC', desc:'Minimum control speed with critical engine inoperative. P2006T: 62 KIAS.'},
+    {term:'VYSE', desc:'Best single-engine rate of climb speed (blue line). P2006T: 84 KIAS at max weight.'},
+    {term:'VXSE', desc:'Best single-engine angle of climb speed. P2006T: 83 KIAS at max weight.'},
+    {term:'VSSE', desc:'Intentional one-engine-inoperative speed. P2006T: 80 KIAS (70 KIAS with T/O flaps).'},
+    {term:'VAPCH', desc:'Final approach speed. P2006T: 80 KIAS (Flaps LND).'},
+    // General
+    {term:'MAC (Mean Aerodynamic Chord)', desc:'A reference chord length used for expressing CG location as a percentage. P2006T forward CG limit: 16.5% MAC.'},
+    {term:'Flaps (P2006T)', desc:'Extended by a single electric actuator in continuous mode. Indicator marks for 0°, T/O, and FULL (landing). No specific flap type (e.g., Fowler) stated in AFM.'},
+    {term:'100LL Caution', desc:'Avgas 100LL may increase valve seat wear and combustion deposits due to lead content. MOGAS preferred for long-term engine longevity.'},
+];
+
+function renderDefs() {
+    const el = document.getElementById('defList');
+    el.innerHTML = definitions.map(d =>
+        `<div class="def-item"><div class="def-term">${d.term}</div><div class="def-desc">${d.desc}</div></div>`
+    ).join('');
+}
+function filterDefs() {
+    const q = document.getElementById('defSearch').value.toLowerCase();
+    const items = document.querySelectorAll('.def-item');
+    items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(q) ? '' : 'none';
+    });
+}
+
+// ===================== AIRSPEEDS =====================
+const speeds = [
+    // Takeoff & Climb
+    {name:'VR', val:'65', desc:'Rotation Speed'},
+    {name:'VR SF', val:'65', desc:'Short Field Rotation'},
+    {name:'Obstacle', val:'70', desc:'Obstacle Clearance (Barrier)'},
+    {name:'VX', val:'72', desc:'Best Angle of Climb (T/O)'},
+    {name:'VY', val:'84', desc:'Best Rate of Climb (T/O)'},
+    {name:'VCC', val:'95', desc:'Cruise Climb Speed'},
+    // Maneuvering
+    {name:'VA', val:'122', desc:'Maneuvering (Max Wt 2712)'},
+    {name:'VA', val:'118', desc:'Maneuvering (2600 lbs)'},
+    // Stall
+    {name:'VS', val:'66', desc:'Stall Speed (Clean)'},
+    {name:'VS0', val:'54', desc:'Stall Speed (Flaps Down)'},
+    // Flap & Gear
+    {name:'VFE T/O', val:'122', desc:'Max Flap Extended (T/O)'},
+    {name:'VFE LND', val:'93', desc:'Max Flap Extended (LND)'},
+    {name:'VLE', val:'122', desc:'Max Gear Extended'},
+    {name:'VLO', val:'122', desc:'Max Gear Operation'},
+    {name:'Emrg Gear', val:'122', desc:'Emergency Gear Extension Max'},
+    // Airspeed Limits
+    {name:'VNO', val:'138', desc:'Max Structural Cruise'},
+    {name:'VNE', val:'171', desc:'Never Exceed (Max Wt)'},
+    // Multi-Engine
+    {name:'VMC', val:'62', desc:'Minimum Control Speed'},
+    {name:'VXSE', val:'83', desc:'Best SE Angle (Max Wt)'},
+    {name:'VYSE', val:'84', desc:'Best SE Rate / Blue Line (Max Wt)'},
+    {name:'VSSE', val:'80', desc:'Intentional OEI Speed'},
+    {name:'VSSE', val:'70', desc:'Intentional OEI (T/O Flaps)'},
+    {name:'VG', val:'84', desc:'Best Glide Speed'},
+    // Pattern & Approach
+    {name:'Downwind', val:'100', desc:'Downwind Leg'},
+    {name:'DW Abeam', val:'90', desc:'Downwind Abeam (Flaps T/O)'},
+    {name:'Base', val:'90', desc:'Base Leg'},
+    {name:'VAPCH', val:'80', desc:'Final Approach (Flaps LND)'},
+    {name:'Short Final', val:'75', desc:'Short Final / Short Field'},
+    {name:'Touchdown', val:'65', desc:'Touchdown Speed'},
+    {name:'SE Final', val:'84', desc:'Single Engine Final Approach'},
+    // Instrument & Other
+    {name:'Holding', val:'100', desc:'Holding Speed'},
+    {name:'Precision', val:'100', desc:'Precision Approach'},
+    {name:'Non-Prec', val:'100', desc:'Non-Precision Approach'},
+    {name:'Steep Trn', val:'110', desc:'Steep Turns'},
+    {name:'Demo X-Wind', val:'17', desc:'Demonstrated Crosswind'},
+];
+function renderSpeeds() {
+    document.getElementById('speedGrid').innerHTML = speeds.map(s =>
+        `<div class="speed-card"><div class="speed-name">${s.name}</div><div class="speed-val">${s.val}</div><div class="speed-desc">${s.desc}</div></div>`
+    ).join('');
+}
+
+// ===================== QUIZ =====================
+const quizQuestions = [
+    // === AERODYNAMICS (15 questions) ===
+    {cat:'Aerodynamics', q:'What does PAST stand for?', opts:['Power, Altitude, Speed, Throttle','P-Factor, Accelerated Slipstream, Spiraling Slipstream, Torque','Pitch, Airspeed, Stall, Throttle','Power, Asymmetric, Sideslip, Torque'], correct:1},
+    {cat:'Aerodynamics', q:'Which engine is typically the critical engine?', opts:['Right engine','Either engine equally','Left engine','Depends on altitude'], correct:2},
+    {cat:'Aerodynamics', q:'How much performance is lost with one engine inoperative?', opts:['50%','25%','80% or more','100%'], correct:2},
+    {cat:'Aerodynamics', q:'In zero sideslip OEI, the ball should be:', opts:['Centered','½ width toward dead engine','½ width toward operating engine','Full deflection toward operating engine'], correct:2},
+    {cat:'Aerodynamics', q:'Vmc decreases with altitude because:', opts:['Air is thinner','Operating engine produces less power','Drag increases','TAS increases'], correct:1},
+    {cat:'Aerodynamics', q:'What makes the left engine critical in most twins?', opts:['It produces less power','P-Factor creates a longer yaw arm on the left','It has weaker ignition','Left prop spins slower'], correct:1},
+    {cat:'Aerodynamics', q:'When an engine fails, the aircraft pitches down because:', opts:['Loss of weight from fuel','Loss of accelerated slipstream over horizontal stabilizer','Trim setting changes','Drag increases'], correct:1},
+    {cat:'Aerodynamics', q:'What bank angle is used for zero sideslip OEI?', opts:['0° (wings level)','2–5° into operating engine','10° into dead engine','5–10° into operating engine'], correct:1},
+    {cat:'Aerodynamics', q:'In Vmc certification, heading must be maintained within:', opts:['10°','15°','20°','30°'], correct:2},
+    {cat:'Aerodynamics', q:'After Vmc recovery, straight flight must be maintained with no more than:', opts:['2° bank','5° bank','10° bank','15° bank'], correct:1},
+    {cat:'Aerodynamics', q:'Why does a windmilling propeller increase Vmc?', opts:['It creates lift','It creates significant drag increasing the yaw moment','It reduces engine temperature','It changes CG'], correct:1},
+    {cat:'Aerodynamics', q:'What causes roll toward the dead engine?', opts:['P-Factor','Loss of accelerated slipstream (reduced lift on dead side)','Torque effect','Weight shift'], correct:1},
+    {cat:'Aerodynamics', q:'Landing gear DOWN affects Vmc by:', opts:['Increasing Vmc','Decreasing Vmc (keel effect provides stability)','No effect','Depends on airspeed'], correct:1},
+    {cat:'Aerodynamics', q:'At low flap settings (5°–15°), the main effect is:', opts:['Significant drag increase','Significant lift increase with slight drag increase','Stall speed increase','No significant change'], correct:1},
+    {cat:'Aerodynamics', q:'Best SE performance requires all EXCEPT:', opts:['Max power on operating engine','Gear up, flaps up','Zero sideslip','Wings level flight'], correct:3},
+    // === SPEEDS (15 questions) ===
+    {cat:'Speeds', q:'What is VR for the P2006T?', opts:['55 KIAS','60 KIAS','65 KIAS','72 KIAS'], correct:2},
+    {cat:'Speeds', q:'What is VYSE (blue line) for the P2006T?', opts:['80 KIAS','83 KIAS','84 KIAS','88 KIAS'], correct:2},
+    {cat:'Speeds', q:'What is VMC for the P2006T?', opts:['56 KIAS','62 KIAS','65 KIAS','70 KIAS'], correct:1},
+    {cat:'Speeds', q:'What is VX for the P2006T?', opts:['65 KIAS','70 KIAS','72 KIAS','84 KIAS'], correct:2},
+    {cat:'Speeds', q:'What is VY for the P2006T?', opts:['72 KIAS','80 KIAS','84 KIAS','88 KIAS'], correct:2},
+    {cat:'Speeds', q:'What is VA at max weight (2712 lbs)?', opts:['110 KIAS','118 KIAS','122 KIAS','138 KIAS'], correct:2},
+    {cat:'Speeds', q:'What is VNE for the P2006T?', opts:['138 KIAS','150 KIAS','163 KIAS','171 KIAS'], correct:3},
+    {cat:'Speeds', q:'What is VNO for the P2006T?', opts:['122 KIAS','130 KIAS','138 KIAS','145 KIAS'], correct:2},
+    {cat:'Speeds', q:'What is VSSE (clean) for the P2006T?', opts:['70 KIAS','75 KIAS','80 KIAS','84 KIAS'], correct:2},
+    {cat:'Speeds', q:'What is VS0 (stall, flaps down) for the P2006T?', opts:['48 KIAS','54 KIAS','58 KIAS','62 KIAS'], correct:1},
+    {cat:'Speeds', q:'What is the obstacle clearance (barrier) speed?', opts:['65 KIAS','70 KIAS','72 KIAS','75 KIAS'], correct:1},
+    {cat:'Speeds', q:'What is the final approach speed (Flaps LND)?', opts:['70 KIAS','75 KIAS','80 KIAS','84 KIAS'], correct:2},
+    {cat:'Speeds', q:'What is the downwind speed?', opts:['90 KIAS','95 KIAS','100 KIAS','110 KIAS'], correct:2},
+    {cat:'Speeds', q:'What is the single engine final approach speed?', opts:['75 KIAS','80 KIAS','84 KIAS','88 KIAS'], correct:2},
+    {cat:'Speeds', q:'What is the demonstrated crosswind component?', opts:['12 kts','15 kts','17 kts','20 kts'], correct:2},
+    {cat:'Speeds', q:'What is VG (best glide) for the P2006T?', opts:['72 KIAS','80 KIAS','84 KIAS','88 KIAS'], correct:2},
+    {cat:'Speeds', q:'What is the steep turns speed?', opts:['100 KIAS','110 KIAS','122 KIAS','130 KIAS'], correct:1},
+    {cat:'Speeds', q:'What is VXSE at max weight?', opts:['70 KIAS','80 KIAS','83 KIAS','84 KIAS'], correct:2},
+    {cat:'Speeds', q:'What is the holding speed?', opts:['84 KIAS','90 KIAS','95 KIAS','100 KIAS'], correct:3},
+    {cat:'Speeds', q:'What is the touchdown speed?', opts:['55 KIAS','60 KIAS','65 KIAS','70 KIAS'], correct:2},
+    // === SYSTEMS (20 questions) ===
+    {cat:'Systems', q:'How many buses does the P2006T electrical system have?', opts:['3','4','5','6'], correct:2},
+    {cat:'Systems', q:'How long can the battery provide emergency power?', opts:['15 minutes','30 minutes','45 minutes','60 minutes'], correct:1},
+    {cat:'Systems', q:'If propeller hub loses oil pressure, blades go to:', opts:['Low pitch / high RPM','Flat pitch','High pitch / low RPM (feather)','Neutral position'], correct:2},
+    {cat:'Systems', q:'What is the P2006T fuel system type?', opts:['Fuel transfer between tanks','Cross-feed only','Gravity feed','Fuel injection'], correct:1},
+    {cat:'Systems', q:'What is the minimum accumulator pressure for emergency gear extension?', opts:['10 bar','15 bar','20 bar','25 bar'], correct:2},
+    {cat:'Systems', q:'How many carburetors does each P2006T engine have?', opts:['1','2','3','4'], correct:1},
+    {cat:'Systems', q:'What is the P2006T engine firing order?', opts:['1-3-2-4','1-2-3-4','1-4-2-3','1-3-4-2'], correct:2},
+    {cat:'Systems', q:'What type of ignition does the Rotax 912 use?', opts:['Magneto','Electronic fuel injection','Dual breakerless CDI','Points-based'], correct:2},
+    {cat:'Systems', q:'The P2006T cylinder heads are cooled by:', opts:['Air only','Liquid only','Liquid (heads) and air (cylinders)','Oil cooling'], correct:2},
+    {cat:'Systems', q:'What drives the coolant pump in the Rotax 912?', opts:['Crankshaft','Camshaft','Electric motor','Belt drive'], correct:1},
+    {cat:'Systems', q:'The oil system is what type?', opts:['Wet sump','Dry sump','Pressure feed','Splash lubrication'], correct:1},
+    {cat:'Systems', q:'What is the gear reduction ratio?', opts:['1.5:1','2.0:1','2.27:1','3.0:1'], correct:2},
+    {cat:'Systems', q:'Where is the accumulator pressure gauge located?', opts:['Instrument panel','Right wing root','Left side of tail cone','Under engine cowl'], correct:2},
+    {cat:'Systems', q:'What are the 5 electrical buses?', opts:['Main, Aux, Backup, Emergency, Standby','Battery, LH Gen, RH Gen, LH Avionics, RH Avionics','Primary, Secondary, Tertiary, Aux, Emergency','Left, Right, Center, Forward, Aft'], correct:1},
+    {cat:'Systems', q:'Each generator is rated at:', opts:['20A, 12VDC','30A, 14VDC','40A, 14VDC','50A, 28VDC'], correct:2},
+    {cat:'Systems', q:'The fuel selector OFF position requires:', opts:['Simple rotation','Pull and simultaneously rotate','Double click','Push and hold'], correct:1},
+    {cat:'Systems', q:'How many drain points must be checked?', opts:['2','3','4','6'], correct:2},
+    {cat:'Systems', q:'What moves coolant from overflow container back to expansion tank?', opts:['Electric pump','Gravity','Vacuum pressure from cooling','Manual operation'], correct:2},
+    {cat:'Systems', q:'Does the P2006T have aileron-rudder interconnect?', opts:['Yes','No','Only with autopilot','Only at high speeds'], correct:1},
+    {cat:'Systems', q:'Power change order for INCREASING power:', opts:['MAP first, then Prop','Prop first, then MAP','Both simultaneously','Throttle only'], correct:1},
+    {cat:'Systems', q:'The propeller governor ground check should show RPM drop of:', opts:['200–300 RPM','400–500 RPM','600–700 RPM','800–900 RPM'], correct:1},
+    {cat:'Systems', q:'What is the main battery specs?', opts:['12V, 13Ah','12V, 23Ah','14V, 23Ah','24V, 13Ah'], correct:1},
+    {cat:'Systems', q:'Where are the emergency gear extension controls?', opts:['Instrument panel','Cabin floor near pilot seat','Behind rear seats','Tail cone'], correct:1},
+    {cat:'Systems', q:'What should be set before emergency gear extension?', opts:['Gear knob to UP','Gear knob to DOWN','Master switch OFF','Flaps to FULL'], correct:1},
+    {cat:'Systems', q:'The Rotax fuel delivery path starts with:', opts:['Carburetor → manifold → pump','Tank → coarse filter → fire cock → fine filter → pump → manifold → carbs','Pump → filter → injector','Tank → pump → carburetor'], correct:1},
+    {cat:'Systems', q:'What prevents vapour lock in the Rotax fuel system?', opts:['High pressure pump','Return line routing surplus fuel back','Fuel heater','Double filters'], correct:1},
+    {cat:'Systems', q:'Propeller RPM red line is:', opts:['2,265 RPM','2,300 RPM','2,388 RPM','2,500 RPM'], correct:2},
+    // === PROCEDURES (12 questions) ===
+    {cat:'Procedures', q:'First action for engine failure after takeoff?', opts:['Feather prop','Identify dead engine','Maintain control, pitch for VYSE','Declare emergency'], correct:2},
+    {cat:'Procedures', q:'The "dead foot, dead engine" technique is used to:', opts:['Check brake pressure','Identify the failed engine','Set trim','Configure flaps'], correct:1},
+    {cat:'Procedures', q:'During Vmc demo, you recover at:', opts:['Stall speed','First sign of loss of directional control','Vmc published speed','When reaching 5° bank'], correct:1},
+    {cat:'Procedures', q:'Engine failure after takeoff procedure order:', opts:['Identify, Feather, Control, Secure','Control, Power up, Clean up, Identify, Verify, Feather, Secure, Checklist','Feather, Identify, Secure, Control','Declare emergency, then identify'], correct:1},
+    {cat:'Procedures', q:'Engine restart procedure — first step:', opts:['Starter engage','Throttle full','Fuel selector ON','Prop full forward'], correct:2},
+    {cat:'Procedures', q:'Normal takeoff rotation speed:', opts:['55 KIAS','60 KIAS','65 KIAS','72 KIAS'], correct:2},
+    {cat:'Procedures', q:'Short field takeoff climb speed:', opts:['65 KIAS (VR)','72 KIAS (VX)','84 KIAS (VY)','88 KIAS (VYSE)'], correct:1},
+    {cat:'Procedures', q:'Final approach speed (Flaps LND):', opts:['70 KIAS','75 KIAS','80 KIAS','84 KIAS'], correct:2},
+    {cat:'Procedures', q:'Vmc demo setup configuration:', opts:['Gear down, flaps up','Gear up, flaps takeoff','Gear down, flaps full','Gear up, flaps up'], correct:1},
+    {cat:'Procedures', q:'After engine failure, "verify" means:', opts:['Check oil pressure','Retard throttle of suspected engine','Look out window','Call ATC'], correct:1},
+    {cat:'Procedures', q:'What is the proper towing method?', opts:['Push by hand on wing','Nose gear tow bar','Main gear dolly','Tail dragger handle'], correct:1},
+    {cat:'Procedures', q:'Should you change airplane config on the runway after landing?', opts:['Yes, always retract flaps immediately','No, unless clear operational need','Yes, retract gear to save brakes','Depends on wind'], correct:1},
+    // === P2006T SPECIFIC (12 questions) ===
+    {cat:'P2006T', q:'What is the P2006T max takeoff weight (SUPP G19)?', opts:['2,500 lbs','2,646 lbs','2,690 lbs','2,712 lbs'], correct:3},
+    {cat:'P2006T', q:'Does the P2006T have rudder trim?', opts:['Yes','No','Only on some models','Electric only'], correct:0},
+    {cat:'P2006T', q:'What is the P2006T max operating altitude?', opts:['10,000 ft','12,000 ft','14,000 ft','18,000 ft'], correct:2},
+    {cat:'P2006T', q:'What ATOMATOFLAMES item differs for the P2006T?', opts:['Airspeed indicator','Altimeter','Temperature gauge','Fuel gauge'], correct:2},
+    {cat:'P2006T', q:'What makes P2006T performance calculations prone to error?', opts:['Outdated charts','Metric units in AFM','Digital instruments','Non-standard atmosphere'], correct:1},
+    {cat:'P2006T', q:'Why is the Rotax 912 liquid-cooled?', opts:['Better fuel economy','Lower weight','High RPM generates excessive heat','Noise reduction'], correct:2},
+    {cat:'P2006T', q:'What advantage does MOGAS have over 100LL?', opts:['More power','Lower cost','Improved engine wear over time','Higher octane'], correct:2},
+    {cat:'P2006T', q:'The P2006T door lock uses what sensor?', opts:['Speed sensor','Altitude sensor','Oil pressure sensor','Temperature sensor'], correct:2},
+    {cat:'P2006T', q:'Does the P2006T have fuel transfer capability?', opts:['Yes, both directions','Yes, left to right only','No, cross-feed only','No fuel system crossover at all'], correct:2},
+    {cat:'P2006T', q:'The P2006T emergency gear extension uses:', opts:['Manual hand crank','Pressurized accumulator','Gravity free-fall','CO2 cartridge'], correct:1},
+    {cat:'P2006T', q:'The P2006T gear system is:', opts:['Fully mechanical','Pneumatic','Electro-hydraulic','Direct electric'], correct:2},
+    {cat:'P2006T', q:'What is the P2006T empty weight?', opts:['~1,700 lbs','~1,800 lbs','~1,940 lbs','~2,100 lbs'], correct:2},
+    // === LIMITATIONS (10 questions) ===
+    {cat:'Limitations', q:'Are spins permitted in the P2006T?', opts:['Yes, with recovery training','No','Only above 5000 AGL','Only in utility category'], correct:1},
+    {cat:'Limitations', q:'Flaps-up load factor limits are:', opts:['+2.5G / -1.0G','+3.8G / -1.78G','+4.4G / -2.2G','+2G / -0G'], correct:1},
+    {cat:'Limitations', q:'Flaps-down load factor limits are:', opts:['+2.5G / -1.0G','+3.8G / -1.78G','+4.4G / -2.2G','+2G / -0G'], correct:3},
+    {cat:'Limitations', q:'What operations is the P2006T approved for?', opts:['Day VFR only','Day and Night VFR only','Day and Night VFR and IFR','All operations including aerobatics'], correct:2},
+    {cat:'Limitations', q:'What is the minimum operating temperature?', opts:['-15°C','-20°C','-25°C','-30°C'], correct:2},
+    {cat:'Limitations', q:'Maximum power output (5 min limit):', opts:['85 HP @ 2,265 RPM','92.5 HP @ 2,265 RPM','98.6 HP @ 2,388 RPM','105 HP @ 2,500 RPM'], correct:2},
+    {cat:'Limitations', q:'Maximum continuous power:', opts:['85 HP @ 2,200 RPM','92.5 HP @ 2,265 RPM','98.6 HP @ 2,388 RPM','95 HP @ 2,300 RPM'], correct:1},
+    {cat:'Limitations', q:'Normal voltmeter range:', opts:['10–12V','12–14V','14–16V','24–28V'], correct:1},
+    {cat:'Limitations', q:'Forward CG limit:', opts:['14.0% MAC','15.5% MAC','16.5% MAC','18.0% MAC'], correct:2},
+    {cat:'Limitations', q:'What stalls are NOT permitted?', opts:['Power-on stalls','Whip stalls and stalls with OEI','Turning stalls','All stalls above 3000 AGL'], correct:1},
+    {cat:'Limitations', q:'Oil pressure may briefly reach 102 PSI during:', opts:['Max power takeoff','Cold weather start','High altitude cruise','Engine shutdown'], correct:1},
+    {cat:'Limitations', q:'Max fuel capacity:', opts:['40 gallons','48.5 gallons','52.8 gallons','60 gallons'], correct:2},
+];
+
+let quizFiltered = [...quizQuestions];
+let quizIdx = 0, quizCorrect = 0, quizTotal = 0, quizAnswered = false;
+
+function buildQuizCats() {
+    const cats = ['All', ...new Set(quizQuestions.map(q => q.cat))];
+    document.getElementById('quizCats').innerHTML = cats.map((c,i) =>
+        `<button class="quiz-cat-btn${i===0?' active':''}" onclick="filterQuiz('${c}',this)">${c}</button>`
+    ).join('');
+}
+function filterQuiz(cat, el) {
+    document.querySelectorAll('.quiz-cat-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    quizFiltered = cat === 'All' ? [...quizQuestions] : quizQuestions.filter(q => q.cat === cat);
+    // Shuffle
+    for (let i = quizFiltered.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [quizFiltered[i], quizFiltered[j]] = [quizFiltered[j], quizFiltered[i]];
+    }
+    quizIdx = 0; quizCorrect = 0; quizTotal = 0; quizAnswered = false;
+    renderQuiz();
+}
+function renderQuiz() {
+    document.getElementById('quizScore').textContent = `Score: ${quizCorrect} / ${quizTotal}`;
+    document.getElementById('quizNextBtn').style.display = 'none';
+    if (quizIdx >= quizFiltered.length) {
+        document.getElementById('quizQuestionArea').innerHTML = `<div class="quiz-question"><div class="q-text" style="text-align:center;">Quiz Complete!<br><br><span style="font-size:28px;color:#4CAF50;">${quizCorrect} / ${quizTotal}</span><br><span style="color:#888;font-size:14px;">${Math.round(quizCorrect/Math.max(quizTotal,1)*100)}%</span></div></div>`;
+        return;
+    }
+    const q = quizFiltered[quizIdx];
+    quizAnswered = false;
+    document.getElementById('quizQuestionArea').innerHTML = `
+        <div class="quiz-question">
+            <div class="q-num">Question ${quizIdx+1} of ${quizFiltered.length} · ${q.cat}</div>
+            <div class="q-text">${q.q}</div>
+            ${q.opts.map((o,i) => `<button class="quiz-option" onclick="answerQuiz(${i},${q.correct})">${o}</button>`).join('')}
+        </div>`;
+}
+function answerQuiz(selected, correct) {
+    if (quizAnswered) return;
+    quizAnswered = true;
+    quizTotal++;
+    const opts = document.querySelectorAll('.quiz-option');
+    opts.forEach((o,i) => {
+        o.disabled = true;
+        if (i === correct) o.classList.add('correct');
+        if (i === selected && selected !== correct) o.classList.add('incorrect');
+    });
+    if (selected === correct) quizCorrect++;
+    document.getElementById('quizScore').textContent = `Score: ${quizCorrect} / ${quizTotal}`;
+    document.getElementById('quizNextBtn').style.display = 'inline-block';
+}
+function nextQuizQuestion() { quizIdx++; renderQuiz(); }
+function resetQuiz() {
+    quizIdx = 0; quizCorrect = 0; quizTotal = 0; quizAnswered = false;
+    // Re-shuffle
+    for (let i = quizFiltered.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [quizFiltered[i], quizFiltered[j]] = [quizFiltered[j], quizFiltered[i]];
+    }
+    renderQuiz();
+}
+
+// ===================== INIT =====================
+buildFilters();
+renderCard();
+renderDefs();
+renderSpeeds();
+buildQuizCats();
+renderQuiz();
+
+// Keyboard shortcuts for flashcards
+document.addEventListener('keydown', e => {
+    const active = document.getElementById('tab-flashcards').classList.contains('active');
+    if (!active) return;
+    if (e.key === 'ArrowRight') nextCard();
+    if (e.key === 'ArrowLeft') prevCard();
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+});
+</script>
+</body>
+</html>

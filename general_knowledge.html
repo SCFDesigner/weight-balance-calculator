@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>General Aviation Knowledge</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d0d0f; color: #e0e0e0; min-height: 100vh; }
+        .top-bar {
+            position: fixed; top: 0; left: 0; right: 0; height: 56px;
+            background: linear-gradient(135deg, #1a1a1e 0%, #111114 100%);
+            border-bottom: 1px solid #333;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 100;
+        }
+        .back-btn { background: none; border: 1px solid #555; color: #e0e0e0; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+        .back-btn:hover { border-color: #4CAF50; color: #4CAF50; }
+        .top-bar h1 { font-size: 18px; font-family: 'Courier New', monospace; color: #f44336; letter-spacing: 2px; }
+        .spacer { width: 80px; }
+        .content { margin-top: 56px; padding: 28px 24px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .search-bar { background: #1a1a1e; border: 1px solid #444; color: #e0e0e0; padding: 10px 16px; border-radius: 8px; font-size: 14px; width: 100%; max-width: 400px; margin-bottom: 24px; }
+        .search-bar:focus { outline: none; border-color: #4CAF50; }
+        .gk-item { margin-bottom: 10px; border: 1px solid #333; border-radius: 8px; overflow: hidden; background: #1a1a1e; }
+        .gk-title {
+            padding: 14px 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(135deg, #1e1e22 0%, #18181c 100%); color: #e0e0e0; font-weight: bold; transition: background 0.2s;
+        }
+        .gk-title:hover { background: rgba(76,175,80,0.08); }
+        .expand-icon { font-size: 18px; font-weight: bold; color: #4CAF50; }
+        .gk-detail { padding: 0; background: #111114; border-top: 1px solid #2a2a2a; display: none; }
+        .gk-block { padding: 14px 18px; border-bottom: 1px solid #1e1e1e; }
+        .gk-block:last-child { border-bottom: none; }
+        .gk-block h4 { color: #4CAF50; margin-bottom: 8px; font-size: 13px; font-family: 'Courier New', monospace; }
+        .gk-block p { font-size: 13px; color: #ccc; line-height: 1.6; margin: 4px 0; }
+        .gk-block p strong { color: #e0e0e0; }
+        .gk-block em { color: #777; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="back-btn" onclick="window.location.href='emergency.html'">← Hub</button>
+        <h1>GENERAL KNOWLEDGE</h1>
+        <div class="spacer"></div>
+    </div>
+    <div class="content">
+        <input type="text" class="search-bar" id="searchBar" placeholder="Search knowledge base..." oninput="filterItems()">
+        <div id="gkList">
+
+        <div class="gk-item">
+            <div class="gk-title" onclick="toggle('docs-currency')"><span>📋 Documents &amp; Currency</span><span class="expand-icon">+</span></div>
+            <div id="docs-currency" class="gk-detail">
+                <div class="gk-block">
+                    <h4>👨‍✈️ Required Pilot Documents</h4>
+                    <p>• Valid Government Issued Photo I.D.</p>
+                    <p>• Current Pilot's Certificate</p>
+                    <p>• Current Medical Certificate</p>
+                    <p>• Logbook (student pilots only)</p>
+                </div>
+                <div class="gk-block">
+                    <h4>⏰ Pilot Currency Requirements</h4>
+                    <p><strong>General:</strong> Flight Review, FAA Checkride, or WINGS program within preceding 24 calendar months</p>
+                    <p><strong>With PAX:</strong> 3 T/O and LDGs within preceding 90 days (must be full stop if night or tailwheel)</p>
+                    <p><strong>IFR Flight:</strong> 6 Instrument Approaches, Holding, Intercepting, and Tracking Course within preceding 6 months (or IPC)</p>
+                </div>
+                <div class="gk-block">
+                    <h4>🏥 Medical Certificates</h4>
+                    <p><strong>1st Class:</strong> Valid 12 calendar months (6 months if over 40)</p>
+                    <p><strong>2nd Class:</strong> Valid 12 calendar months</p>
+                    <p><strong>3rd Class:</strong> Valid 60 calendar months (24 months if over 40)</p>
+                    <p><em>*1st reverts to 2nd which reverts to 3rd class privileges</em></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="gk-item">
+            <div class="gk-title" onclick="toggle('airspace')"><span>🗺️ Airspace &amp; Weather Minimums</span><span class="expand-icon">+</span></div>
+            <div id="airspace" class="gk-detail">
+                <div class="gk-block">
+                    <h4>🗺️ Airspace Dimensions</h4>
+                    <p><strong>Class A:</strong> FL180 to FL600, entire U.S., extends 12 NM off coastline</p>
+                    <p><strong>Class B:</strong> Surface to 10,000 MSL in multiple shelves. Typically extends to 30 NM.</p>
+                    <p><strong>Class C:</strong> Surface to 4,000 AGL with 1 shelf (lower shelf starts at 1,200 AGL). Typically extends to 10 NM.</p>
+                    <p><strong>Class D:</strong> Surface to 2,500 AGL. Typically extends to 4 NM.</p>
+                    <p><strong>Class E:</strong> From SFC, 700 AGL, or 1,200 AGL up to 17,999 MSL.</p>
+                    <p><strong>Class G:</strong> Surface to 700 AGL or 1,200 AGL. Max 14,500 MSL (out west)</p>
+                    <p><em>*Hierarchy: A &gt; B &gt; C &gt; D &gt; E &gt; G</em></p>
+                </div>
+                <div class="gk-block">
+                    <h4>📡 Airspace Equipment Requirements</h4>
+                    <p><strong>Class A:</strong> IFR flight plan, IFR equipment, IFR current</p>
+                    <p><strong>Class B:</strong> Two-way radio, Mode C transponder, clearance into Class B</p>
+                    <p><strong>Class C:</strong> Two-way radio, Mode C transponder, establish 2-way contact</p>
+                    <p><strong>Class D:</strong> Two-way radio. Establish 2-way radio contact</p>
+                    <p><strong>Class E &amp; G:</strong> None</p>
+                </div>
+                <div class="gk-block">
+                    <h4>☁️ VFR Weather Minimums</h4>
+                    <p><strong>Class A:</strong> VFR N/A</p>
+                    <p><strong>Class B:</strong> 3SM, Clear of clouds</p>
+                    <p><strong>Class C &amp; D:</strong> 3SM, 1000 above / 500 below / 2000 horizontal (3-152)</p>
+                    <p><strong>Class E below 10k:</strong> 3SM, 1000/500/2000 (3-152)</p>
+                    <p><strong>Class E above 10k:</strong> 5SM, 1000/1000/1SM (5-111)</p>
+                    <p><strong>Class G &lt;1200 AGL day:</strong> 1SM, Clear of clouds</p>
+                    <p><strong>Class G &gt;1200 AGL, &lt;10k:</strong> 1SM, 1000/500/2000 (3-152)</p>
+                    <p><strong>Class G &gt;1200 AGL, &gt;10k:</strong> 5SM, 1000/1000/1SM (5-111)</p>
+                    <p><strong>Class G night:</strong> 3SM, 1000/500/2000 (3-152)</p>
+                </div>
+                <div class="gk-block">
+                    <h4>⛰️ Minimum Safe Altitudes (91.119)</h4>
+                    <p><strong>Anywhere:</strong> Altitude allowing safe landing if powerplant fails without undue harm to persons or property</p>
+                    <p><strong>Congested areas:</strong> 2000 ft horizontal, 1000 ft above highest obstacle</p>
+                    <p><strong>Other than congested:</strong> 500 ft above the surface</p>
+                    <p><strong>Over water/sparse areas:</strong> 500 ft from any person, vessel, vehicle, or structure</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="gk-item">
+            <div class="gk-title" onclick="toggle('regulations')"><span>⚖️ Regulations &amp; Procedures</span><span class="expand-icon">+</span></div>
+            <div id="regulations" class="gk-detail">
+                <div class="gk-block">
+                    <h4>⚠️ Inoperative Equipment Test (91.213)</h4>
+                    <p><strong>Step 1:</strong> VFR Day Type Certificate</p>
+                    <p><strong>Step 2:</strong> Kinds of Operations List</p>
+                    <p><strong>Step 3:</strong> 91.205 Requirements</p>
+                    <p><strong>Step 4:</strong> Airworthiness Directives</p>
+                    <p><em>If item passes all 4 steps → deactivate and placard INOPERATIVE, or remove and redo W&amp;B</em></p>
+                    <p><em>*MEL items do NOT require the 4-step test. MELs are tail number specific.</em></p>
+                </div>
+                <div class="gk-block">
+                    <h4>🎛️ Instrument Cockpit Check</h4>
+                    <p><strong>Airspeed:</strong> Reading 0 kts</p>
+                    <p><strong>Altimeter:</strong> +/- 75 ft of field elevation</p>
+                    <p><strong>Attitude:</strong> Erect, bank no more than 5°</p>
+                    <p><strong>Compass:</strong> Swinging freely, full of fluid, known headings</p>
+                    <p><strong>D.G.:</strong> Matches compass, moves correctly during turns</p>
+                    <p><strong>Turn and Bank:</strong> Ball to outside of turn, coordinator goes with turn</p>
+                    <p><strong>Vertical Speed:</strong> Reads 0 fpm</p>
+                </div>
+                <div class="gk-block">
+                    <h4>⚖️ Aircraft Load Factors</h4>
+                    <p><strong>Normal:</strong> +3.8 g / -1.52 g</p>
+                    <p><strong>Utility:</strong> +4.4 g / -1.76 g</p>
+                    <p><strong>Acrobatic:</strong> +6.0 g / -3.00 g</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="gk-item">
+            <div class="gk-title" onclick="toggle('oxygen')"><span>🫁 Supplemental Oxygen (91.211)</span><span class="expand-icon">+</span></div>
+            <div id="oxygen" class="gk-detail">
+                <div class="gk-block">
+                    <h4>🫁 Oxygen Requirements by Altitude</h4>
+                    <p><strong>12,500 MSL:</strong> Minimum flight crew must use supplemental oxygen for any period greater than 30 minutes</p>
+                    <p><strong>14,000 MSL:</strong> Minimum flight crew must use supplemental oxygen</p>
+                    <p><strong>15,000 MSL:</strong> All flight crew must use supplemental oxygen. Passengers must be supplied with supplemental oxygen.</p>
+                </div>
+            </div>
+        </div>
+
+        </div><!-- end gkList -->
+    </div>
+
+    <script>
+    function toggle(id) {
+        const detail = document.getElementById(id);
+        const title = detail.previousElementSibling;
+        const icon = title.querySelector('.expand-icon');
+        const open = detail.style.display === 'block';
+        detail.style.display = open ? 'none' : 'block';
+        icon.textContent = open ? '+' : '−';
+        title.style.background = open ? '' : 'rgba(76,175,80,0.08)';
+    }
+    function filterItems() {
+        const q = document.getElementById('searchBar').value.toLowerCase();
+        document.querySelectorAll('.gk-item').forEach(item => {
+            item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+    }
+    </script>
+</body>
+</html>

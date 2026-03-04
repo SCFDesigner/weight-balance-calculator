@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mnemonics</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d0d0f; color: #e0e0e0; min-height: 100vh; }
+        .top-bar {
+            position: fixed; top: 0; left: 0; right: 0; height: 56px;
+            background: linear-gradient(135deg, #1a1a1e 0%, #111114 100%);
+            border-bottom: 1px solid #333;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 100;
+        }
+        .back-btn { background: none; border: 1px solid #555; color: #e0e0e0; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+        .back-btn:hover { border-color: #4CAF50; color: #4CAF50; }
+        .top-bar h1 { font-size: 18px; font-family: 'Courier New', monospace; color: #f44336; letter-spacing: 2px; }
+        .spacer { width: 80px; }
+        .content { margin-top: 56px; padding: 28px 24px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .search-bar { background: #1a1a1e; border: 1px solid #444; color: #e0e0e0; padding: 10px 16px; border-radius: 8px; font-size: 14px; width: 100%; max-width: 400px; margin-bottom: 24px; }
+        .search-bar:focus { outline: none; border-color: #4CAF50; }
+        .mnemonic-item { margin-bottom: 10px; border: 1px solid #333; border-radius: 8px; overflow: hidden; background: #1a1a1e; }
+        .mnemonic-title {
+            padding: 14px 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(135deg, #1e1e22 0%, #18181c 100%); color: #e0e0e0; font-weight: bold; transition: background 0.2s;
+        }
+        .mnemonic-title:hover { background: rgba(76,175,80,0.08); }
+        .expand-icon { font-size: 18px; font-weight: bold; color: #4CAF50; }
+        .mnemonic-detail { padding: 16px 18px; background: #111114; border-top: 1px solid #2a2a2a; color: #ccc; line-height: 1.7; display: none; }
+        .mnemonic-detail p { margin: 6px 0; font-size: 13px; }
+        .mnemonic-detail strong { color: #4CAF50; }
+        .mnemonic-detail em { color: #888; font-style: italic; }
+        .mnemonic-detail hr { border: none; border-top: 1px solid #2a2a2a; margin: 12px 0; }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="back-btn" onclick="window.location.href='emergency.html'">← Hub</button>
+        <h1>MNEMONICS</h1>
+        <div class="spacer"></div>
+    </div>
+    <div class="content">
+        <input type="text" class="search-bar" id="searchBar" placeholder="Search mnemonics..." oninput="filterMnemonics()">
+        <div id="mnemonicList">
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('aircraft-docs')"><span>✈️ Required Aircraft Documents (ARROW)</span><span class="expand-icon">+</span></div>
+            <div id="aircraft-docs" class="mnemonic-detail">
+                <p><strong>A</strong> – Airworthiness Certificate</p>
+                <p><strong>R</strong> – Registration</p>
+                <p><strong>R</strong> – Radio Operators License (International flights)</p>
+                <p><strong>O</strong> – Operating Limitations</p>
+                <p><strong>W</strong> – Weight and Balance Information</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('day-vfr')"><span>☀️ Required Equipment – Day VFR (91.205b) (ATOMS2 FLEAF)</span><span class="expand-icon">+</span></div>
+            <div id="day-vfr" class="mnemonic-detail">
+                <p><strong>A</strong> – Airspeed Indicator</p>
+                <p><strong>A</strong> – Altimeter</p>
+                <p><strong>T</strong> – Temperature Gauge (each liquid cooled engine)</p>
+                <p><strong>T</strong> – Tachometer (each engine)</p>
+                <p><strong>O</strong> – Oil Temperature Gauge (each air cooled engine)</p>
+                <p><strong>O</strong> – Oil Pressure Gauge (each engine using pressure system)</p>
+                <p><strong>M</strong> – Manifold Pressure Gauge (each altitude engine)</p>
+                <p><strong>M</strong> – Magnetic Compass</p>
+                <p><strong>S</strong> – Seatbelt</p>
+                <p><strong>S</strong> – Shoulder Harness (man. after July 18, 1978)</p>
+                <p><strong>F</strong> – Fuel Quantity Indicator (each tank)</p>
+                <p><strong>L</strong> – Landing Gear Position Indicator</p>
+                <p><strong>E</strong> – Emergency Locator Transmitter (ELT)</p>
+                <p><strong>A</strong> – Anti-Collision Lights (man. after March 11, 1996)</p>
+                <p><strong>F</strong> – Flotation Device (for hire beyond power off glide distance from shore)</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('ifr-equipment')"><span>🛩️ Required Equipment – IFR Flight (91.205d) (GRAB CARD)</span><span class="expand-icon">+</span></div>
+            <div id="ifr-equipment" class="mnemonic-detail">
+                <p><strong>G</strong> – Generator / Alternator</p>
+                <p><strong>R</strong> – Radios (two-way) and Nav. Equipment</p>
+                <p><strong>A</strong> – Altimeter (pressure sensitive)</p>
+                <p><strong>B</strong> – Ball (Inclinometer)</p>
+                <p><strong>C</strong> – Clock (sweeping seconds or digital display, installed in a/c)</p>
+                <p><strong>R</strong> – Rate of Turn Indicator</p>
+                <p><strong>A</strong> – Attitude Indicator</p>
+                <p><strong>D</strong> – Direction Gyro</p>
+                <p><strong>D</strong> – DME (above FL240)</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('inspections')"><span>🔧 Required Inspections (GAVIATES)</span><span class="expand-icon">+</span></div>
+            <div id="inspections" class="mnemonic-detail">
+                <p><strong>G</strong> – GPS (every 28 days)</p>
+                <p><strong>A</strong> – Annual (every 12 calendar months)</p>
+                <p><strong>V</strong> – VOR (every 30 days for IFR)</p>
+                <p><strong>I</strong> – 100-hour Inspection (for hire)</p>
+                <p><strong>A</strong> – Altimeter (every 24 calendar months for IFR)</p>
+                <p><strong>T</strong> – Transponder (every 24 calendar months)</p>
+                <p><strong>E</strong> – ELT (every 12 calendar months)</p>
+                <p><strong>S</strong> – Static/Pitot System (every 24 calendar months for IFR)</p>
+                <p><strong>A</strong> – Airworthiness Directives (as required)</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('preflight')"><span>📋 Pre-Flight Action (91.103) (WKRAFTN)</span><span class="expand-icon">+</span></div>
+            <div id="preflight" class="mnemonic-detail">
+                <p><strong>W</strong> – Weather and Forecasts</p>
+                <p><strong>K</strong> – Known ATC Delays (IFR Flight)</p>
+                <p><strong>R</strong> – Runway lengths of intended use</p>
+                <p><strong>A</strong> – Alternates (IFR Flight)</p>
+                <p><strong>F</strong> – Fuel Requirements</p>
+                <p><strong>T</strong> – T/O and LDG Distances</p>
+                <p><strong>N</strong> – NOTAMs</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('vor-checks')"><span>📡 VOR Receiver Checks (91.171) (BAD VAG)</span><span class="expand-icon">+</span></div>
+            <div id="vor-checks" class="mnemonic-detail">
+                <p><strong>B</strong> – Bench (+/- 4°)</p>
+                <p><strong>A</strong> – Airway (+/- 6°)</p>
+                <p><strong>D</strong> – Dual (+/- 4°)</p>
+                <p><strong>V</strong> – VOT (+/- 4°)</p>
+                <p><strong>A</strong> – Airborne (+/- 6°)</p>
+                <p><strong>G</strong> – Ground (+/- 4°)</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('clearance')"><span>📻 IFR Clearance (CRAFTT)</span><span class="expand-icon">+</span></div>
+            <div id="clearance" class="mnemonic-detail">
+                <p><strong>C</strong> – Clearance limit</p>
+                <p><strong>R</strong> – Route of flight</p>
+                <p><strong>A</strong> – Altitudes</p>
+                <p><strong>F</strong> – Frequency</p>
+                <p><strong>T</strong> – Transponder Code</p>
+                <p><strong>T</strong> – Time of Void</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('lost')"><span>🧭 Lost Procedures VFR (5 C's)</span><span class="expand-icon">+</span></div>
+            <div id="lost" class="mnemonic-detail">
+                <p><strong>C</strong> – Climb</p>
+                <p><strong>C</strong> – Communicate</p>
+                <p><strong>C</strong> – Confess</p>
+                <p><strong>C</strong> – Comply</p>
+                <p><strong>C</strong> – Conserve</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('altitude-types')"><span>📏 Types of Altitudes (IPDAT)</span><span class="expand-icon">+</span></div>
+            <div id="altitude-types" class="mnemonic-detail">
+                <p><strong>I</strong> – Indicated – Read off your Altimeter</p>
+                <p><strong>P</strong> – Pressure – Height above standard datum plane (29.92")</p>
+                <p><strong>D</strong> – Density – Pressure altitude corrected for non-standard temperature</p>
+                <p><strong>A</strong> – Absolute – Height above the ground (AGL)</p>
+                <p><strong>T</strong> – True – Height above mean sea level (MSL)</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('ifr-altitudes')"><span>🛩️ IFR Altitudes (MOMMAD)</span><span class="expand-icon">+</span></div>
+            <div id="ifr-altitudes" class="mnemonic-detail">
+                <p><strong>M</strong> – MEA – Minimum Enroute Altitude</p>
+                <p><strong>O</strong> – MOCA – Minimum Obstruction Clearance Altitude</p>
+                <p><strong>M</strong> – OROCA – Off Route Obstruction Clearance Altitude / MORA</p>
+                <p><strong>M</strong> – MAA – Maximum Authorized Altitude</p>
+                <p><strong>A</strong> – MCA – Minimum Crossing Altitude</p>
+                <p><strong>D</strong> – MRA – Minimum Reception Altitude</p>
+                <p><strong>M</strong> – MSA – Minimum Safe Altitude</p>
+                <p><strong>A</strong> – MVA – Minimum Vectoring Altitude</p>
+                <p><strong>D</strong> – DH – Decision Height (AGL)</p>
+                <p><strong>A</strong> – DA – Decision Altitude (MSL)</p>
+                <p><strong>M</strong> – MDA – Minimum Descent Altitude (MSL)</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('gumps')"><span>🛬 Pre-Landing Check (GUMPS)</span><span class="expand-icon">+</span></div>
+            <div id="gumps" class="mnemonic-detail">
+                <p><strong>G</strong> – Gas (fuel pump on)</p>
+                <p><strong>U</strong> – Undercarriage (Down and VERIFY 3-green)</p>
+                <p><strong>M</strong> – Mixture (full rich)</p>
+                <p><strong>P</strong> – Propeller (full forward)</p>
+                <p><strong>P</strong> – Power (set)</p>
+                <p><strong>P</strong> – Brake pressure (check for resistance)</p>
+                <p><strong>S</strong> – Systems (engine instruments in the green)</p>
+                <p><strong>S</strong> – Seatbelts (fastened)</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('night-vfr')"><span>🌙 Night VFR Equipment (FLAPS)</span><span class="expand-icon">+</span></div>
+            <div id="night-vfr" class="mnemonic-detail">
+                <p><strong>F</strong> – Fuses (1 set or 3 of each – in reach of pilot)</p>
+                <p><strong>L</strong> – Landing Light (for hire)</p>
+                <p><strong>A</strong> – Anti-Collision Lights (man. after August 11, 1971)</p>
+                <p><strong>P</strong> – Position Lights</p>
+                <p><strong>S</strong> – Source of electrical power</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('crmaloft')"><span>⚠️ Critical Engine Inoperative Vmc Factors (CRMALOFT)</span><span class="expand-icon">+</span></div>
+            <div id="crmaloft" class="mnemonic-detail">
+                <p><strong>C</strong> – Critical Engine Inoperative (failed engine windmilling, creating high drag)</p>
+                <p><strong>R</strong> – Rearward Center of Gravity (reduces rudder effectiveness, increases Vmc)</p>
+                <p><strong>M</strong> – Most Unfavorable Weight (lighter weight can increase Vmc)</p>
+                <p><strong>A</strong> – Airborne / Out of Ground Effect (higher Vmc due to accelerated slipstream)</p>
+                <p><strong>L</strong> – Landing Gear Up (removes drag on failed side, allows faster yaw)</p>
+                <p><strong>O</strong> – Operating Engine at Max Power (maximum yaw on good engine)</p>
+                <p><strong>F</strong> – Flaps Up (flaps up allows higher Vmc)</p>
+                <p><strong>T</strong> – Trimmed for Takeoff (rudder trim set for takeoff increases Vmc)</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('past')"><span>🛩️ Critical Engine Determination (PAST)</span><span class="expand-icon">+</span></div>
+            <div id="past" class="mnemonic-detail">
+                <p><strong>P</strong> – P-Factor (Asymmetric Thrust — descending blade produces more thrust; left engine's thrust arm farther from CG)</p>
+                <p><strong>A</strong> – Accelerated Slipstream (Roll — right engine creates accelerated airflow over wing; more lift farther from CG causes severe roll when left engine fails)</p>
+                <p><strong>S</strong> – Spiraling Slipstream (Yaw — left engine slipstream strikes vertical stab from left, helping counteract yaw from failed right engine)</p>
+                <p><strong>T</strong> – Torque (Roll — clockwise torque from right engine causes greater roll toward dead engine in left engine failure)</p>
+            </div>
+        </div>
+
+        <div class="mnemonic-item">
+            <div class="mnemonic-title" onclick="toggle('ccmals')"><span>🔄 Pre-Maneuver Checklist (CCMALS)</span><span class="expand-icon">+</span></div>
+            <div id="ccmals" class="mnemonic-detail">
+                <p><strong>C</strong> – Clearing Turns (visually checking for traffic)</p>
+                <p><strong>C</strong> – Configuration (setting aircraft — flaps, power)</p>
+                <p><strong>M</strong> – Minimum Safe Altitude (1,500' or 2,000' AGL)</p>
+                <p><strong>A</strong> – Airspeed (establishing proper speed)</p>
+                <p><strong>L</strong> – Landing Area (identifying emergency landing spot)</p>
+                <p><strong>S</strong> – Scan/Seatbelts (scanning for traffic and securing belts)</p>
+            </div>
+        </div>
+
+        </div><!-- end mnemonicList -->
+    </div>
+
+    <script>
+    function toggle(id) {
+        const detail = document.getElementById(id);
+        const title = detail.previousElementSibling;
+        const icon = title.querySelector('.expand-icon');
+        const open = detail.style.display === 'block';
+        detail.style.display = open ? 'none' : 'block';
+        icon.textContent = open ? '+' : '−';
+        title.style.background = open ? '' : 'rgba(76,175,80,0.08)';
+    }
+    function filterMnemonics() {
+        const q = document.getElementById('searchBar').value.toLowerCase();
+        document.querySelectorAll('.mnemonic-item').forEach(item => {
+            const text = item.textContent.toLowerCase();
+            item.style.display = text.includes(q) ? '' : 'none';
+        });
+    }
+    </script>
+</body>
+</html>
