@@ -340,6 +340,33 @@
         .cl-sub { padding: 1px 0 1px 28px; font-size: 10px; color: #666666; line-height: 1.4; }
         @media (max-width: 900px) { .checklist-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .checklist-grid { grid-template-columns: 1fr; } }
+
+        /* Centered panel tabs */
+        #tab-information, #tab-definitions, #tab-airspeeds {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Checklist mode toggle buttons */
+        .cl-mode-btns {
+            display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+        }
+        .cl-mode-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid #444;
+            color: #888888; padding: 8px 20px; border-radius: 8px;
+            cursor: pointer; font-size: 13px; font-weight: bold;
+            font-family: 'Courier New', monospace; letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+        .cl-mode-btn:hover { border-color: #888; color: #fff; }
+        .cl-mode-btn.active {
+            background: rgba(76,175,80,0.15); border-color: #4CAF50; color: #fff;
+        }
+        .cl-mode-btn.emg.active {
+            background: rgba(76,175,80,0.15); border-color: #4CAF50; color: #fff;
+        }
+        /* Asterisk highlight */
+        .cl-ast { color: #4CAF50; }
     </style>
 </head>
 <body>
@@ -787,7 +814,13 @@
         <!-- ==================== CHECKLISTS ==================== -->
         <div id="tab-checklists" class="tab-page">
 
+            <div class="cl-mode-btns">
+                <button id="btn-cl-normal" class="cl-mode-btn active" onclick="showCL('normal')">▸ Normal Procedures</button>
+                <button id="btn-cl-emg" class="cl-mode-btn emg" onclick="showCL('emg')">⚠ Emergency Procedures</button>
+            </div>
+
             <!-- NORMAL PROCEDURES -->
+            <div id="cl-normal-section">
             <div class="cl-section-title">▸ Normal Procedures</div>
             <div class="checklist-grid">
 
@@ -986,8 +1019,10 @@
                 </div>
 
             </div><!-- end normal grid -->
+            </div><!-- end cl-normal-section -->
 
             <!-- EMERGENCY PROCEDURES -->
+            <div id="cl-emg-section" style="display:none">
             <div class="cl-section-title emg">⚠ Emergency Procedures</div>
             <div class="checklist-grid">
 
@@ -1143,6 +1178,7 @@
                 </div>
 
             </div><!-- end emergency grid -->
+            </div><!-- end cl-emg-section -->
         </div><!-- end tab-checklists -->
 
     </div>
@@ -1160,6 +1196,26 @@ function switchInfoSub(sub) {
     document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('info-' + sub).classList.add('active');
     event.target.classList.add('active');
+}
+
+// ===================== CHECKLIST TOGGLE =====================
+function showCL(mode) {
+    const normalSec = document.getElementById('cl-normal-section');
+    const emgSec = document.getElementById('cl-emg-section');
+    const btnNormal = document.getElementById('btn-cl-normal');
+    const btnEmg = document.getElementById('btn-cl-emg');
+    if (mode === 'normal') {
+        normalSec.style.display = 'block';
+        emgSec.style.display = 'none';
+        btnNormal.classList.add('active');
+        btnEmg.classList.remove('active');
+    } else {
+        normalSec.style.display = 'none';
+        emgSec.style.display = 'block';
+        btnEmg.classList.add('active');
+        btnNormal.classList.remove('active');
+    }
+    console.log('[CL] Switched to:', mode);
 }
 
 // ===================== FLASH CARD DATA =====================
@@ -1679,6 +1735,14 @@ renderDefs();
 renderSpeeds();
 buildQuizCats();
 renderQuiz();
+
+// Color asterisks in checklist numbers green
+document.querySelectorAll('.cl-num').forEach(el => {
+    if (el.textContent.includes('*')) {
+        el.innerHTML = el.textContent.replace(/\*/g, '<span class="cl-ast">*</span>');
+    }
+});
+console.log('[CL] Asterisk styling applied');
 
 // Keyboard shortcuts for flashcards
 document.addEventListener('keydown', e => {
