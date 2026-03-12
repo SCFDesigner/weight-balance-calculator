@@ -367,6 +367,64 @@
         }
         /* Asterisk highlight */
         .cl-ast { color: #4CAF50; }
+
+        /* ===== Systems Diagrams ===== */
+        .diagram-section {
+            max-width: 1100px; margin: 0 auto 32px auto;
+        }
+        .diagram-section-title {
+            color: #4CAF50; font-family: 'Courier New', monospace;
+            font-size: 20px; font-weight: bold; letter-spacing: 1px;
+            margin-bottom: 16px; padding-bottom: 8px;
+            border-bottom: 1px solid #2a4a2a;
+        }
+        .diagram-card {
+            background: linear-gradient(135deg, #1e1e22 0%, #16161a 100%);
+            border: 1px solid #333; border-radius: 12px;
+            padding: 20px; margin-bottom: 16px;
+        }
+        .diagram-card h3 {
+            color: #4CAF50; font-size: 15px; margin-bottom: 12px;
+            font-family: 'Courier New', monospace;
+        }
+        .diagram-card h4 {
+            color: #81C784; font-size: 13px; margin: 14px 0 8px 0;
+            font-family: 'Courier New', monospace;
+        }
+        .diagram-card p, .diagram-card li {
+            color: #e0e0e0; font-size: 13px; line-height: 1.7; margin-bottom: 6px;
+        }
+        .diagram-card ul { padding-left: 20px; }
+        .diagram-card .highlight { color: #4CAF50; font-weight: bold; }
+        .diagram-img-wrapper {
+            background: #111114; border: 1px solid #333;
+            border-radius: 10px; padding: 12px; margin: 16px 0;
+            text-align: center; cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .diagram-img-wrapper:hover { border-color: #4CAF50; }
+        .diagram-img-wrapper img {
+            max-width: 100%; height: auto; border-radius: 6px;
+        }
+        .diagram-img-caption {
+            color: #888; font-size: 11px; margin-top: 8px;
+            font-style: italic;
+        }
+        .diagram-img-wrapper.expanded {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1000; background: rgba(0,0,0,0.95);
+            border: none; border-radius: 0; margin: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .diagram-img-wrapper.expanded img {
+            max-height: 85vh; max-width: 95vw;
+            object-fit: contain;
+        }
+        .diagram-img-wrapper.expanded .diagram-img-caption {
+            color: #aaa; font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -385,6 +443,7 @@
         <button class="tab-btn" onclick="switchTab('airspeeds')">Airspeeds</button>
         <button class="tab-btn" onclick="switchTab('quiz')">Quiz</button>
         <button class="tab-btn" onclick="switchTab('checklists')">Checklists</button>
+        <button class="tab-btn" onclick="switchTab('systems-diagrams')">Systems Diagrams</button>
     </div>
 
     <!-- Content -->
@@ -1181,9 +1240,170 @@
             </div><!-- end cl-emg-section -->
         </div><!-- end tab-checklists -->
 
+        <!-- ==================== SYSTEMS DIAGRAMS ==================== -->
+        <div id="tab-systems-diagrams" class="tab-page">
+            <div class="diagram-section">
+                <div class="diagram-section-title">P2006T Emergency Systems Study — AFM Diagrams</div>
+                <p style="color:#888; font-size:13px; margin-bottom:24px;">Systems notes and schematic diagrams from the Tecnam P2006T Aircraft Flight Manual. Click any diagram to expand.</p>
+
+                <!-- ===== FUEL SYSTEM ===== -->
+                <div class="diagram-card">
+                    <h3>Fuel System</h3>
+                    <div class="diagram-img-wrapper" onclick="toggleDiagramExpand(this)">
+                        <img src="images/fuel-system-p2006t.png" alt="P2006T Fuel System Diagram">
+                        <div class="diagram-img-caption">Fuel System Schematic — P2006T AFM</div>
+                    </div>
+                    <p>The fuel system consists of <span class="highlight">two integrated fuel tanks</span> located inside the <span class="highlight">wing torque boxes</span> and fitted with inspection doors.</p>
+                    <h4>Fuel Tank Details</h4>
+                    <ul>
+                        <li><span class="highlight">Each tank capacity:</span> 100 liters (26.42 US gallons)</li>
+                        <li>Each tank includes a <span class="highlight">vent valve</span> with outlet on the lower wing skin</li>
+                        <li>Each tank includes a <span class="highlight">sump</span> fitted with a drain valve for water/moisture drainage</li>
+                    </ul>
+                    <p>A <span class="highlight">Gascolator</span> (sediment-filter bowl) is located beneath the engine nacelle between the fuel tank and electric pump at the <span class="highlight">lowest point of the fuel system</span>. It has a drain valve that allows drainage of the overall fuel line.</p>
+                    <p>An <span class="highlight">electric fuel pump</span> feeds the associated engine in the event of engine-driven pump failure.</p>
+                    <h4>Fuel Indications</h4>
+                    <ul>
+                        <li>Fuel quantity indicators for each engine (RH instrument panel)</li>
+                        <li>Fuel pressure indicators for each engine (RH instrument panel)</li>
+                    </ul>
+                    <h4>Normal Fuel Feed and Crossfeed</h4>
+                    <p>In normal operation, each engine-driven pump draws fuel from its <span class="highlight">own respective tank</span>.</p>
+                    <p>Crossfeed is available through <span class="highlight">fuel valves located on the front spar</span>, controlled by Bowden cables from the fuel selectors on the cabin overhead panel.</p>
+                    <ul>
+                        <li><span class="highlight">Left fuel selector:</span> feeds the left engine from either the left tank or the right tank (crossfeed)</li>
+                        <li><span class="highlight">Right fuel selector:</span> feeds the right engine from either the right tank or the left tank (crossfeed)</li>
+                    </ul>
+                    <p>Each selector can only be set to <span class="highlight">OFF</span> by pulling and simultaneously rotating the lever, which helps prevent unintentional shutdown.</p>
+                    <h4>Fuel Caution</h4>
+                    <p>Use of <span class="highlight">Avgas 100LL</span> causes greater wear of the valve seats and greater combustion deposits inside the cylinders because of the higher lead content. The AFM directs operators to the Rotax Maintenance Manual for additional checks required after prolonged use of Avgas.</p>
+                </div>
+
+                <!-- ===== HYDRAULIC / LANDING GEAR SYSTEM ===== -->
+                <div class="diagram-card">
+                    <h3>Landing Gear System (Hydraulic)</h3>
+                    <div class="diagram-img-wrapper" onclick="toggleDiagramExpand(this)">
+                        <img src="images/hydraulic-system-p2006t.png" alt="P2006T Hydraulic Schematic Diagram">
+                        <div class="diagram-img-caption">Hydraulic Schematic Diagram — P2006T AFM</div>
+                    </div>
+                    <p>The landing gear retraction system is <span class="highlight">electro-hydraulic</span>. It is powered by a <span class="highlight">reversible pump</span> that is electrically controlled by the landing gear control knob on the LH instrument panel and by leg position micro-switches.</p>
+                    <p>These micro-switches detect when the landing gear is <span class="highlight">down-locked</span> or <span class="highlight">up</span>, and they also support the warning system that alerts the pilot if approach/landing configuration is unsafe in terms of flaps, throttle, and gear position.</p>
+                    <h4>Normal Operation</h4>
+                    <p>Gear extension and retraction are accomplished by <span class="highlight">hydraulic jacks</span>. Gear extension is also assisted by <span class="highlight">gravity</span>.</p>
+                    <p>Hydraulic oil is stored in an integrated reservoir inside the <span class="highlight">Hydraulic Power Pack</span>. A reversible electric pump pressurizes the fluid. When the landing gear control knob is placed to UP or DOWN, the pump directs hydraulic fluid through the appropriate pressure line to each jack.</p>
+                    <p>To prevent inadvertent retraction, the landing gear control knob must be <span class="highlight">pulled before being pushed upward</span> for an UP command.</p>
+                    <h4>Emergency Operation</h4>
+                    <p>Emergency operation provides <span class="highlight">landing gear extension only</span>.</p>
+                    <p>This is accomplished using a <span class="highlight">hydraulic accumulator</span> that discharges pressurized oil into the hydraulic jacks.</p>
+                    <p>The normal extension line and emergency extension line converge at <span class="highlight">shuttle valves</span>:</p>
+                    <ul>
+                        <li>One valve for the <span class="highlight">nose landing gear (NLG)</span></li>
+                        <li>One valve for the <span class="highlight">main landing gear (MLG)</span> emergency operation</li>
+                    </ul>
+                    <p>The <span class="highlight">emergency accumulator nitrogen pressure indicator</span> is located on the left side of the tail cone. On the ground, a red push-button below the indicator allows the electrical pump to charge the accumulator if nitrogen pressure is below the placarded lower limit.</p>
+                    <p>Emergency extension is controlled by <span class="highlight">two distributors</span> located on the cabin floor under a removable cover beneath the pilot seat.</p>
+                    <h4>Landing Gear Indication System</h4>
+                    <ul>
+                        <li><span class="highlight">Three green lights:</span> respective gear is down and locked</li>
+                        <li><span class="highlight">Red light:</span> gear is in transit, either up or down</li>
+                        <li><span class="highlight">Amber "GEAR PUMP ON" light:</span> pump is electrically supplied</li>
+                    </ul>
+                    <p>The red transition light goes out only when all three gear legs are either down and locked, or fully up. The amber caution light goes out only when the electrical pump is off.</p>
+                    <h4>Gear Warning Horn</h4>
+                    <p>A warning horn sounds when the landing gear control knob is in <span class="highlight">UP</span>, and at least one throttle lever is at <span class="highlight">idle</span> and/or flaps are set to <span class="highlight">LAND</span>.</p>
+                    <p>During emergency extension, gear lights operate the same as in normal extension. The landing gear control knob must be set to <span class="highlight">DOWN</span> before beginning the emergency extension procedure.</p>
+                    <p style="color:#f44336; font-size:12px; margin-top:12px;"><strong>Important:</strong> After each emergency landing gear extension, the aircraft requires the restoration procedure described in the AMM.</p>
+                </div>
+
+                <!-- ===== BRAKE SYSTEM ===== -->
+                <div class="diagram-card">
+                    <h3>Brake System</h3>
+                    <div class="diagram-img-wrapper" onclick="toggleDiagramExpand(this)">
+                        <img src="images/brake-system-p2006t.png" alt="P2006T Brake System Diagram">
+                        <div class="diagram-img-caption">Brake System Schematic — P2006T AFM</div>
+                    </div>
+                    <p>The aircraft has an <span class="highlight">independent hydraulically actuated brake system for each main wheel</span>.</p>
+                    <p>A <span class="highlight">master cylinder</span> is attached to each pilot and co-pilot rudder pedal. Hydraulic pressure from the master cylinders is transmitted through brake lines to the wheel brake calipers.</p>
+                    <p>A <span class="highlight">parking brake valve</span> is mounted on the cabin floor and is operated by a knob on the cockpit central pedestal. Once the brake system is pressurized, this valve traps hydraulic pressure in the lines to hold the brake linings against the brake discs.</p>
+                    <p>Brakes can be operated from either the pilot's or co-pilot's pedals. A <span class="highlight">single vented oil reservoir</span> feeds the pilot-side master cylinders, which are connected by hoses to the co-pilot-side cylinders.</p>
+                    <p style="color:#f44336; font-size:12px; margin-top:12px;"><strong>Brake System Note:</strong> While steering on the ground, do <strong>not</strong> press the opposite toe brake until the pedals are back aligned. Doing so may damage the pedal mechanism.</p>
+                </div>
+
+                <!-- ===== POWERPLANT ===== -->
+                <div class="diagram-card">
+                    <h3>Powerplant</h3>
+                    <p>The Tecnam P2006T is equipped with <span class="highlight">two Rotax 912S3 engines</span>, each producing <span class="highlight">98 hp (73 kW)</span>. Both engines rotate clockwise. They are four-cylinder, four-stroke, horizontally opposed engines with 1352 cc displacement. The engines are partially liquid cooled, using liquid cooling for the cylinder heads and ram-air cooling for the cylinders. Each engine uses two carburetors and includes an integrated reduction gearbox with shock absorber. The engines drive constant-speed propellers with pitch feathering capability.</p>
+                    <h4>Engine Features</h4>
+                    <ul>
+                        <li><span class="highlight">Manufacturer:</span> Bombardier-Rotax GmbH</li>
+                        <li><span class="highlight">Model:</span> 912 S3</li>
+                        <li><span class="highlight">Configuration:</span> 4-cylinder horizontally opposed</li>
+                        <li><span class="highlight">Displacement:</span> 1352 cc</li>
+                        <li><span class="highlight">Cooling:</span> Liquid-cooled cylinder heads, ram-air cooled cylinders</li>
+                        <li><span class="highlight">Induction:</span> Two carburetors</li>
+                        <li><span class="highlight">Gearbox:</span> Integrated reduction gearbox with shock absorber</li>
+                        <li><span class="highlight">Maximum power (5 min):</span> 73.5 kW (98.6 hp) at 5800 RPM</li>
+                        <li><span class="highlight">Continuous power:</span> 69.0 kW (92.5 hp) at 5500 RPM</li>
+                    </ul>
+                    <h4>Cooling System</h4>
+                    <p>The cooling system is designed with liquid cooling for the cylinder heads and ram-air cooling for the cylinders. The liquid cooling system is a <span class="highlight">closed circuit</span> with an overflow bottle and an expansion tank.</p>
+                    <p>Coolant is circulated by a <span class="highlight">water pump driven from the camshaft</span>. It flows from the radiator to the cylinder heads, then from the top of the heads to the expansion tank. Because the radiator is located below engine level, the expansion tank is mounted on top of the engine to allow for coolant expansion.</p>
+                    <p>The expansion tank is closed by a <span class="highlight">pressure cap</span> fitted with both a pressure relief valve and a return valve. As coolant temperature rises and the coolant expands, the pressure relief valve opens and sends coolant through a hose into the transparent overflow bottle at atmospheric pressure. When the system cools, coolant is drawn back into the cooling circuit.</p>
+                    <h4>Lubrication System</h4>
+                    <p>The engine uses a <span class="highlight">dry sump forced lubrication system</span> with an oil pump that has an integrated pressure regulator.</p>
+                    <p>A <span class="highlight">thermostatic valve</span> regulates oil flow to the heat exchanger (oil radiator) based on oil temperature. This helps allow engine starting in cold conditions.</p>
+                    <p>The oil tank is installed behind the firewall and is protected from heat sources. Holes in the supporting bracket structure provide ventilation. The oil reservoir has a dipstick, and a hose located under the filler cap allows oil relief to discharge safely in the cowling away from exhausts and other heat sources.</p>
+                    <h4>Powerplant Instruments</h4>
+                    <ul>
+                        <li>LH &amp; RH RPM indicators</li>
+                        <li>LH &amp; RH manifold pressure indicators</li>
+                        <li>LH &amp; RH oil pressure indicators</li>
+                        <li>LH &amp; RH oil temperature indicators</li>
+                        <li>LH &amp; RH cylinder head temperature indicators</li>
+                    </ul>
+                </div>
+
+                <!-- ===== PROPELLER SYSTEM ===== -->
+                <div class="diagram-card">
+                    <h3>Propeller System</h3>
+                    <p>The aircraft uses <span class="highlight">MT Propeller</span> constant-speed propellers.</p>
+                    <h4>Propeller Features</h4>
+                    <ul>
+                        <li><span class="highlight">Model:</span> MTV-21-A-C-F/CF178-05</li>
+                        <li><span class="highlight">Blades/Hub:</span> 2 wood/composite blades, aluminum hub</li>
+                        <li><span class="highlight">Diameter:</span> 1780 mm</li>
+                        <li><span class="highlight">Type:</span> Variable-pitch, hydraulically controlled</li>
+                    </ul>
+                    <h4>Propeller Governor</h4>
+                    <ul>
+                        <li><span class="highlight">Manufacturer:</span> MT Propeller</li>
+                        <li><span class="highlight">Model:</span> P-875-12</li>
+                        <li><span class="highlight">Type:</span> Hydraulic</li>
+                    </ul>
+                </div>
+
+            </div><!-- end diagram-section -->
+        </div><!-- end tab-systems-diagrams -->
+
     </div>
 
 <script>
+// ===================== DIAGRAM EXPAND =====================
+function toggleDiagramExpand(wrapper) {
+    if (wrapper.classList.contains('expanded')) {
+        wrapper.classList.remove('expanded');
+    } else {
+        wrapper.classList.add('expanded');
+    }
+}
+// Close expanded diagram on Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.diagram-img-wrapper.expanded').forEach(w => w.classList.remove('expanded'));
+    }
+});
+console.log('[Systems Diagrams] Tab loaded');
+
 // ===================== TAB SWITCHING =====================
 function switchTab(tab) {
     document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
