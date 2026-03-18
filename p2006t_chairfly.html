@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>P2006T Chairfly — G1000</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -214,12 +215,18 @@ body { background: #111; width: 100vw; height: 100vh; overflow: hidden; position
 // ─── FULLSCREEN ──────────────────────────────────────────────
 function enterFullscreen(){
   const el=document.documentElement;
-  const req=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen;
-  if(req) req.call(el).catch(()=>{});
+  try {
+    if(el.requestFullscreen){ const p=el.requestFullscreen(); if(p&&p.catch) p.catch(()=>{}); }
+    else if(el.webkitRequestFullscreen){ el.webkitRequestFullscreen(); }
+    else if(el.mozRequestFullScreen){ el.mozRequestFullScreen(); }
+  } catch(e){}
 }
 function exitFullscreen(){
-  const ex=document.exitFullscreen||document.webkitExitFullscreen||document.mozCancelFullScreen;
-  if(ex) ex.call(document).catch(()=>{});
+  try {
+    if(document.exitFullscreen){ const p=document.exitFullscreen(); if(p&&p.catch) p.catch(()=>{}); }
+    else if(document.webkitExitFullscreen){ document.webkitExitFullscreen(); }
+    else if(document.mozCancelFullScreen){ document.mozCancelFullScreen(); }
+  } catch(e){}
 }
 function isFullscreen(){
   return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement);
@@ -228,12 +235,10 @@ function toggleFullscreen(){ isFullscreen()?exitFullscreen():enterFullscreen(); 
 function updateFsBtn(){
   const btn=document.getElementById('btn-fs');
   if(!btn) return;
-  btn.textContent=isFullscreen()?'✕FS':'⛶';
+  btn.textContent=isFullscreen()?'✕':'⛶';
   btn.classList.toggle('active',isFullscreen());
 }
-document.addEventListener('fullscreenchange',updateFsBtn);
-document.addEventListener('webkitfullscreenchange',updateFsBtn);
-document.addEventListener('mozfullscreenchange',updateFsBtn);
+['fullscreenchange','webkitfullscreenchange','mozfullscreenchange'].forEach(e=>document.addEventListener(e,updateFsBtn));
 
 // ─── ORIENTATION LOCK ────────────────────────────────────────
 (function(){
