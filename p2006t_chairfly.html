@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>P2006T Chairfly — G1000</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -150,6 +153,7 @@ body { background: #111; width: 100vw; height: 100vh; overflow: hidden; position
     <button class="btn" id="btn-stop">■</button>
     <div id="rp-prog"><div id="rp-prog-fill"></div></div>
     <span id="rp-time">0.0s</span>
+    <button class="btn" id="btn-fs" title="Fullscreen" style="font-size:14px;padding:3px 8px;">⛶</button>
   </div>
   <div id="view-badge">SIDE VIEW</div>
   <div id="step-box">—</div>
@@ -207,6 +211,30 @@ body { background: #111; width: 100vw; height: 100vh; overflow: hidden; position
 </div><!-- #app -->
 
 <script>
+// ─── FULLSCREEN ──────────────────────────────────────────────
+function enterFullscreen(){
+  const el=document.documentElement;
+  const req=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen;
+  if(req) req.call(el).catch(()=>{});
+}
+function exitFullscreen(){
+  const ex=document.exitFullscreen||document.webkitExitFullscreen||document.mozCancelFullScreen;
+  if(ex) ex.call(document).catch(()=>{});
+}
+function isFullscreen(){
+  return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement);
+}
+function toggleFullscreen(){ isFullscreen()?exitFullscreen():enterFullscreen(); }
+function updateFsBtn(){
+  const btn=document.getElementById('btn-fs');
+  if(!btn) return;
+  btn.textContent=isFullscreen()?'✕FS':'⛶';
+  btn.classList.toggle('active',isFullscreen());
+}
+document.addEventListener('fullscreenchange',updateFsBtn);
+document.addEventListener('webkitfullscreenchange',updateFsBtn);
+document.addEventListener('mozfullscreenchange',updateFsBtn);
+
 // ─── ORIENTATION LOCK ────────────────────────────────────────
 (function(){
   try {
@@ -1307,8 +1335,10 @@ document.getElementById('btn-play').addEventListener('click',()=>{
     const rpS=document.getElementById('rp-steps');
     if(rpS) rpS.innerHTML=buildRightSteps(m);
   }
+  enterFullscreen();
   playAnim();
 });
+document.getElementById('btn-fs').addEventListener('click',toggleFullscreen);
 document.getElementById('btn-stop').addEventListener('click',()=>{
   stopAnim();
   if(selIdx>=0){animTime=0;trailPts=[];renderFrame(MANEUVERS[selIdx],0);}
