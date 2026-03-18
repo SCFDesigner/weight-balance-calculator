@@ -2092,8 +2092,8 @@
                         <span class="info-value" data-field="accelerateStopDist"></span>
                         <div class="tooltip-content">
                             <div class="tooltip-title">Accelerate/Stop Distance Calculation</div>
-                            <div class="tooltip-formula">|Takeoff GR - Landing GR|</div>
-                            <div class="tooltip-note">Absolute difference between takeoff ground roll and landing ground roll. Represents total runway distance needed to accelerate to takeoff speed and then stop abort.</div>
+                            <div class="tooltip-formula">Takeoff GR + Landing GR</div>
+                            <div class="tooltip-note">Total runway required to accelerate to takeoff speed and then stop if the takeoff is aborted.</div>
                         </div>
                     </div>
                     <div class="info-item performance-tooltip">
@@ -4593,8 +4593,8 @@ const P2006T_SE_PERFORMANCE = {
             const takeoffGR = parseFloat(document.getElementById('takeoffGR').value) || 0;
             const landingGR = parseFloat(document.getElementById('landingGR').value) || 0;
             
-            // Calculate Accelerate/Stop Distance
-            const accelerateStopDist = Math.abs(takeoffGR - landingGR);
+            // Calculate Accelerate/Stop Distance (T/O ground roll + landing ground roll)
+            const accelerateStopDist = takeoffGR + landingGR;
             document.querySelector('[data-field="accelerateStopDist"]').textContent = `${accelerateStopDist} ft`;
             
             // Get current weight for SE performance calculations
@@ -4769,10 +4769,10 @@ const P2006T_SE_PERFORMANCE = {
                 if (accelStopTooltip) {
                     accelStopTooltip.innerHTML = `
                         <div class="tooltip-title">Accelerate/Stop Distance Calculation</div>
-                        <div class="tooltip-formula">|${calculationDetails.p2006t.takeoffGR || 0} - ${calculationDetails.p2006t.landingGR || 0}| = ${calculationDetails.p2006t.accelerateStop || 0} ft</div>
+                        <div class="tooltip-formula">${calculationDetails.p2006t.takeoffGR || 0} + ${calculationDetails.p2006t.landingGR || 0} = ${calculationDetails.p2006t.accelerateStop || 0} ft</div>
                         <div class="tooltip-formula">Takeoff GR: ${calculationDetails.p2006t.takeoffGR || 0} ft</div>
                         <div class="tooltip-formula">Landing GR: ${calculationDetails.p2006t.landingGR || 0} ft</div>
-                        <div class="tooltip-note">Absolute difference between takeoff and landing ground roll.</div>
+                        <div class="tooltip-note">Total runway to accelerate to takeoff speed and stop if the takeoff is aborted.</div>
                     `;
                 }
 
