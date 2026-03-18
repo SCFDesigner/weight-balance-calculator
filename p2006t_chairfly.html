@@ -24,7 +24,7 @@ body { background: #111; width: 100vw; height: 100vh; overflow: hidden; position
 @media (orientation: portrait) {
   #portrait-overlay { display: flex; }
 }
-#app { position: absolute; top: 0; left: 0; width: 1440px; height: 900px; transform-origin: 0 0; display: flex; flex-direction: column; overflow: hidden; color: #e0e0e0; font-family: 'Courier New', monospace; }
+#app { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; color: #e0e0e0; font-family: 'Courier New', monospace; }
 
 /* ── TOP HALF ── */
 #top-half { flex: 0 0 56%; position: relative; overflow: hidden; border-bottom: 3px solid #222; }
@@ -1316,11 +1316,8 @@ document.getElementById('btn-stop').addEventListener('click',()=>{
 
 // ─── RESIZE ──────────────────────────────────────────────────
 function scaleApp(){
-  const W=1440, H=900;
-  const scale=Math.min(window.innerWidth/W, window.innerHeight/H);
-  const x=(window.innerWidth - W*scale)/2;
-  const y=(window.innerHeight - H*scale)/2;
-  document.getElementById('app').style.transform=`translate(${x}px,${y}px) scale(${scale})`;
+  // App fills viewport via CSS — no transform needed
+  document.getElementById('app').style.transform='';
 }
 function resize(){
   scaleApp();
