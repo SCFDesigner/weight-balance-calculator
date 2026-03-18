@@ -1,63 +1,49 @@
-# ✈️ Airspeeds Quiz
+# Student Pilot One-Stop Shop — Tecnam P2006T / G1000
 
-A Python quiz application to help memorize aircraft V-speeds with an interactive GUI and fireworks celebration!
+A web-based training tool for student pilots flying the **Tecnam P2006T** with a **Garmin G1000** glass cockpit. All information is sourced directly from the **POH/AFM** and **school-specific maneuvers guides and checklists** to ensure accuracy.
 
-## Features
+---
 
-- **18 V-Speeds**: Complete set of important aircraft airspeeds
-- **Randomized Order**: Each quiz shuffles the V-speeds for better learning
-- **Auto-Focus**: Automatically focuses on the first input field
-- **Enter Navigation**: Press Enter to move to the next question
-- **Instant Feedback**: Wrong answers immediately reset the quiz
-- **Fireworks Celebration**: 10-second fireworks show for perfect scores
-- **Dark Theme**: Professional dark grey background with white text
+## What's Inside
 
-## V-Speeds Included
+### Weight & Balance Calculator (`index.html`)
+An interactive weight and balance tool for the P2006T. Enter passenger weights, baggage, and fuel to instantly calculate:
+- Total weight and CG location
+- Whether the loading is within the aircraft's approved envelope
+- Visual envelope plot
 
-| V-Speed | Value | Description |
-|---------|-------|-------------|
-| Vr | 65 | Rotation speed |
-| Vx | 73 | Best angle of climb |
-| Vy | 84 | Best rate of climb |
-| Vyse | 84 | Best rate of climb single engine |
-| Vsse | 70 | Safe single engine speed |
-| Vmc | 62 | Minimum control speed |
-| Vcc | 95 | Cruise climb speed |
-| Vs0 | 56 | Stall speed landing config |
-| Vs1 | 66 | Stall speed clean config |
-| Vne | 167 | Never exceed speed |
-| Vno | 135 | Normal operating speed |
-| Va | 118 | Maneuvering speed |
-| Vo | 118 | Operating speed |
-| Vle | 93 | Landing gear extended speed |
-| Vlo | 93 | Landing gear operating speed |
-| Vfe | 119 | Flaps extended speed |
-| Vapp | 90 | Approach speed |
-| Vfinal | 70 | Final approach speed |
+### Airspeed / V-Speed Study (`airspeeds quiz.html`)
+A flashcard-style study tool for memorizing P2006T V-speeds. All values are taken directly from the POH/AFM.
 
-## How to Run
+### Chairfly Trainer (`p2006t_chairfly.html`)
+A simulated G1000 cockpit environment for chair-flying maneuvers. Walk through procedures step-by-step with:
+- Animated PFD and MFD representations
+- Checklist and emergency procedure overlays
+- Step-by-step callouts for each maneuver
 
-1. Make sure you have Python 3.6+ installed
-2. Navigate to the project directory
-3. Run the application:
-   ```bash
-   python3 airspeeds_quiz.py
-   ```
+---
 
-## How to Use
+## Data Sources
 
-1. **Start Quiz**: The application automatically starts with randomized V-speeds
-2. **Enter Answers**: Type the airspeed value for each V-speed
-3. **Navigate**: Press Enter to move to the next question
-4. **Wrong Answer**: Any incorrect answer resets and reshuffles the quiz
-5. **Perfect Score**: Get all 18 correct to see the fireworks celebration!
-6. **Restart**: After fireworks, press any key to start a new quiz
+All data — airspeeds, weight limits, CG envelopes, checklists, and procedures — comes from:
+- **Tecnam P2006T POH / AFM**
+- **School-specific maneuvers guide**
+- **School-specific normal and emergency checklists**
 
-## Study Tips
+Nothing is estimated or approximated. If a value is in this tool, it has a source document.
 
-- Focus on memorizing the exact numbers
-- The random order helps prevent pattern memorization
-- Use the immediate feedback to reinforce correct answers
-- The reset mechanism ensures you know ALL speeds, not just some
+---
 
-Perfect for pilot training and aircraft systems study! 🛩️
+## Purpose
+
+Built for personal use during primary flight training. The goal is a single tab that covers everything needed for ground study and pre-flight preparation — numbers, procedures, and chair-flying — without switching between multiple documents.
+
+---
+
+## Python Quiz (Legacy)
+
+`airspeeds_quiz.py` is an earlier terminal-based V-speed quiz. Requires Python 3.6+.
+
+```bash
+python3 airspeeds_quiz.py
+```
