@@ -6,6 +6,24 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #111; width: 100vw; height: 100vh; overflow: hidden; position: relative; }
+
+/* ── PORTRAIT OVERLAY ── */
+#portrait-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 9999;
+  background: #000;
+  flex-direction: column;
+  align-items: center; justify-content: center;
+  color: #fff; font-family: 'Courier New', monospace; text-align: center; gap: 18px;
+}
+#portrait-overlay svg { animation: rotate-hint 2s ease-in-out infinite; }
+@keyframes rotate-hint {
+  0%,100% { transform: rotate(0deg); }
+  40%,60% { transform: rotate(90deg); }
+}
+@media (orientation: portrait) {
+  #portrait-overlay { display: flex; }
+}
 #app { position: absolute; top: 0; left: 0; width: 1440px; height: 900px; transform-origin: 0 0; display: flex; flex-direction: column; overflow: hidden; color: #e0e0e0; font-family: 'Courier New', monospace; }
 
 /* ── TOP HALF ── */
@@ -113,6 +131,14 @@ body { background: #111; width: 100vw; height: 100vh; overflow: hidden; position
 </style>
 </head>
 <body>
+<div id="portrait-overlay">
+  <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+    <rect x="16" y="4" width="32" height="56" rx="5" stroke="#4af" stroke-width="3"/>
+    <line x1="24" y1="52" x2="40" y2="52" stroke="#4af" stroke-width="3" stroke-linecap="round"/>
+  </svg>
+  <div style="font-size:16px;color:#4af;letter-spacing:2px;">ROTATE DEVICE</div>
+  <div style="font-size:11px;color:#666;letter-spacing:1px;">Landscape orientation required</div>
+</div>
 <div id="app">
 
 <div id="top-half">
@@ -181,6 +207,15 @@ body { background: #111; width: 100vw; height: 100vh; overflow: hidden; position
 </div><!-- #app -->
 
 <script>
+// ─── ORIENTATION LOCK ────────────────────────────────────────
+(function(){
+  try {
+    if(screen.orientation && screen.orientation.lock){
+      screen.orientation.lock('landscape').catch(()=>{});
+    }
+  } catch(e){}
+})();
+
 // ─── MANEUVER DATA ───────────────────────────────────────────
 const MANEUVERS = [
 {name:"1. Normal Takeoff",view:"side",duration:60,keyframes:[
@@ -808,17 +843,15 @@ function drawPFD(st,altFt,vsi,hdg){
   pfdX.fillStyle='#0a0a0a'; pfdX.fillRect(0,0,W,H);
 
   const TAPE_W=Math.max(52,W*.085);
-  const HDG_H=Math.max(60,H*.46);
-  const aiX=TAPE_W, aiY=0, aiW=W-TAPE_W*2, aiH=H-HDG_H;
+  const aiX=TAPE_W, aiY=0, aiW=W-TAPE_W*2, aiH=H;
 
-  drawAI_PFD(pfdX,st.pitch,st.bank,aiX,aiY,aiW,aiH);
+  drawAI_PFD(pfdX,st.pitch,st.bank,st.eng,hdg||0,aiX,aiY,aiW,aiH);
   drawASI_tape(pfdX,st.ias,0,0,TAPE_W,aiH);
   drawALT_tape(pfdX,altFt,vsi,W-TAPE_W,0,TAPE_W,aiH);
-  drawHSI_arc(pfdX,hdg||0,aiY+aiH,W,HDG_H);
-  drawPFD_overlays(pfdX,st,altFt,vsi,W,H,TAPE_W,HDG_H,aiX,aiW,aiH);
+  drawPFD_overlays(pfdX,st,altFt,vsi,W,H,TAPE_W,0,aiX,aiW,aiH);
 }
 
-function drawAI_PFD(ctx,pitch,bank,x,y,w,h){
+function drawAI_PFD(ctx,pitch,bank,eng,hdg,x,y,w,h){
   ctx.save(); ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
   ctx.save(); ctx.translate(x+w/2,y+h/2); ctx.rotate(bank*Math.PI/180);
   const pxPerDeg=h/50; // tighter pitch ladder — ±25° visible range
@@ -875,6 +908,135 @@ function drawAI_PFD(ctx,pitch,bank,x,y,w,h){
   ctx.lineTo(x+w/2+Math.cos(ba-.12)*r*.88,y+h/2+Math.sin(ba-.12)*r*.88);
   ctx.lineTo(x+w/2+Math.cos(ba+.12)*r*.88,y+h/2+Math.sin(ba+.12)*r*.88);
   ctx.closePath(); ctx.fill();
+
+  // ── Slip/Skid Indicator (inclinometer) ──
+  // Fixed below 12-o'clock position of the bank arc (always centered)
+  const ssY=(y+h/2-r)+16; // just below 12-o'clock of bank arc
+  const tubeW=32, tubeH=10, tubeR=5;
+  const tubeCX=x+w/2, tubeCY=ssY+tubeH/2;
+  // Tube background (rounded rect via arc)
+  function rrect(lx,ly,lw,lh,lr){
+    ctx.beginPath();
+    ctx.moveTo(lx+lr,ly);
+    ctx.lineTo(lx+lw-lr,ly); ctx.arcTo(lx+lw,ly,lx+lw,ly+lr,lr);
+    ctx.lineTo(lx+lw,ly+lh-lr); ctx.arcTo(lx+lw,ly+lh,lx+lw-lr,ly+lh,lr);
+    ctx.lineTo(lx+lr,ly+lh); ctx.arcTo(lx,ly+lh,lx,ly+lh-lr,lr);
+    ctx.lineTo(lx,ly+lr); ctx.arcTo(lx,ly,lx+lr,ly,lr);
+    ctx.closePath();
+  }
+  const tlx=tubeCX-tubeW/2-tubeR, tly=ssY, tlw=tubeW+tubeR*2, tlh=tubeH;
+  ctx.fillStyle='rgba(0,0,0,0.6)'; rrect(tlx,tly,tlw,tlh,tubeR); ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=1; rrect(tlx,tly,tlw,tlh,tubeR); ctx.stroke();
+  // Center mark
+  ctx.strokeStyle='rgba(255,255,255,0.3)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(tubeCX,ssY+2); ctx.lineTo(tubeCX,ssY+tubeH-2); ctx.stroke();
+  // Ball deflection:
+  // For engine-fail maneuvers, rudder/bank coordination needed; ball deflects proportional to bank
+  // In coordinated flight (BOTH engines) ball stays centered
+  let ballOffset=0;
+  if(eng==='FAIL'){
+    // Ball deflects toward the dead engine side (opposite of applied bank)
+    // Max deflection ~14px at 0° bank; centers as bank reaches ~5°
+    ballOffset=Math.max(-tubeW/2, Math.min(tubeW/2, -bank*2.8));
+  }
+  // Draw ball
+  const ballX=tubeCX+ballOffset;
+  ctx.beginPath(); ctx.arc(ballX, tubeCY, tubeH/2-1, 0, Math.PI*2);
+  ctx.fillStyle=Math.abs(ballOffset)<3?'#fff':'#f66';
+  ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,0.5)'; ctx.lineWidth=1; ctx.stroke();
+
+  // ── Mini HSI compass rose overlay (in lower brown section) ──
+  drawMiniHSI(ctx, hdg, x, y, w, h);
+
+  ctx.restore();
+}
+
+function drawMiniHSI(ctx, hdg, aiX, aiY, aiW, aiH){
+  const cx = aiX + aiW/2;
+  // Center the mini HSI in the lower brown area (~73% down the AI)
+  const cy = aiY + aiH * 0.75;
+  const r  = Math.min(aiW * 0.22, aiH * 0.18);
+  const hdgNorm = ((hdg%360)+360)%360;
+  const CARDINALS = {0:'N',90:'E',180:'S',270:'W'};
+
+  ctx.save();
+  // Clip to a circle
+  ctx.beginPath(); ctx.arc(cx, cy, r+2, 0, Math.PI*2); ctx.clip();
+
+  // Background
+  ctx.fillStyle='rgba(10,8,0,0.72)';
+  ctx.beginPath(); ctx.arc(cx, cy, r+2, 0, Math.PI*2); ctx.fill();
+
+  // Tick marks + labels
+  for(let deg=0; deg<360; deg+=5){
+    const isThirty=deg%30===0, isTen=deg%10===0, isCard=deg%90===0;
+    const ang=((deg-hdgNorm)-90)*Math.PI/180;
+    const tickLen=isThirty?r*.18:isTen?r*.12:r*.07;
+    const ox=cx+Math.cos(ang)*r, oy=cy+Math.sin(ang)*r;
+    const ix=cx+Math.cos(ang)*(r-tickLen), iy=cy+Math.sin(ang)*(r-tickLen);
+    ctx.strokeStyle=isCard?'#fff':'#777';
+    ctx.lineWidth=isThirty?1.5:1;
+    ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(ix,iy); ctx.stroke();
+    if(isThirty){
+      const lbl=CARDINALS[deg]||(deg/10).toString();
+      const lx=cx+Math.cos(ang)*(r-tickLen-r*.18);
+      const ly=cy+Math.sin(ang)*(r-tickLen-r*.18);
+      ctx.fillStyle=isCard?'#fff':'#aaa';
+      ctx.font=isCard?`bold ${Math.round(r*.22)}px Courier New`:`${Math.round(r*.19)}px Courier New`;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(lbl,lx,ly);
+    }
+  }
+
+  // Rose ring
+  ctx.strokeStyle='rgba(255,255,255,0.25)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+
+  // Course pointer (magenta)
+  const courseAng=-Math.PI/2;
+  ctx.strokeStyle='#ff44ff'; ctx.lineWidth=1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx+Math.cos(courseAng)*r*.85, cy+Math.sin(courseAng)*r*.85);
+  ctx.lineTo(cx+Math.cos(courseAng)*r*.3, cy+Math.sin(courseAng)*r*.3);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx+Math.cos(courseAng)*r*.85, cy+Math.sin(courseAng)*r*.85);
+  ctx.lineTo(cx+Math.cos(courseAng-.28)*r*.72, cy+Math.sin(courseAng-.28)*r*.72);
+  ctx.lineTo(cx+Math.cos(courseAng+.28)*r*.72, cy+Math.sin(courseAng+.28)*r*.72);
+  ctx.closePath(); ctx.fillStyle='#ff44ff'; ctx.fill();
+  // Tail
+  const tailAng=courseAng+Math.PI;
+  ctx.strokeStyle='#ff44ff'; ctx.lineWidth=1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx+Math.cos(tailAng)*r*.85, cy+Math.sin(tailAng)*r*.85);
+  ctx.lineTo(cx+Math.cos(tailAng)*r*.3, cy+Math.sin(tailAng)*r*.3);
+  ctx.stroke();
+
+  // Lubber line at top
+  ctx.fillStyle='#fff';
+  ctx.beginPath();
+  ctx.moveTo(cx, cy-r);
+  ctx.lineTo(cx-3.5, cy-r-7);
+  ctx.lineTo(cx+3.5, cy-r-7);
+  ctx.closePath(); ctx.fill();
+
+  // Aircraft symbol (white, tiny)
+  const as=r*.14;
+  ctx.strokeStyle='#fff'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(cx,cy-as*.8); ctx.lineTo(cx,cy+as*.6); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx-as*1.1,cy); ctx.lineTo(cx+as*1.1,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx-as*.5,cy+as*.5); ctx.lineTo(cx+as*.5,cy+as*.5); ctx.stroke();
+
+  // Heading readout box
+  const hdgStr=Math.round(hdgNorm).toString().padStart(3,'0')+'°';
+  const bw=38, bh=14;
+  ctx.fillStyle='#000'; ctx.fillRect(cx-bw/2, cy-r*.38, bw, bh);
+  ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.strokeRect(cx-bw/2, cy-r*.38, bw, bh);
+  ctx.fillStyle='#fff'; ctx.font=`bold ${Math.round(r*.21)}px Courier New`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(hdgStr, cx, cy-r*.38+bh/2);
+
   ctx.restore();
 }
 
