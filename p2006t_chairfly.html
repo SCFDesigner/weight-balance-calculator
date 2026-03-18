@@ -842,7 +842,7 @@ function drawPFD(st,altFt,vsi,hdg){
   pfdX.clearRect(0,0,W,H);
   pfdX.fillStyle='#0a0a0a'; pfdX.fillRect(0,0,W,H);
 
-  const TAPE_W=Math.max(52,W*.085);
+  const TAPE_W=Math.round(W*.088);
   const aiX=TAPE_W, aiY=0, aiW=W-TAPE_W*2, aiH=H;
 
   drawAI_PFD(pfdX,st.pitch,st.bank,st.eng,hdg||0,aiX,aiY,aiW,aiH);
@@ -1044,6 +1044,10 @@ function drawASI_tape(ctx,ias,x,y,w,h){
   ctx.save(); ctx.fillStyle='rgba(0,0,0,0.82)'; ctx.fillRect(x,y,w,h);
   ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
   const midY=y+h/2, pxPerKt=h/80;
+  const fTick=`${Math.max(7,Math.round(w*.28))}px Courier New`;
+  const fVal=`bold ${Math.max(9,Math.round(w*.36))}px Courier New`;
+  const fBug=`${Math.max(6,Math.round(w*.22))}px Courier New`;
+  const bh=Math.max(16,Math.round(w*.55));
   // Color bands
   const bands=[{lo:0,hi:62,c:'rgba(200,0,0,0.4)'},{lo:62,hi:72,c:'rgba(255,255,0,0.25)'},{lo:72,hi:122,c:'rgba(0,255,0,0.15)'},{lo:122,hi:200,c:'rgba(255,200,0,0.2)'}];
   bands.forEach(b=>{
@@ -1051,7 +1055,7 @@ function drawASI_tape(ctx,ias,x,y,w,h){
     ctx.fillStyle=b.c; ctx.fillRect(x,y1,w*.18,y2-y1);
   });
   // Ticks
-  ctx.strokeStyle='#ccc'; ctx.font='10px Courier New'; ctx.fillStyle='#ddd';
+  ctx.strokeStyle='#ccc'; ctx.font=fTick; ctx.fillStyle='#ddd';
   for(let v=0;v<=200;v+=10){
     const vy=midY-(v-ias)*pxPerKt;
     if(vy<y-5||vy>y+h+5) continue;
@@ -1065,15 +1069,14 @@ function drawASI_tape(ctx,ias,x,y,w,h){
     if(vy>y&&vy<y+h){
       ctx.strokeStyle=bug.c; ctx.lineWidth=2;
       ctx.beginPath(); ctx.moveTo(x+w*.85,vy); ctx.lineTo(x+w,vy); ctx.stroke();
-      ctx.fillStyle=bug.c; ctx.font='8px Courier New'; ctx.fillText(bug.l,x+w*.65,vy-2);
+      ctx.fillStyle=bug.c; ctx.font=fBug; ctx.fillText(bug.l,x+w*.65,vy-2);
     }
   });
   // Current speed box
-  const bh=22;
   ctx.fillStyle='rgba(0,0,0,0.9)'; ctx.fillRect(x,midY-bh/2,w,bh);
   ctx.strokeStyle='#ccc'; ctx.lineWidth=1; ctx.strokeRect(x,midY-bh/2,w,bh);
-  ctx.fillStyle='#fff'; ctx.font='bold 14px Courier New'; ctx.textAlign='center';
-  ctx.fillText(Math.max(0,Math.round(ias)),x+w/2,midY+5);
+  ctx.fillStyle='#fff'; ctx.font=fVal; ctx.textAlign='center';
+  ctx.fillText(Math.max(0,Math.round(ias)),x+w/2,midY+bh*.35);
   ctx.textAlign='left';
   ctx.restore();
 }
@@ -1082,7 +1085,11 @@ function drawALT_tape(ctx,alt,vsi,x,y,w,h){
   ctx.save(); ctx.fillStyle='rgba(0,0,0,0.82)'; ctx.fillRect(x,y,w,h);
   ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
   const midY=y+h/2, pxPerFt=h/2000;
-  ctx.strokeStyle='#ccc'; ctx.font='10px Courier New'; ctx.fillStyle='#ddd';
+  const fTick=`${Math.max(7,Math.round(w*.28))}px Courier New`;
+  const fVal=`bold ${Math.max(9,Math.round(w*.32))}px Courier New`;
+  const fVsi=`${Math.max(6,Math.round(w*.24))}px Courier New`;
+  const bh=Math.max(16,Math.round(w*.55));
+  ctx.strokeStyle='#ccc'; ctx.font=fTick; ctx.fillStyle='#ddd';
   for(let v=-500;v<=10000;v+=100){
     const vy=midY-(v-alt)*pxPerFt;
     if(vy<y-5||vy>y+h+5) continue;
@@ -1091,16 +1098,15 @@ function drawALT_tape(ctx,alt,vsi,x,y,w,h){
     if(v%500===0) ctx.fillText(v,x+w*.4,vy+4);
   }
   // Current alt box
-  const bh=22;
   ctx.fillStyle='rgba(0,0,0,0.9)'; ctx.fillRect(x,midY-bh/2,w,bh);
   ctx.strokeStyle='#ccc'; ctx.lineWidth=1; ctx.strokeRect(x,midY-bh/2,w,bh);
-  ctx.fillStyle='#fff'; ctx.font='bold 12px Courier New'; ctx.textAlign='center';
-  ctx.fillText(Math.round(alt/10)*10,x+w/2,midY+5);
+  ctx.fillStyle='#fff'; ctx.font=fVal; ctx.textAlign='center';
+  ctx.fillText(Math.round(alt/10)*10,x+w/2,midY+bh*.35);
   ctx.textAlign='left';
   // VSI
   const vsiC=vsi>100?'#4af':vsi<-100?'#f84':'#aaa';
-  ctx.fillStyle=vsiC; ctx.font='9px Courier New'; ctx.textAlign='center';
-  ctx.fillText((vsi>=0?'+':'')+Math.round(vsi/100)*100,x+w/2,midY-14);
+  ctx.fillStyle=vsiC; ctx.font=fVsi; ctx.textAlign='center';
+  ctx.fillText((vsi>=0?'+':'')+Math.round(vsi/100)*100,x+w/2,midY-bh*.7);
   ctx.textAlign='left';
   ctx.restore();
 }
