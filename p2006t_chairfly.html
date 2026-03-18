@@ -508,6 +508,33 @@ topImg.src = 'airplane_svg/cessna top view.png';
 // ─── STATE ───────────────────────────────────────────────────
 let selIdx = -1, playing = false, animTime = 0, animStart = null, rafId = null, trailPts = [];
 let mfdPage = 'normal';
+let hdgTimeline = []; // [{t, hdg}] precomputed per maneuver
+
+function precomputeHeadings(m){
+  hdgTimeline = [];
+  const dt = 0.1;
+  let hdg = m.initHdg || 0;
+  for(let t=0; t<=m.duration+dt; t+=dt){
+    hdgTimeline.push({t, hdg});
+    const st = interp(m, t);
+    const tas = Math.max(st.ias, 50);
+    // turn rate (°/s) = 1091 × tan(bank_rad) / TAS_kts / 60
+    // negative bank = left turn = heading decreases
+    const turnRate = 1091 * Math.tan(st.bank * Math.PI/180) / tas / 60;
+    hdg += turnRate * dt;
+  }
+}
+
+function getHeadingAt(t){
+  if(!hdgTimeline.length) return 0;
+  for(let i=0; i<hdgTimeline.length-1; i++){
+    if(t<=hdgTimeline[i+1].t){
+      const f=(t-hdgTimeline[i].t)/(hdgTimeline[i+1].t-hdgTimeline[i].t);
+      return lerp(hdgTimeline[i].hdg, hdgTimeline[i+1].hdg, f);
+    }
+  }
+  return hdgTimeline[hdgTimeline.length-1].hdg;
+}
 const skyC = document.getElementById('sky-canvas');
 const skyX = skyC.getContext('2d');
 const pfdC = document.getElementById('pfd-canvas');
@@ -524,6 +551,7 @@ function selectManeuver(i){
   document.querySelectorAll('.sidebar-item').forEach((e,j)=>e.classList.toggle('active',j===i));
   selIdx=i; stopAnim(); animTime=0; trailPts=[];
   const m=MANEUVERS[i];
+  precomputeHeadings(m);
   document.getElementById('maneuver-title').textContent=m.name.toUpperCase();
   document.getElementById('view-badge').textContent=m.view==='side'?'SIDE VIEW':'TOP VIEW';
   // Populate right panel steps
@@ -581,7 +609,7 @@ function renderFrame(m,t){
   // Also keep sky overlay callout
   document.getElementById('step-box').textContent = st.callout;
   // PFD
-  drawPFD(st,altFt,Math.round(vsi));
+  drawPFD(st,altFt,Math.round(vsi),getHeadingAt(t));
   // Gear indicator
   updateGearIndicator(st.gear);
   // Flap lever
@@ -693,18 +721,34 @@ function drawTopView(m,st,t,W,H){
   drawAirplaneTop(p.cx,p.cy,st.bank,st.eng,W,H);
 }
 
+function catmullRomPath(ctx,pts,steps){
+  if(pts.length<2) return;
+  ctx.moveTo(pts[0].cx,pts[0].cy);
+  for(let i=0;i<pts.length-1;i++){
+    const p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(pts.length-1,i+2)];
+    for(let j=1;j<=steps;j++){
+      const t=j/steps,t2=t*t,t3=t2*t;
+      const cx=0.5*((2*p1.cx)+(-p0.cx+p2.cx)*t+(2*p0.cx-5*p1.cx+4*p2.cx-p3.cx)*t2+(-p0.cx+3*p1.cx-3*p2.cx+p3.cx)*t3);
+      const cy=0.5*((2*p1.cy)+(-p0.cy+p2.cy)*t+(2*p0.cy-5*p1.cy+4*p2.cy-p3.cy)*t2+(-p0.cy+3*p1.cy-3*p2.cy+p3.cy)*t3);
+      ctx.lineTo(cx,cy);
+    }
+  }
+}
+
 function drawTrail(m,W,H){
-  // Ghost path
+  // Ghost path — keyframe waypoints connected with Catmull-Rom curves
   const pts=m.keyframes.map(kf=>{
     const s=m.view==='side'?{x:kf.x,alt:kf.alt}:{x:kf.x,y:kf.y||0,alt:kf.alt};
     return getCanvasXY(m,s,W,H);
   });
-  skyX.beginPath(); skyX.strokeStyle='rgba(80,180,255,0.12)'; skyX.lineWidth=1.5; skyX.setLineDash([5,5]);
-  pts.forEach((p,i)=>i?skyX.lineTo(p.cx,p.cy):skyX.moveTo(p.cx,p.cy)); skyX.stroke(); skyX.setLineDash([]);
+  skyX.beginPath(); skyX.strokeStyle='rgba(80,180,255,0.15)'; skyX.lineWidth=1.5; skyX.setLineDash([5,5]);
+  catmullRomPath(skyX,pts,20);
+  skyX.stroke(); skyX.setLineDash([]);
   // Active trail
   if(trailPts.length<2) return;
   skyX.beginPath(); skyX.strokeStyle='rgba(80,200,255,0.7)'; skyX.lineWidth=3;
-  trailPts.forEach((p,i)=>i?skyX.lineTo(p.cx,p.cy):skyX.moveTo(p.cx,p.cy)); skyX.stroke();
+  catmullRomPath(skyX,trailPts,8);
+  skyX.stroke();
 }
 
 function getHardDecks(m){
@@ -758,19 +802,19 @@ function drawAirplaneTop(cx,cy,bank,eng,W,H){
 }
 
 // ─── G1000 PFD ───────────────────────────────────────────────
-function drawPFD(st,altFt,vsi){
+function drawPFD(st,altFt,vsi,hdg){
   const W=pfdC.width,H=pfdC.height;
   pfdX.clearRect(0,0,W,H);
   pfdX.fillStyle='#0a0a0a'; pfdX.fillRect(0,0,W,H);
 
   const TAPE_W=Math.max(52,W*.085);
-  const HDG_H=Math.max(28,H*.18);
+  const HDG_H=Math.max(40,H*.22);
   const aiX=TAPE_W, aiY=0, aiW=W-TAPE_W*2, aiH=H-HDG_H;
 
   drawAI_PFD(pfdX,st.pitch,st.bank,aiX,aiY,aiW,aiH);
   drawASI_tape(pfdX,st.ias,0,0,TAPE_W,aiH);
   drawALT_tape(pfdX,altFt,vsi,W-TAPE_W,0,TAPE_W,aiH);
-  drawHDG_tape(pfdX,0,aiY+aiH,W,HDG_H);
+  drawHSI_arc(pfdX,hdg||0,aiY+aiH,W,HDG_H);
   drawPFD_overlays(pfdX,st,altFt,vsi,W,H,TAPE_W,HDG_H,aiX,aiW,aiH);
 }
 
@@ -779,10 +823,14 @@ function drawAI_PFD(ctx,pitch,bank,x,y,w,h){
   ctx.save(); ctx.translate(x+w/2,y+h/2); ctx.rotate(bank*Math.PI/180);
   const pxPerDeg=h/30;
   const pOff=pitch*pxPerDeg; // positive pitch → horizon moves DOWN (more sky visible)
-  // Sky (above horizon)
-  ctx.fillStyle='#1a6ecc'; ctx.fillRect(-w*2,-h*3+pOff,w*4,h*3);
-  // Ground (below horizon)
-  ctx.fillStyle='#7a5210'; ctx.fillRect(-w*2,pOff,w*4,h*3);
+  // Sky — G1000 blue
+  const skyGrad=ctx.createLinearGradient(0,-h*3+pOff,0,pOff);
+  skyGrad.addColorStop(0,'#0d4f9e'); skyGrad.addColorStop(1,'#2390d4');
+  ctx.fillStyle=skyGrad; ctx.fillRect(-w*2,-h*3+pOff,w*4,h*3);
+  // Ground — G1000 brown
+  const gndGrad=ctx.createLinearGradient(0,pOff,0,pOff+h*3);
+  gndGrad.addColorStop(0,'#8b6610'); gndGrad.addColorStop(1,'#5a3f08');
+  ctx.fillStyle=gndGrad; ctx.fillRect(-w*2,pOff,w*4,h*3);
   // Horizon
   ctx.strokeStyle='#fff'; ctx.lineWidth=2;
   ctx.beginPath(); ctx.moveTo(-w,pOff); ctx.lineTo(w,pOff); ctx.stroke();
@@ -889,28 +937,58 @@ function drawALT_tape(ctx,alt,vsi,x,y,w,h){
   ctx.restore();
 }
 
-function drawHDG_tape(ctx,hdg,y,W,H){
-  ctx.save(); ctx.fillStyle='rgba(0,0,0,0.75)'; ctx.fillRect(0,y,W,H);
+function drawHSI_arc(ctx,hdg,y,W,H){
+  ctx.save();
+  ctx.fillStyle='rgba(0,0,0,0.82)'; ctx.fillRect(0,y,W,H);
   ctx.beginPath(); ctx.rect(0,y,W,H); ctx.clip();
-  const midX=W/2, pxPerDeg=W/90;
-  const dirs=['N','NE','E','SE','S','SW','W','NW'];
-  ctx.strokeStyle='#aaa'; ctx.font='10px Courier New'; ctx.fillStyle='#ccc';
-  for(let d=hdg-50;d<=hdg+50;d++){
-    const dn=((d%360)+360)%360;
-    const dx=midX+(d-hdg)*pxPerDeg;
-    if(dx<0||dx>W) continue;
-    ctx.lineWidth=dn%10===0?1.5:1;
-    ctx.beginPath(); ctx.moveTo(dx,y); ctx.lineTo(dx,y+(dn%10===0?H*.55:H*.35)); ctx.stroke();
-    if(dn%30===0){
-      const lbl=dirs[dn/45]||dn;
-      ctx.fillText(lbl,dx-6,y+H*.85);
+
+  const hdgNorm=((hdg%360)+360)%360;
+  const cx=W/2, cy=y+H*1.05; // center below visible area so only arc shows
+  const r=H*2.2;
+  const CARDINALS={0:'N',90:'E',180:'S',270:'W'};
+
+  // Draw arc ticks for ±60° around current heading
+  for(let delta=-65;delta<=65;delta++){
+    const deg=((hdgNorm+delta)%360+360)%360;
+    const ang=(delta-90)*Math.PI/180; // -90 so 0° delta points straight up
+    const isMajor=deg%10===0, isCardinal=deg%90===0, isMinor=deg%5===0;
+    if(!isMajor&&!isMinor) continue;
+    const tickLen=isCardinal?H*.35:isMajor?H*.22:H*.12;
+    const rx=cx+Math.cos(ang)*r, ry=cy+Math.sin(ang)*r;
+    const rx2=cx+Math.cos(ang)*(r-tickLen), ry2=cy+Math.sin(ang)*(r-tickLen);
+    ctx.strokeStyle=isCardinal?'#ffff00':'#aaa';
+    ctx.lineWidth=isCardinal?2:isMajor?1.5:1;
+    ctx.beginPath(); ctx.moveTo(rx,ry); ctx.lineTo(rx2,ry2); ctx.stroke();
+    if(isMajor){
+      const lbl=CARDINALS[deg]||(deg/10).toString();
+      const lx=cx+Math.cos(ang)*(r-tickLen-11);
+      const ly=cy+Math.sin(ang)*(r-tickLen-11)+4;
+      ctx.fillStyle=isCardinal?'#ffff00':'#ccc';
+      ctx.font=isCardinal?'bold 11px Courier New':'9px Courier New';
+      ctx.textAlign='center'; ctx.fillText(lbl,lx,ly);
     }
   }
-  // Current hdg box
-  ctx.fillStyle='rgba(0,0,0,0.85)'; ctx.fillRect(midX-24,y,48,H*.65);
-  ctx.strokeStyle='#ccc'; ctx.strokeRect(midX-24,y,48,H*.65);
-  ctx.fillStyle='#fff'; ctx.font='bold 12px Courier New'; ctx.textAlign='center';
-  ctx.fillText(Math.round(((hdg%360)+360)%360).toString().padStart(3,'0'),midX,y+H*.5);
+
+  // Lubber line (heading bug pointer) — white triangle pointing down from top
+  ctx.fillStyle='#fff';
+  ctx.beginPath();
+  ctx.moveTo(cx,y+4);
+  ctx.lineTo(cx-7,y+16);
+  ctx.lineTo(cx+7,y+16);
+  ctx.closePath(); ctx.fill();
+
+  // Aircraft symbol
+  ctx.strokeStyle='#fa0'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(cx-28,y+H*.62); ctx.lineTo(cx-8,y+H*.62); ctx.lineTo(cx-8,y+H*.62+8); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx+28,y+H*.62); ctx.lineTo(cx+8,y+H*.62); ctx.lineTo(cx+8,y+H*.62+8); ctx.stroke();
+  ctx.fillStyle='#fa0'; ctx.beginPath(); ctx.arc(cx,y+H*.62,4,0,Math.PI*2); ctx.fill();
+
+  // HDG readout box
+  const hdgStr=Math.round(hdgNorm).toString().padStart(3,'0');
+  ctx.fillStyle='#000'; ctx.fillRect(cx-26,y,52,H*.52);
+  ctx.strokeStyle='#fa0'; ctx.lineWidth=1.5; ctx.strokeRect(cx-26,y,52,H*.52);
+  ctx.fillStyle='#fa0'; ctx.font='bold 13px Courier New'; ctx.textAlign='center';
+  ctx.fillText(hdgStr,cx,y+H*.38);
   ctx.textAlign='left';
   ctx.restore();
 }
@@ -1039,7 +1117,7 @@ function resize(){
   const pr=pfdC.getBoundingClientRect();
   pfdC.width=Math.round(pr.width); pfdC.height=Math.round(pr.height);
   if(selIdx>=0) renderFrame(MANEUVERS[selIdx],animTime);
-  else drawPFD({pitch:0,bank:0,ias:0,mp:0,gear:'UP',flaps:'UP',eng:'BOTH'},0,0);
+  else drawPFD({pitch:0,bank:0,ias:0,mp:0,gear:'UP',flaps:'UP',eng:'BOTH'},0,0,0);
 }
 window.addEventListener('resize',resize);
 // Wait for bezel PNGs to load so canvas gets correct dimensions
