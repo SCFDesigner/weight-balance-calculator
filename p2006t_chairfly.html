@@ -216,10 +216,24 @@ body { background: #111; width: 100vw; height: 100vh; overflow: hidden; position
 function enterFullscreen(){
   const el=document.documentElement;
   try {
-    if(el.requestFullscreen){ const p=el.requestFullscreen(); if(p&&p.catch) p.catch(()=>{}); }
+    if(el.requestFullscreen){ const p=el.requestFullscreen(); if(p&&p.catch) p.catch(()=>showFsToast()); }
     else if(el.webkitRequestFullscreen){ el.webkitRequestFullscreen(); }
     else if(el.mozRequestFullScreen){ el.mozRequestFullScreen(); }
-  } catch(e){}
+    else { showFsToast(); }
+  } catch(e){ showFsToast(); }
+}
+function showFsToast(){
+  let t=document.getElementById('fs-toast');
+  if(!t){
+    t=document.createElement('div');
+    t.id='fs-toast';
+    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid #4af;color:#ccc;font-family:Courier New,monospace;font-size:13px;padding:10px 18px;border-radius:6px;z-index:9998;text-align:center;max-width:90vw;line-height:1.5;';
+    document.body.appendChild(t);
+  }
+  t.innerHTML='Fullscreen unavailable in Firefox iOS.<br><span style="color:#4af">Use Safari → Share → Add to Home Screen</span><br>for permanent fullscreen.';
+  t.style.display='block';
+  clearTimeout(t._to);
+  t._to=setTimeout(()=>{ t.style.display='none'; }, 5000);
 }
 function exitFullscreen(){
   try {
