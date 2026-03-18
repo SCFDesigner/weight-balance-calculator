@@ -6,10 +6,34 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>P2006T Chairfly — G1000</title>
+<title>Chairfly</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #111; width: 100vw; height: 100vh; overflow: hidden; position: relative; }
+
+/* ── AIRCRAFT SELECTION ── */
+#aircraft-select {
+  position: fixed; inset: 0; z-index: 9990;
+  background: #0a0a0c;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-family: 'Courier New', monospace;
+  gap: 32px;
+}
+#aircraft-select h1 { font-size: 32px; letter-spacing: 6px; color: #4af; font-weight: normal; }
+#aircraft-select h2 { font-size: 11px; letter-spacing: 4px; color: #444; font-weight: normal; margin-top: -22px; }
+#aircraft-grid { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; max-width: 700px; }
+.ac-card {
+  width: 180px; padding: 20px 16px;
+  background: #0d0d10; border: 1px solid #2a2a2a; border-radius: 8px;
+  cursor: pointer; text-align: center;
+  transition: border-color 0.15s, background 0.15s;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.ac-card:hover { border-color: #4af; background: #0a1520; }
+.ac-card-name { font-size: 15px; color: #ddd; letter-spacing: 1px; }
+.ac-card-sub  { font-size: 10px; color: #555; letter-spacing: 2px; }
+.ac-card-tag  { font-size: 9px; color: #4af; letter-spacing: 1px; margin-top: 4px; }
 
 /* ── PORTRAIT OVERLAY ── */
 #portrait-overlay {
@@ -135,6 +159,17 @@ body { background: #111; width: 100vw; height: 100vh; overflow: hidden; position
 </style>
 </head>
 <body>
+<div id="aircraft-select">
+  <h1>CHAIRFLY</h1>
+  <h2>SELECT AIRCRAFT</h2>
+  <div id="aircraft-grid">
+    <div class="ac-card" onclick="selectAircraft('p2006t')">
+      <div class="ac-card-name">Tecnam P2006T</div>
+      <div class="ac-card-sub">TWIN · G1000</div>
+      <div class="ac-card-tag">▶ SELECT</div>
+    </div>
+  </div>
+</div>
 <div id="portrait-overlay">
   <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
     <rect x="16" y="4" width="32" height="56" rx="5" stroke="#4af" stroke-width="3"/>
@@ -212,6 +247,16 @@ body { background: #111; width: 100vw; height: 100vh; overflow: hidden; position
 </div><!-- #app -->
 
 <script>
+// ─── AIRCRAFT SELECTION ──────────────────────────────────────
+document.getElementById('app').style.display = 'none';
+
+function selectAircraft(id) {
+  document.getElementById('aircraft-select').style.display = 'none';
+  document.getElementById('app').style.display = '';
+  resize();
+  selectManeuver(0);
+}
+
 // ─── FULLSCREEN ──────────────────────────────────────────────
 function enterFullscreen(){
   const el=document.documentElement;
@@ -1385,7 +1430,6 @@ resize();
 
 mfdPage='normal';
 renderMFD();
-selectManeuver(0);
 </script>
 </body>
 </html>
