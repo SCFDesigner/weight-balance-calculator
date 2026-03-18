@@ -808,7 +808,7 @@ function drawPFD(st,altFt,vsi,hdg){
   pfdX.fillStyle='#0a0a0a'; pfdX.fillRect(0,0,W,H);
 
   const TAPE_W=Math.max(52,W*.085);
-  const HDG_H=Math.max(40,H*.22);
+  const HDG_H=Math.max(60,H*.46);
   const aiX=TAPE_W, aiY=0, aiW=W-TAPE_W*2, aiH=H-HDG_H;
 
   drawAI_PFD(pfdX,st.pitch,st.bank,aiX,aiY,aiW,aiH);
@@ -821,7 +821,7 @@ function drawPFD(st,altFt,vsi,hdg){
 function drawAI_PFD(ctx,pitch,bank,x,y,w,h){
   ctx.save(); ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
   ctx.save(); ctx.translate(x+w/2,y+h/2); ctx.rotate(bank*Math.PI/180);
-  const pxPerDeg=h/30;
+  const pxPerDeg=h/50; // tighter pitch ladder — ±25° visible range
   const pOff=pitch*pxPerDeg; // positive pitch → horizon moves DOWN (more sky visible)
   // Sky — G1000 blue
   const skyGrad=ctx.createLinearGradient(0,-h*3+pOff,0,pOff);
@@ -834,14 +834,20 @@ function drawAI_PFD(ctx,pitch,bank,x,y,w,h){
   // Horizon
   ctx.strokeStyle='#fff'; ctx.lineWidth=2;
   ctx.beginPath(); ctx.moveTo(-w,pOff); ctx.lineTo(w,pOff); ctx.stroke();
-  // Pitch lines
-  ctx.strokeStyle='rgba(255,255,255,0.85)'; ctx.lineWidth=1.2; ctx.font='bold 9px Courier New'; ctx.fillStyle='#fff';
-  for(let p=-20;p<=20;p+=5){
+  // Pitch lines — G1000 style: short tapered lines with numbers at 10° intervals
+  ctx.font='bold 8px Courier New'; ctx.fillStyle='#fff';
+  for(let p=-30;p<=30;p+=5){
     if(p===0) continue;
     const yy=pOff-p*pxPerDeg;
-    const hw=p%10===0?w*.22:w*.12;
+    if(Math.abs(yy)>h) continue;
+    const isTen=p%10===0;
+    const hw=isTen?w*.13:w*.07;
+    ctx.strokeStyle='rgba(255,255,255,0.9)'; ctx.lineWidth=isTen?1.5:1;
     ctx.beginPath(); ctx.moveTo(-hw,yy); ctx.lineTo(hw,yy); ctx.stroke();
-    if(p%10===0){ ctx.fillText(Math.abs(p),hw+4,yy+4); ctx.fillText(Math.abs(p),-hw-20,yy+4); }
+    if(isTen){
+      ctx.fillText(Math.abs(p),hw+3,yy+3);
+      ctx.fillText(Math.abs(p),-hw-15,yy+3);
+    }
   }
   ctx.restore();
   // Fixed aircraft symbol
@@ -939,57 +945,96 @@ function drawALT_tape(ctx,alt,vsi,x,y,w,h){
 
 function drawHSI_arc(ctx,hdg,y,W,H){
   ctx.save();
-  ctx.fillStyle='rgba(0,0,0,0.82)'; ctx.fillRect(0,y,W,H);
+  ctx.fillStyle='#100c00'; ctx.fillRect(0,y,W,H);
   ctx.beginPath(); ctx.rect(0,y,W,H); ctx.clip();
 
   const hdgNorm=((hdg%360)+360)%360;
-  const cx=W/2, cy=y+H*1.05; // center below visible area so only arc shows
-  const r=H*2.2;
+  const cx=W/2;
+  const cy=y+H*0.58;
+  const r=Math.min(W*0.38, H*0.82);
   const CARDINALS={0:'N',90:'E',180:'S',270:'W'};
 
-  // Draw arc ticks for ±60° around current heading
-  for(let delta=-65;delta<=65;delta++){
-    const deg=((hdgNorm+delta)%360+360)%360;
-    const ang=(delta-90)*Math.PI/180; // -90 so 0° delta points straight up
-    const isMajor=deg%10===0, isCardinal=deg%90===0, isMinor=deg%5===0;
-    if(!isMajor&&!isMinor) continue;
-    const tickLen=isCardinal?H*.35:isMajor?H*.22:H*.12;
-    const rx=cx+Math.cos(ang)*r, ry=cy+Math.sin(ang)*r;
-    const rx2=cx+Math.cos(ang)*(r-tickLen), ry2=cy+Math.sin(ang)*(r-tickLen);
-    ctx.strokeStyle=isCardinal?'#ffff00':'#aaa';
-    ctx.lineWidth=isCardinal?2:isMajor?1.5:1;
-    ctx.beginPath(); ctx.moveTo(rx,ry); ctx.lineTo(rx2,ry2); ctx.stroke();
-    if(isMajor){
+  // ── Compass rose circle ──
+  ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+
+  // ── Rotating tick marks + upright labels ──
+  for(let deg=0;deg<360;deg+=5){
+    const isThirty=deg%30===0, isTen=deg%10===0, isCard=deg%90===0;
+    // Screen angle: current heading rotates to 12-o'clock (-π/2)
+    const ang=((deg-hdgNorm)-90)*Math.PI/180;
+    const tickLen=isThirty?r*.16:isTen?r*.10:r*.06;
+    const ox=cx+Math.cos(ang)*r, oy=cy+Math.sin(ang)*r;
+    const ix=cx+Math.cos(ang)*(r-tickLen), iy=cy+Math.sin(ang)*(r-tickLen);
+    ctx.strokeStyle=isCard?'#fff':'#888';
+    ctx.lineWidth=isThirty?1.8:1;
+    ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(ix,iy); ctx.stroke();
+    if(isThirty){
       const lbl=CARDINALS[deg]||(deg/10).toString();
-      const lx=cx+Math.cos(ang)*(r-tickLen-11);
-      const ly=cy+Math.sin(ang)*(r-tickLen-11)+4;
-      ctx.fillStyle=isCardinal?'#ffff00':'#ccc';
-      ctx.font=isCardinal?'bold 11px Courier New':'9px Courier New';
-      ctx.textAlign='center'; ctx.fillText(lbl,lx,ly);
+      const lx=cx+Math.cos(ang)*(r-tickLen-r*.12);
+      const ly=cy+Math.sin(ang)*(r-tickLen-r*.12);
+      ctx.fillStyle=isCard?'#fff':'#bbb';
+      ctx.font=isCard?'bold 11px Courier New':'9px Courier New';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(lbl,lx,ly);
     }
   }
 
-  // Lubber line (heading bug pointer) — white triangle pointing down from top
+  // ── Course pointer (magenta) — simple needle through center ──
+  // Defaults to 0° offset (same as heading); replace with course param later
+  const courseAng=-Math.PI/2; // points up (on-course = aligned with heading)
+  ctx.strokeStyle='#ff44ff'; ctx.lineWidth=2;
+  // Head arrow
+  const hx=cx+Math.cos(courseAng)*r*.88, hy=cy+Math.sin(courseAng)*r*.88;
+  const hx2=cx+Math.cos(courseAng)*r*.28, hy2=cy+Math.sin(courseAng)*r*.28;
+  ctx.beginPath(); ctx.moveTo(hx,hy); ctx.lineTo(hx2,hy2); ctx.stroke();
+  // Arrowhead
+  const ahAng=courseAng+Math.PI;
+  ctx.beginPath();
+  ctx.moveTo(hx,hy);
+  ctx.lineTo(cx+Math.cos(courseAng-.25)*r*.76,cy+Math.sin(courseAng-.25)*r*.76);
+  ctx.lineTo(cx+Math.cos(courseAng+.25)*r*.76,cy+Math.sin(courseAng+.25)*r*.76);
+  ctx.closePath(); ctx.fillStyle='#ff44ff'; ctx.fill();
+  // Tail
+  const tx=cx+Math.cos(ahAng)*r*.88, ty=cy+Math.sin(ahAng)*r*.88;
+  ctx.strokeStyle='#ff44ff';
+  ctx.beginPath(); ctx.moveTo(tx,ty); ctx.lineTo(cx+Math.cos(ahAng)*r*.28,cy+Math.sin(ahAng)*r*.28); ctx.stroke();
+
+  // ── Lubber line at top (fixed, white) ──
   ctx.fillStyle='#fff';
   ctx.beginPath();
-  ctx.moveTo(cx,y+4);
-  ctx.lineTo(cx-7,y+16);
-  ctx.lineTo(cx+7,y+16);
+  ctx.moveTo(cx,cy-r);
+  ctx.lineTo(cx-5,cy-r-10);
+  ctx.lineTo(cx+5,cy-r-10);
   ctx.closePath(); ctx.fill();
 
-  // Aircraft symbol
-  ctx.strokeStyle='#fa0'; ctx.lineWidth=2.5;
-  ctx.beginPath(); ctx.moveTo(cx-28,y+H*.62); ctx.lineTo(cx-8,y+H*.62); ctx.lineTo(cx-8,y+H*.62+8); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx+28,y+H*.62); ctx.lineTo(cx+8,y+H*.62); ctx.lineTo(cx+8,y+H*.62+8); ctx.stroke();
-  ctx.fillStyle='#fa0'; ctx.beginPath(); ctx.arc(cx,y+H*.62,4,0,Math.PI*2); ctx.fill();
+  // ── Aircraft symbol (white, center) ──
+  const as=r*.17;
+  ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(cx,cy-as*.9); ctx.lineTo(cx,cy+as*.7); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx-as*1.25,cy+as*.05); ctx.lineTo(cx+as*1.25,cy+as*.05); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx-as*.55,cy+as*.6); ctx.lineTo(cx+as*.55,cy+as*.6); ctx.stroke();
 
-  // HDG readout box
-  const hdgStr=Math.round(hdgNorm).toString().padStart(3,'0');
-  ctx.fillStyle='#000'; ctx.fillRect(cx-26,y,52,H*.52);
-  ctx.strokeStyle='#fa0'; ctx.lineWidth=1.5; ctx.strokeRect(cx-26,y,52,H*.52);
-  ctx.fillStyle='#fa0'; ctx.font='bold 13px Courier New'; ctx.textAlign='center';
-  ctx.fillText(hdgStr,cx,y+H*.38);
-  ctx.textAlign='left';
+  // ── Heading readout box (above aircraft, inside rose) ──
+  const hdgStr=Math.round(hdgNorm).toString().padStart(3,'0')+'°';
+  const bw=50,bh=19;
+  ctx.fillStyle='#000'; ctx.fillRect(cx-bw/2,cy-r*.44,bw,bh);
+  ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.strokeRect(cx-bw/2,cy-r*.44,bw,bh);
+  ctx.fillStyle='#fff'; ctx.font='bold 12px Courier New';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(hdgStr,cx,cy-r*.44+bh/2);
+
+  // ── HDG label (cyan, left) ──
+  ctx.fillStyle='#00ffff'; ctx.font='bold 9px Courier New';
+  ctx.textAlign='left'; ctx.textBaseline='top';
+  ctx.fillText('HDG '+Math.round(hdgNorm).toString().padStart(3,'0')+'°', 4, y+3);
+
+  // ── CRS label (magenta, right) ──
+  ctx.fillStyle='#ff44ff'; ctx.font='bold 9px Courier New';
+  ctx.textAlign='right';
+  ctx.fillText('CRS 360°', W-4, y+3);
+
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
   ctx.restore();
 }
 
