@@ -676,6 +676,9 @@
         let quiz;
         document.addEventListener('DOMContentLoaded', () => {
             quiz = new AirspeedsQuiz();
+            // Pre-select aircraft from URL param (e.g. ?aircraft=c172)
+            const urlAc = new URLSearchParams(window.location.search).get('aircraft');
+            if (urlAc) quiz.selectAircraft(urlAc);
         });
     </script>
 </body>
