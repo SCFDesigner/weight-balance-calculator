@@ -258,11 +258,6 @@ function selectAircraft(id) {
   selectManeuver(0);
 }
 
-// Auto-select aircraft from URL param (e.g. ?aircraft=p2006t from landing page)
-(function(){
-  const urlAc = new URLSearchParams(window.location.search).get('aircraft');
-  if (urlAc) selectAircraft(urlAc);
-})();
 
 // ─── FULLSCREEN ──────────────────────────────────────────────
 function enterFullscreen(){
@@ -1437,6 +1432,10 @@ resize();
 
 mfdPage='normal';
 renderMFD();
+
+// Auto-select aircraft from URL param — must run after all functions are defined
+const _urlAc = new URLSearchParams(window.location.search).get('aircraft');
+if (_urlAc) selectAircraft(_urlAc);
 </script>
 </body>
 </html>
