@@ -1,164 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Aviation Study Hub</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0d0d0f;
-            color: #e0e0e0;
-            min-height: 100vh;
-        }
-        .top-bar {
-            position: fixed; top: 0; left: 0; right: 0;
-            height: 56px;
-            background: linear-gradient(135deg, #1a1a1e 0%, #111114 100%);
-            border-bottom: 1px solid #333;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; z-index: 100;
-        }
-        .top-bar .back-btn {
-            background: none; border: 1px solid #555; color: #e0e0e0;
-            padding: 6px 14px; border-radius: 6px; cursor: pointer;
-            font-size: 13px; transition: all 0.2s;
-        }
-        .top-bar .back-btn:hover { border-color: #4CAF50; color: #4CAF50; }
-        .top-bar h1 {
-            font-size: 18px; font-family: 'Courier New', monospace;
-            color: #f44336; letter-spacing: 2px;
-        }
-        .top-bar .spacer { width: 80px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Study Hub</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .content { margin-top: 56px; padding: 32px 24px; max-width: 1100px; margin-left: auto; margin-right: auto; }
+body {
+  background: #08080a;
+  min-height: 100vh;
+  font-family: 'Courier New', monospace;
+  color: #ccc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
 
-        .section-label {
-            font-size: 10px; font-weight: bold; letter-spacing: 3px;
-            text-transform: uppercase; color: #555; margin-bottom: 14px; margin-top: 8px;
-            font-family: 'Courier New', monospace;
-        }
+/* ── HEADER ── */
+header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+header h1 {
+  font-size: clamp(22px, 5vw, 36px);
+  letter-spacing: 8px;
+  color: #fff;
+  font-weight: normal;
+}
+header p {
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #333;
+  margin-top: 8px;
+}
+header .back-link {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #333;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+header .back-link:hover { color: #4af; }
 
-        /* Aircraft row */
-        .aircraft-grid {
-            display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 40px;
-        }
-        .aircraft-card {
-            background: linear-gradient(135deg, #1e1e22 0%, #16161a 100%);
-            border: 1px solid #333; border-radius: 14px;
-            padding: 24px 28px; cursor: pointer;
-            transition: all 0.25s; min-width: 200px; flex: 1; max-width: 260px;
-            text-decoration: none; display: block;
-        }
-        .aircraft-card:hover { border-color: #4CAF50; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(76,175,80,0.15); }
-        .aircraft-card.coming-soon { opacity: 0.35; cursor: default; pointer-events: none; }
-        .aircraft-card .ac-badge {
-            font-size: 10px; font-weight: bold; letter-spacing: 1px;
-            color: #4CAF50; background: rgba(76,175,80,0.1);
-            border: 1px solid rgba(76,175,80,0.3); border-radius: 20px;
-            padding: 2px 10px; display: inline-block; margin-bottom: 12px;
-        }
-        .aircraft-card.coming-soon .ac-badge { color: #555; background: rgba(255,255,255,0.03); border-color: #333; }
-        .aircraft-card .ac-name {
-            font-size: 22px; font-weight: bold; color: #ffffff;
-            font-family: 'Courier New', monospace; margin-bottom: 4px;
-        }
-        .aircraft-card .ac-full { font-size: 12px; color: #888; margin-bottom: 10px; }
-        .aircraft-card .ac-tags {
-            display: flex; gap: 6px; flex-wrap: wrap;
-        }
-        .ac-tag {
-            font-size: 10px; color: #666; border: 1px solid #333;
-            border-radius: 4px; padding: 2px 6px;
-        }
-        .aircraft-card:hover .ac-tag { border-color: #3a5a3a; color: #888; }
+/* ── GRID ── */
+#study-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-width: 700px;
+}
 
-        /* Study resources row */
-        .resources-grid {
-            display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 40px;
-        }
-        .resource-card {
-            background: linear-gradient(135deg, #1e1e22 0%, #16161a 100%);
-            border: 1px solid #333; border-radius: 14px;
-            padding: 24px 28px; cursor: pointer;
-            transition: all 0.25s; flex: 1; min-width: 220px;
-            text-decoration: none; display: block;
-        }
-        .resource-card:hover { border-color: #4CAF50; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(76,175,80,0.12); }
-        .resource-card .res-icon { font-size: 28px; margin-bottom: 12px; }
-        .resource-card .res-title {
-            font-size: 16px; font-weight: bold; color: #ffffff;
-            margin-bottom: 6px; font-family: 'Courier New', monospace;
-        }
-        .resource-card .res-desc { font-size: 12px; color: #777; line-height: 1.5; }
-        .resource-card .res-count {
-            margin-top: 12px; font-size: 11px; color: #4CAF50;
-        }
+/* ── SECTION CARD ── */
+.tool-card {
+  background: #0d0d10;
+  border: 1px solid #1e1e22;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.tool-card-header {
+  padding: 20px 20px 14px;
+  border-bottom: 1px solid #1a1a1e;
+}
+.tool-card-icon {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: #4af;
+}
+.tool-card-title {
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: #fff;
+  font-weight: normal;
+}
+.tool-card-desc {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #444;
+  margin-top: 5px;
+  line-height: 1.5;
+}
 
-        @media (max-width: 600px) {
-            .aircraft-card { max-width: 100%; }
-            .resource-card { min-width: 100%; }
-            .top-bar h1 { font-size: 14px; }
-        }
-    </style>
+/* ── BUTTONS ── */
+.ac-list {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+.ac-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #0a0a0d;
+  border: 1px solid #252528;
+  border-radius: 6px;
+  color: #aaa;
+  text-decoration: none;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  cursor: pointer;
+}
+.ac-btn:hover {
+  border-color: #4af;
+  background: #0a1520;
+  color: #fff;
+}
+.ac-btn:hover .ac-arrow { color: #4af; }
+.ac-btn.disabled {
+  opacity: 0.28;
+  pointer-events: none;
+  cursor: default;
+}
+.ac-btn-name { flex: 1; }
+.ac-btn-sub  { font-size: 9px; color: #333; letter-spacing: 1px; margin-right: 10px; }
+.ac-arrow    { color: #333; font-size: 13px; transition: color 0.15s; }
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  #study-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+  }
+  header { margin-bottom: 32px; }
+  body { justify-content: flex-start; padding-top: 48px; }
+}
+</style>
 </head>
 <body>
-    <div class="top-bar">
-        <button class="back-btn" onclick="window.location.href='index.html'">← Home</button>
-        <h1>STUDY HUB</h1>
-        <div class="spacer"></div>
+
+<header>
+  <h1>STUDY HUB</h1>
+  <p>SELECT A CATEGORY TO BEGIN</p>
+  <a class="back-link" href="index.html">← HOME</a>
+</header>
+
+<div id="study-grid">
+
+  <!-- AIRCRAFT -->
+  <div class="tool-card">
+    <div class="tool-card-header">
+      <div class="tool-card-icon">✈</div>
+      <div class="tool-card-title">AIRCRAFT</div>
+      <div class="tool-card-desc">V-speeds, systems, checklists &amp; flashcards</div>
     </div>
-
-    <div class="content">
-
-        <div class="section-label">Aircraft</div>
-        <div class="aircraft-grid">
-            <a class="aircraft-card" href="p2006t_study.html">
-                <div class="ac-badge">MULTI-ENGINE</div>
-                <div class="ac-name">P2006T</div>
-                <div class="ac-full">Tecnam P2006T</div>
-                <div class="ac-tags">
-                    <span class="ac-tag">Flash Cards</span>
-                    <span class="ac-tag">Checklists</span>
-                    <span class="ac-tag">Quiz</span>
-                    <span class="ac-tag">V-Speeds</span>
-                </div>
-            </a>
-            <div class="aircraft-card coming-soon">
-                <div class="ac-badge">SINGLE-ENGINE</div>
-                <div class="ac-name">C172</div>
-                <div class="ac-full">Cessna 172 Skyhawk</div>
-                <div class="ac-tags">
-                    <span class="ac-tag">Coming Soon</span>
-                </div>
-            </div>
-            <div class="aircraft-card coming-soon">
-                <div class="ac-badge">SINGLE-ENGINE</div>
-                <div class="ac-name">C152</div>
-                <div class="ac-full">Cessna 152</div>
-                <div class="ac-tags">
-                    <span class="ac-tag">Coming Soon</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="section-label">Study Resources</div>
-        <div class="resources-grid">
-            <a class="resource-card" href="mnemonics.html">
-                <div class="res-icon">📚</div>
-                <div class="res-title">Mnemonics</div>
-                <div class="res-desc">ARROW, GUMPS, CRMALOFT, PAST, CCMALS, CRAFTT, and more aviation memory aids.</div>
-                <div class="res-count">14 mnemonics</div>
-            </a>
-            <a class="resource-card" href="general_knowledge.html">
-                <div class="res-icon">⚖️</div>
-                <div class="res-title">General Knowledge</div>
-                <div class="res-desc">Pilot documents, currency requirements, airspace dimensions, VFR weather minimums, regulations.</div>
-                <div class="res-count">Documents · Airspace · Regulations · Oxygen</div>
-            </a>
-        </div>
-
+    <div class="ac-list">
+      <a class="ac-btn" href="p2006t_study.html">
+        <span class="ac-btn-name">Tecnam P2006T</span>
+        <span class="ac-btn-sub">TWIN · G1000</span>
+        <span class="ac-arrow">›</span>
+      </a>
+      <span class="ac-btn disabled">
+        <span class="ac-btn-name">Cessna 172</span>
+        <span class="ac-btn-sub">COMING SOON</span>
+        <span class="ac-arrow">›</span>
+      </span>
+      <span class="ac-btn disabled">
+        <span class="ac-btn-name">Cessna 152</span>
+        <span class="ac-btn-sub">COMING SOON</span>
+        <span class="ac-arrow">›</span>
+      </span>
     </div>
+  </div>
+
+  <!-- RESOURCES -->
+  <div class="tool-card">
+    <div class="tool-card-header">
+      <div class="tool-card-icon">◉</div>
+      <div class="tool-card-title">RESOURCES</div>
+      <div class="tool-card-desc">Mnemonics, regulations &amp; general knowledge</div>
+    </div>
+    <div class="ac-list">
+      <a class="ac-btn" href="mnemonics.html">
+        <span class="ac-btn-name">Mnemonics</span>
+        <span class="ac-btn-sub">14 AIDS</span>
+        <span class="ac-arrow">›</span>
+      </a>
+      <a class="ac-btn" href="general_knowledge.html">
+        <span class="ac-btn-name">General Knowledge</span>
+        <span class="ac-btn-sub">REGS · AIRSPACE</span>
+        <span class="ac-arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
 </body>
 </html>
