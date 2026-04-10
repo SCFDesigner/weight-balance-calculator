@@ -425,6 +425,32 @@
         .diagram-img-wrapper.expanded .diagram-img-caption {
             color: #aaa; font-size: 13px;
         }
+
+        /* Interactive diagram pins */
+        .dia-interactive{position:relative;background:#111114;border:1px solid #333;border-radius:8px;padding:0;margin:16px 0;overflow:hidden}
+        .dia-interactive img{display:block;width:100%;height:auto;border-radius:8px;filter:invert(0.88) hue-rotate(180deg);pointer-events:none}
+        .dia-pin{position:absolute;width:12px;height:12px;border-radius:50%;background:#4CAF50;border:2px solid rgba(0,0,0,0.5);cursor:pointer;transform:translate(-50%,-50%);z-index:10;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 0 6px rgba(76,175,80,0.4)}
+        .dia-pin:hover{transform:translate(-50%,-50%) scale(1.5);box-shadow:0 0 14px rgba(76,175,80,0.8)}
+        .dia-pin.blue{background:#4fc3f7;box-shadow:0 0 6px rgba(79,195,247,0.4)}
+        .dia-pin.blue:hover{box-shadow:0 0 14px rgba(79,195,247,0.8)}
+        .dia-pin.orange{background:#ffb74d;box-shadow:0 0 6px rgba(255,183,77,0.4)}
+        .dia-pin.orange:hover{box-shadow:0 0 14px rgba(255,183,77,0.8)}
+        .dia-pin.red{background:#ff6688;box-shadow:0 0 6px rgba(255,102,136,0.4)}
+        .dia-pin.red:hover{box-shadow:0 0 14px rgba(255,102,136,0.8)}
+        .dia-tip{position:absolute;background:rgba(10,10,14,0.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(76,175,80,0.25);border-radius:6px;padding:8px 12px;color:#e0e0e0;font-size:10px;line-height:1.5;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:20;transform:translate(-50%,-110%);left:50%;bottom:100%;margin-bottom:6px}
+        .dia-pin:hover .dia-tip{opacity:1;pointer-events:auto}
+        .dia-tip-title{color:#4CAF50;font-weight:700;font-size:11px;margin-bottom:2px}
+        .dia-tip-desc{color:#aaa;white-space:normal;max-width:240px}
+
+        /* Fuel burn calculator */
+        .fb-btn{padding:6px 0;border-radius:6px;border:1px solid #333;background:#1a1a1e;color:#888;font-size:11px;cursor:pointer;font-weight:400;flex:1;transition:all 0.2s}
+        .fb-btn:hover{border-color:#666;color:#e0e0e0}
+        .fb-btn.act{border-color:#4CAF50;background:rgba(76,175,80,0.12);color:#4CAF50;font-weight:600}
+        .fb-btn.act-warm{border-color:#ffb74d;background:rgba(255,183,77,0.12);color:#ffb74d;font-weight:600}
+        .fb-result{background:#1a1a1e;border:1px solid #333;border-radius:8px;padding:12px;text-align:center}
+        .fb-result-label{color:#666;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+        .fb-result-val{font-size:20px;font-weight:700}
+        .fb-result-sub{color:#666;font-size:10px;margin-top:2px}
     </style>
 </head>
 <body>
@@ -523,13 +549,78 @@
                         <li><span class="highlight">C</span> — Critical engine windmilling (more drag → higher Vmc)</li>
                         <li><span class="highlight">R</span> — Rearward CG (less rudder leverage → higher Vmc)</li>
                         <li><span class="highlight">M</span> — Max takeoff power (most asymmetric thrust → higher Vmc)</li>
-                        <li><span class="highlight">A</span> — Aft CG (same as rearward → higher Vmc)</li>
+                        <li><span class="highlight">A</span> — Airborne, out of ground effect (more induced drag → higher Vmc)</li>
                         <li><span class="highlight">L</span> — Landing gear up (less keel effect → higher Vmc)</li>
-                        <li><span class="highlight">O</span> — Out of ground effect (more induced drag → higher Vmc)</li>
+                        <li><span class="highlight">O</span> — Operating engine at takeoff/max power (greatest asymmetric thrust → higher Vmc)</li>
                         <li><span class="highlight">F</span> — Flaps in takeoff position (increased yawing moment → higher Vmc)</li>
                         <li><span class="highlight">T</span> — Trim set for takeoff (reduced control forces → higher Vmc)</li>
                     </ul>
                     <p>Vmc <span class="highlight">decreases</span> with altitude because the operating engine produces less power. Published as IAS; TAS at Vmc increases with altitude.</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Vmc Certification — CRM ALOFT (Detailed)</h3>
+                    <p style="color:#888;font-size:11px;margin-bottom:12px">Each factor below explains how it affects Vmc and single-engine performance. All conditions are set to produce the <b>highest</b> Vmc for certification purposes.</p>
+
+                    <h4 style="color:#81C784;font-size:13px;margin:14px 0 8px;font-family:'Courier New',monospace;">C — Critical Engine Inoperative &amp; Windmilling</h4>
+                    <p><span class="highlight">↑ Vmc · ↓ Performance</span></p>
+                    <p>A windmilling prop creates more drag than a feathered one, increasing the yawing moment toward the dead engine. More rudder force is needed to counteract that yaw, so the minimum controllable speed goes up.</p>
+                    <p>Feathered = less drag = less yaw = lower Vmc. Windmilling = max drag = max yaw = higher Vmc. Additionally, windmilling drag reduces total available thrust, degrading performance significantly compared to a feathered prop.</p>
+
+                    <h4 style="color:#81C784;font-size:13px;margin:14px 0 8px;font-family:'Courier New',monospace;">R — Rearward Center of Gravity</h4>
+                    <p><span class="highlight">↑ Vmc · ↑ Performance</span></p>
+                    <p>CG position changes the moment arm to the rudder. <b>Forward CG</b> = longer arm = more rudder leverage = lower Vmc. <b>Rearward CG</b> = shorter arm = less rudder leverage = higher Vmc (Law of the Lever).</p>
+                    <p>Performance improves with aft CG because the horizontal stabilizer produces less negative lift (less down force needed to balance), reducing induced drag.</p>
+
+                    <h4 style="color:#81C784;font-size:13px;margin:14px 0 8px;font-family:'Courier New',monospace;">M — Most Unfavorable Takeoff Weight</h4>
+                    <p><span class="highlight">↑ Vmc · ↑ Performance</span></p>
+                    <p>A <b>lighter</b> airplane is the most unfavorable weight for Vmc. Two reasons:</p>
+                    <ul>
+                        <li>A heavier airplane has a higher horizontal component of lift at a given bank angle (5°), which helps turn toward the operating engine — more turning force = better control.</li>
+                        <li>A heavier airplane resists yawing and rolling toward the dead engine because the operating engine's force is less effective displacing the greater mass (like pushing a heavy door vs. a light one).</li>
+                    </ul>
+                    <p>A lighter airplane = less resistance to yaw = higher Vmc. However, the lighter airplane has less induced drag and therefore better overall performance.</p>
+
+                    <h4 style="color:#81C784;font-size:13px;margin:14px 0 8px;font-family:'Courier New',monospace;">A — Airborne, Out of Ground Effect</h4>
+                    <p><span class="highlight">↑ Vmc · ↓ Performance</span></p>
+                    <p>Light twins are not required to determine Vmc on the ground. Out of ground effect, induced drag is higher → higher AOA required → P-factor and accelerated slipstream effects are more pronounced → greater rudder force needed → Vmc increases.</p>
+                    <p>In ground effect, the downwash deflection reduces induced drag significantly, meaning the airplane performs much better and requires less rudder authority. Out of ground effect, total drag is higher and performance degrades.</p>
+
+                    <h4 style="color:#81C784;font-size:13px;margin:14px 0 8px;font-family:'Courier New',monospace;">L — Landing Gear Retracted</h4>
+                    <p><span class="highlight">↑ Vmc · ↑ Performance</span></p>
+                    <p>Extended gear provides three stabilizing effects that lower Vmc:</p>
+                    <ol style="padding-left:20px;color:#ccc;font-size:13px;line-height:1.8;">
+                        <li><b>Keel Effect:</b> Gear lowers the CG below the center of lift, increasing stability — like the keel of a boat holding it upright.</li>
+                        <li><b>Drag behind CG:</b> Main gear drag acts behind the CG, reducing the effectiveness of the yawing moment from the dead engine — like a child dragging their feet on a bike for stability.</li>
+                        <li><b>Weathervane Effect:</b> Wheels and doors align themselves with the relative wind, resisting the yaw toward the dead engine — like a weathervane pointing into wind.</li>
+                    </ol>
+                    <p>Gear retracted removes all three stabilizing effects → more rudder required → higher Vmc. But retracted gear also means less total drag → better performance.</p>
+
+                    <h4 style="color:#81C784;font-size:13px;margin:14px 0 8px;font-family:'Courier New',monospace;">O — Operating Engine at Takeoff/Max Power</h4>
+                    <p><span class="highlight">↑ Vmc · ↑ Performance</span></p>
+                    <p>Full power on the operating engine creates the greatest asymmetric thrust → maximum yawing and rolling moment toward the dead engine. If the operating engine were at idle, there would be no yaw and no rudder needed.</p>
+                    <p>For a normally aspirated engine, full power occurs at sea level with standard atmosphere. More power = more asymmetric force = higher Vmc. Obviously, more power also means better performance and slower descent rate OEI.</p>
+
+                    <h4 style="color:#81C784;font-size:13px;margin:14px 0 8px;font-family:'Courier New',monospace;">F — Flaps in Takeoff Position</h4>
+                    <p><span class="highlight">↑ Vmc · ↑ Performance</span></p>
+                    <p>Flap settings affect lift and drag differently:</p>
+                    <ul>
+                        <li><b>Low settings (5°–15°):</b> Significant lift increase, small drag penalty</li>
+                        <li><b>Middle settings (15°–25°):</b> Equal increase in lift and drag</li>
+                        <li><b>High settings (25°–40°):</b> Higher drag penalty than lift developed</li>
+                    </ul>
+                    <p>At low/takeoff flap settings, the accelerated slipstream effect is more pronounced (less drag behind CG to stabilize). At higher settings, drag aft of the CG creates a stabilizing effect similar to extended gear. More flaps = easier to control = lower Vmc. Takeoff flaps (low or nil) = harder to control = higher Vmc.</p>
+                    <p>With little or no flaps, less drag means more available power → better performance.</p>
+
+                    <h4 style="color:#81C784;font-size:13px;margin:14px 0 8px;font-family:'Courier New',monospace;">T — Trimmed for Takeoff (Rudder)</h4>
+                    <p><span class="highlight">↑ Vmc · ↑ Performance</span></p>
+                    <p>Three possible rudder trim configurations:</p>
+                    <ol style="padding-left:20px;color:#ccc;font-size:13px;line-height:1.8;">
+                        <li><b>Trimmed toward operating engine</b> (less foot pressure): Trim tab helps hold rudder in place but <b>decreases</b> total rudder effectiveness (lowers the rudder AOA). Less effective rudder → higher Vmc.</li>
+                        <li><b>Trim neutral:</b> Tab acts as a rudder extension. Higher foot pressure required, but rudder AOA is higher → more effective → lower Vmc.</li>
+                        <li><b>Trimmed toward inoperative engine</b> (most foot pressure): Dramatically increases rudder AOA → most effective. However, rudder pressure increases significantly. Certification limit: no more than <b>150 lbs</b> of force.</li>
+                    </ol>
+                    <p>Takeoff trim (toward operating engine or neutral) limits rudder effectiveness, producing a higher Vmc. Less trim drag also means better performance.</p>
                 </div>
 
                 <div class="info-card">
@@ -555,59 +646,79 @@
                 <div class="info-card">
                     <h3>Electrical System</h3>
                     <ul>
-                        <li><span class="highlight">Primary power:</span> Two engine-driven generators (40A, 14VDC each), operating in parallel with voltage regulators and automatic overvoltage protection</li>
-                        <li><span class="highlight">Secondary power:</span> Main battery 12V/23Ah + Secondary battery 12V/13Ah</li>
-                        <li><span class="highlight">5 Buses:</span> Battery Bus, LH Generator Bus, RH Generator Bus, LH Avionics Bus, RH Avionics Bus</li>
-                        <li>Cross-bus switches isolate L/R sides; FIELD switches control generators</li>
-                        <li>Battery emergency power: 30 minutes</li>
-                        <li>System is DC; Voltmeter normal range: 12–14V</li>
+                        <li><span class="highlight">Primary power:</span> Two engine-driven generators (40A, 14.2–14.8 VDC each), operating in parallel with integrated voltage regulators and automatic overvoltage protection</li>
+                        <li><span class="highlight">Secondary power:</span> Main battery <span class="highlight">12V, 23Ah</span> + Secondary battery <span class="highlight">12V, 13Ah</span> (both lead-acid, fuselage tail left side). EMERG BATT switch puts both in parallel.</li>
+                        <li><span class="highlight">5 Buses:</span> Battery Bus (3-source: battery + both generators), LH Generator Bus, RH Generator Bus, LH Avionics Bus, RH Avionics Bus</li>
+                        <li><span class="highlight">Cross-bus switches:</span> Allow parallel connection of generator/battery buses; OFF isolates generator bus from battery bus and opposite generator</li>
+                        <li><span class="highlight">FIELD switches:</span> Control generator excitation — OFF puts that generator off-line</li>
+                        <li><span class="highlight">Avionics switches:</span> Can cut power to respective avionic bus via relay</li>
+                        <li>Battery emergency power: <span class="highlight">30 minutes</span></li>
+                        <li>System is <span class="highlight">DC</span>; Voltmeter/ammeter on RH instrument panel; ammeter selector for LH or RH generator</li>
                         <li>External DC power feeds Battery Bus regardless of master switch position (starters can engage with master off)</li>
+                        <li>Each generator alone can maintain flight safety if the other fails</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Warning, Caution &amp; Advisory Lights</h3>
+                    <ul>
+                        <li style="color:#ff6688"><span class="highlight">RED (Warning):</span> LH/RH OVERVOLT, MAIN/REAR DOOR OPEN, LH/RH LOW COOLANT, LH/RH ENGINE FIRE, LG TRANSITION</li>
+                        <li style="color:#ffb74d"><span class="highlight">AMBER (Caution):</span> LH/RH GENERATOR failure, EXT POWER connected, PITOT HEAT failure, GEAR PUMP ON</li>
+                        <li style="color:#4CAF50"><span class="highlight">GREEN (Advisory):</span> LH/RH FUEL PUMP ON, PITOT HEAT ON, 3× LG Down &amp; Locked</li>
                     </ul>
                 </div>
 
                 <div class="info-card">
                     <h3>Engines</h3>
                     <ul>
-                        <li><span class="highlight">Type:</span> Bombardier-Rotax 912 S3 — 4-stroke, 4-cylinder horizontally opposed, spark ignition</li>
+                        <li><span class="highlight">Type:</span> Bombardier-Rotax 912 S3 — 4-stroke, 4-cylinder horizontally opposed, 1352 cc displacement</li>
                         <li>Single central camshaft, pushrods, OHV</li>
                         <li><span class="highlight">Cooling:</span> Cylinder heads liquid-cooled, cylinders ram-air cooled</li>
                         <li>Dry-sump forced lubrication system</li>
                         <li>Dual breakerless CDI ignition; firing order: 1-4-2-3</li>
                         <li>Two constant-depression carburetors per engine</li>
-                        <li>Reduction gearbox (2.27:1) with shock absorber and overload clutch</li>
-                        <li><span class="highlight">Max power:</span> 98.6 HP @ 2,388 RPM (5 min limit); Max continuous: 92.5 HP @ 2,265 RPM</li>
+                        <li>Reduction gearbox (2.27:1) with shock absorber</li>
+                        <li><span class="highlight">Max power:</span> 73.5 kW (98.6 HP) @ 5800 RPM / 2388 prop RPM (5 min limit)</li>
+                        <li><span class="highlight">Max continuous:</span> 69.0 kW (92.5 HP) @ 5500 RPM / 2265 prop RPM</li>
                     </ul>
                 </div>
 
                 <div class="info-card">
-                    <h3>Cooling System (Rotax)</h3>
+                    <h3>Cooling System</h3>
                     <ul>
-                        <li>Closed liquid circuit with expansion tank; water pump driven from camshaft</li>
-                        <li>Flow: Radiator → pump → cylinder heads → expansion tank → back to radiator</li>
-                        <li>Overflow bottle: excess coolant flows there when hot; vacuum sucks it back when cooling</li>
-                        <li>Pressure cap with excess pressure valve + return valve</li>
+                        <li>Closed liquid circuit for <span class="highlight">cylinder heads</span>; ram-air cooling for <span class="highlight">cylinders</span></li>
+                        <li>Flow: <span class="highlight">Radiator → water pump (camshaft-driven) → cylinder heads → expansion tank → radiator</span></li>
+                        <li><span class="highlight">Expansion tank:</span> Located on top of engine (radiator is below engine level) — accommodates thermal expansion</li>
+                        <li><span class="highlight">Pressure cap:</span> Fitted with pressure relief valve + return valve on the expansion tank</li>
+                        <li><span class="highlight">Overflow:</span> Relief valve opens when hot → coolant flows to transparent overflow bottle at atmospheric pressure. On cooling, vacuum sucks coolant back into circuit.</li>
                         <li>Coolant temp sensors at cylinder heads 2 and 3 (hottest)</li>
+                        <li><span class="highlight">CT max:</span> 120°C (248°F) · <span class="highlight">CHT max:</span> 135°C (275°F)</li>
+                        <li><span class="highlight">LOW COOLANT warning:</span> Red annunciator light when level drops below limit</li>
                     </ul>
                 </div>
 
                 <div class="info-card">
-                    <h3>Oil System (Rotax)</h3>
+                    <h3>Oil System</h3>
                     <ul>
                         <li>Dry sump forced lubrication; camshaft-driven oil pump with integrated pressure regulator</li>
                         <li>Flow: Oil tank → oil cooler → oil filter → lubrication points → crankcase → oil tank (via piston blow-by)</li>
-                        <li>Oil temperature sensor on oil pump housing</li>
-                        <li>Circuit venting via bore on oil tank</li>
+                        <li><span class="highlight">Thermostatic valve:</span> Regulates oil flow to heat exchanger (oil radiator) based on temperature — allows cold-weather starting</li>
+                        <li>Oil tank behind firewall, protected from heat sources; dipstick for level check</li>
+                        <li>Oil relief hose discharges to safe zone in cowling away from exhausts</li>
+                        <li><span class="highlight">Oil pressure:</span> Min 0.8 bar (11.5 psi) below 1400 prop RPM · Normal 2–5 bar (29–72.5 psi) · Max 7 bar (102 psi) — cold start up to 7 bar permissible briefly</li>
+                        <li><span class="highlight">Oil temp:</span> Min 50°C · Normal 90–110°C (194–230°F) · Max 130°C (266°F)</li>
                     </ul>
                 </div>
 
                 <div class="info-card">
-                    <h3>Propeller & Governor</h3>
+                    <h3>Propeller &amp; Governor</h3>
                     <ul>
-                        <li><span class="highlight">Propeller:</span> MT MTV-21-A-C-F-/CF178-05 — wood/composite 2-blade, variable pitch, fully featherable, diameter 1780mm</li>
-                        <li><span class="highlight">Governor:</span> MT P-875-12 — hydraulically controlled; oil pressure reduces pitch</li>
+                        <li><span class="highlight">Propeller:</span> MT MTV-21-A-C-F/CF178-05 — 2 wood/composite blades, aluminium hub, diameter 1780 mm (no reduction allowed)</li>
+                        <li><span class="highlight">Type:</span> Variable pitch, hydraulically controlled, <span class="highlight">fully featherable</span></li>
+                        <li><span class="highlight">Governor:</span> MT P-875-12 — hydraulic; oil pressure reduces pitch</li>
                         <li>If hub loses oil pressure → blades move to high-pitch/low-RPM (feather direction)</li>
                         <li><span class="highlight">Power change:</span> Increase: Prop FIRST, then MAP. Decrease: MAP FIRST, then Prop</li>
-                        <li>Governor check: 3 purge cycles, 400–500 RPM drop each; push lever if >500 RPM drop</li>
+                        <li>Governor check: slowly and gently 3 purge cycles, 400–500 RPM drop each; push lever if >500 RPM drop. Avoid excessive lever pulling (gearbox wear + detonation risk)</li>
                         <li>RPM: Green 580–2265, Yellow 2265–2388, Red line 2388</li>
                     </ul>
                 </div>
@@ -615,33 +726,60 @@
                 <div class="info-card">
                     <h3>Fuel System</h3>
                     <ul>
-                        <li>Two integrated wing tanks: 26.42 US gal each (52.84 gal total); usable: 51.35 gal</li>
+                        <li>Two integrated wing tanks: <span class="highlight">100L (26.42 gal) each</span> — 200L (52.8 gal) total</li>
+                        <li>Usable: <span class="highlight">194.4L (51.35 gal)</span> — 97.2L (25.68 gal) per wing</li>
+                        <li>Unusable: <span class="highlight">5.6L (1.48 gal)</span> — 2.8L (0.74 gal) per wing</li>
                         <li>4 drain points: 1 gascolator + 1 wing sump per side</li>
                         <li><span class="highlight">No fuel transfer</span> — cross-feed only (supply engine from opposite tank)</li>
-                        <li>Each selector: Left, Right, Off (Off requires pull + rotate)</li>
+                        <li>Each selector: Left, Right, Off (Off requires pull + rotate to prevent accidental shutoff)</li>
                         <li>Electric backup fuel pump for engine-driven pump failure</li>
-                        <li>Gascolator below engine nacelle at lowest point</li>
-                        <li>100LL may increase valve seat wear (MOGAS preferred for engine longevity)</li>
+                        <li>Gascolator (sediment-filter bowl) below engine nacelle at lowest point of fuel system</li>
+                        <li><span class="highlight">Fuel pressure:</span> Min 2.2 psi (0.15 bar) · Max 5.8 psi (0.40 bar)</li>
+                        <li><span class="highlight">Approved fuels:</span> MOGAS ASTM D4814, MOGAS EN 228 (min RON 95), AVGAS 100LL</li>
+                        <li>100LL may increase valve seat wear and combustion deposits (MOGAS preferred for longevity)</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Fuel Delivery (Engine Side)</h3>
+                    <ul>
+                        <li>Flow: <span class="highlight">Tank → coarse filter → fire cock → fine filter → mechanical fuel pump → fuel manifold → two carburetors</span></li>
+                        <li>A return line routes surplus fuel back to the tank and suction side to prevent <span class="highlight">vapour lock</span></li>
+                        <li>Mechanical fuel pump is engine-driven; electric backup pump available</li>
+                        <li>Carb heat controlled via Bowden cable levers on central pedestal (fully pulled = max hot air; forward = OFF)</li>
                     </ul>
                 </div>
 
                 <div class="info-card">
                     <h3>Landing Gear</h3>
                     <ul>
-                        <li>3 wheels; electro-hydraulic retractable</li>
+                        <li>3 wheels; <span class="highlight">electro-hydraulic</span> retractable; 6 couples of micro-switches (2 per leg) for position detection</li>
                         <li><span class="highlight">Normal:</span> Reversible electric hydraulic pump; extension aided by gravity</li>
-                        <li><span class="highlight">Emergency:</span> Pressurized accumulator (min 20 bar) forces gear down via shuttle valves</li>
-                        <li>Inadvertent retraction protection: knob must be pulled before pushing UP</li>
+                        <li><span class="highlight">Emergency:</span> Pressurized accumulator (min 20 bar) forces gear down via shuttle valves (NLG + MLG)</li>
+                        <li>Inadvertent retraction protection: knob must be <span class="highlight">pulled before pushing UP</span></li>
                         <li>Accumulator gauge: left side of tail cone; red push-button to recharge if low</li>
                         <li>Emergency extension: two distributors on cabin floor under removable cover near pilot seat</li>
-                        <li>Set gear knob to DOWN before emergency extension so lights work normally</li>
+                        <li>Set gear knob to DOWN before emergency extension so indication lights work normally</li>
                         <li>Indications: 3 green (down-locked), 1 red (transit), amber "GEAR PUMP ON" caution</li>
                         <li>Warning horn: gear UP + throttle idle or flaps LAND</li>
+                        <li style="color:#ff6688">After emergency extension, apply AMM restoration procedure</li>
                     </ul>
                 </div>
 
                 <div class="info-card">
-                    <h3>Flight Controls & Trim</h3>
+                    <h3>Brake System</h3>
+                    <ul>
+                        <li>Independent hydraulic brake for each main wheel — no nose wheel brakes</li>
+                        <li>Master cylinders (MC-4) on each pilot and copilot rudder pedal</li>
+                        <li>Single <span class="highlight">vented oil reservoir (R-100)</span> feeds pilot-side cylinders, connected to copilot-side</li>
+                        <li><span class="highlight">Parking brake:</span> PV-1 valve on cabin floor, operated by knob on central pedestal — traps pressure in lines</li>
+                        <li>Brakes operable from both pilot and copilot pedals</li>
+                        <li style="color:#ff6688">Do NOT press opposite toe brake while steering until pedals realign — may damage mechanism</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Flight Controls &amp; Trim</h3>
                     <ul>
                         <li>Primary controls: ailerons, rudder, stabilator — manual via cables/pulleys/rods</li>
                         <li><span class="highlight">No</span> reversible flight controls, <span class="highlight">no</span> aileron-rudder interconnect</li>
@@ -652,44 +790,49 @@
                 </div>
 
                 <div class="info-card">
-                    <h3>Ignition System (Rotax)</h3>
+                    <h3>Ignition System</h3>
                     <ul>
                         <li>Dual, breakerless <span class="highlight">capacitor discharge ignition (CDI)</span> with integrated generator</li>
                         <li>Two independent charging coils supply the ignition circuits</li>
                         <li>Energy stored in capacitors; external trigger coils actuate discharge to ignition coils</li>
+                        <li><span class="highlight">Independent</span> from the main electrical generation/distribution system — switches control only engine electrical circuit</li>
                         <li>Firing order: <span class="highlight">1-4-2-3</span></li>
+                        <li style="color:#ff6688"><b>WARNING:</b> If ignition switches are ON, propeller movement can cause engine starting — hazard to nearby people</li>
                     </ul>
                 </div>
 
                 <div class="info-card">
-                    <h3>Fuel Delivery (Rotax)</h3>
+                    <h3>Door Locking System</h3>
                     <ul>
-                        <li>Fuel flow path (engine-side): <span class="highlight">Tank → coarse filter → fire cock → fine filter → mechanical fuel pump → fuel manifold → two carburetors</span></li>
-                        <li>A return line routes surplus fuel back to the tank and suction side to help prevent <span class="highlight">vapour lock</span></li>
-                        <li>Mechanical fuel pump is engine-driven; electric backup pump available for pump failure</li>
+                        <li><span class="highlight">Main door (forward, left):</span> Electro-mechanical lock engages when left engine running (via oil pressure switch)</li>
+                        <li><span class="highlight">Emergency exit (aft, right):</span> Same system, triggered by right engine oil pressure</li>
+                        <li>Manual override lever accessible from inside and outside door panel</li>
+                        <li>Post-shutdown pressure drop may delay opening — use override if needed</li>
+                        <li><span class="highlight">Ditching exit (roof):</span> Manual handle with safety wire; two cables keep door connected when open</li>
+                        <li>Warning lights: MAIN DOOR OPEN and REAR DOOR OPEN on annunciator</li>
                     </ul>
                 </div>
 
                 <div class="info-card">
-                    <h3>Electrical System Details</h3>
+                    <h3>Pedestal Controls</h3>
                     <ul>
-                        <li>Each generator rated <span class="highlight">40A, 14VDC</span></li>
-                        <li>Battery: <span class="highlight">12V, 23Ah</span> (main) + <span class="highlight">12V, 13Ah</span> (secondary)</li>
-                        <li>Avionics buses powered by their respective Generator Bus</li>
-                        <li>FIELD switches control generator excitation — OFF puts generator off-line</li>
-                        <li>Integrated generator regulator maintains constant output voltage + automatic overvoltage protection</li>
-                        <li>Ammeter (G1000) can display current from either L or R generator via selector</li>
-                        <li>System is <span class="highlight">DC</span></li>
+                        <li><span class="highlight">Throttle levers:</span> LH and RH (with friction knob)</li>
+                        <li><span class="highlight">Propeller pitch levers:</span> LH and RH</li>
+                        <li><span class="highlight">Carb heat levers:</span> Between throttle and prop levers — fully pulled = max hot air, forward = OFF</li>
+                        <li><span class="highlight">Choke controls:</span> With friction knob</li>
+                        <li><span class="highlight">Parking brake knob</span></li>
+                        <li><span class="highlight">Windshield defrost knob</span></li>
                     </ul>
                 </div>
 
                 <div class="info-card">
-                    <h3>Preflight & Towing</h3>
+                    <h3>Preflight &amp; Towing</h3>
                     <ul>
                         <li>Tow using the <span class="highlight">nose gear tow bar</span></li>
                         <li>Preflight gear check: inspect for damage, proper extension, and brake condition</li>
                         <li>4 drain points: 1 gascolator + 1 wing sump per side</li>
                         <li>Check emergency gear accumulator pressure gauge (left side of tail cone) — min 20 bar</li>
+                        <li>Oil level check: switch off ignitions, turn prop by hand several times to pump oil to tank, then check dipstick</li>
                     </ul>
                 </div>
             </div>
@@ -816,6 +959,8 @@
                     <p>Performance calculations likely include error due to <span class="highlight">metric units</span> in AFM.</p>
                     <p>Max operating altitude: <span class="highlight">14,000 ft</span>. Min operating temp: <span class="highlight">-25°C</span>.</p>
                 </div>
+
+                <div id="fuelCalcContainer"></div>
             </div>
 
             <!-- Limitations -->
@@ -1243,142 +1388,60 @@
         <!-- ==================== SYSTEMS DIAGRAMS ==================== -->
         <div id="tab-systems-diagrams" class="tab-page">
             <div class="diagram-section">
-                <div class="diagram-section-title">P2006T Emergency Systems Study — AFM Diagrams</div>
-                <p style="color:#888; font-size:13px; margin-bottom:24px;">Systems notes and schematic diagrams from the Tecnam P2006T Aircraft Flight Manual. Click any diagram to expand.</p>
+                <div class="diagram-section-title">P2006T Systems Diagrams — Interactive</div>
+                <p style="color:#888; font-size:13px; margin-bottom:24px;">Hover the colored pins on each diagram to see component details. Click any diagram wrapper to expand fullscreen.</p>
 
                 <!-- ===== FUEL SYSTEM ===== -->
                 <div class="diagram-card">
                     <h3>Fuel System</h3>
-                    <div class="diagram-img-wrapper" onclick="toggleDiagramExpand(this)">
-                        <img src="images/fuel-system-p2006t.png" alt="P2006T Fuel System Diagram">
-                        <div class="diagram-img-caption">Fuel System Schematic — P2006T AFM</div>
-                    </div>
-                    <p>The fuel system consists of <span class="highlight">two integrated fuel tanks</span> located inside the <span class="highlight">wing torque boxes</span> and fitted with inspection doors.</p>
-                    <h4>Fuel Tank Details</h4>
-                    <ul>
-                        <li><span class="highlight">Each tank capacity:</span> 100 liters (26.42 US gallons)</li>
-                        <li>Each tank includes a <span class="highlight">vent valve</span> with outlet on the lower wing skin</li>
-                        <li>Each tank includes a <span class="highlight">sump</span> fitted with a drain valve for water/moisture drainage</li>
-                    </ul>
-                    <p>A <span class="highlight">Gascolator</span> (sediment-filter bowl) is located beneath the engine nacelle between the fuel tank and electric pump at the <span class="highlight">lowest point of the fuel system</span>. It has a drain valve that allows drainage of the overall fuel line.</p>
-                    <p>An <span class="highlight">electric fuel pump</span> feeds the associated engine in the event of engine-driven pump failure.</p>
-                    <h4>Fuel Indications</h4>
-                    <ul>
-                        <li>Fuel quantity indicators for each engine (RH instrument panel)</li>
-                        <li>Fuel pressure indicators for each engine (RH instrument panel)</li>
-                    </ul>
-                    <h4>Normal Fuel Feed and Crossfeed</h4>
-                    <p>In normal operation, each engine-driven pump draws fuel from its <span class="highlight">own respective tank</span>.</p>
-                    <p>Crossfeed is available through <span class="highlight">fuel valves located on the front spar</span>, controlled by Bowden cables from the fuel selectors on the cabin overhead panel.</p>
-                    <ul>
-                        <li><span class="highlight">Left fuel selector:</span> feeds the left engine from either the left tank or the right tank (crossfeed)</li>
-                        <li><span class="highlight">Right fuel selector:</span> feeds the right engine from either the right tank or the left tank (crossfeed)</li>
-                    </ul>
-                    <p>Each selector can only be set to <span class="highlight">OFF</span> by pulling and simultaneously rotating the lever, which helps prevent unintentional shutdown.</p>
-                    <h4>Fuel Caution</h4>
-                    <p>Use of <span class="highlight">Avgas 100LL</span> causes greater wear of the valve seats and greater combustion deposits inside the cylinders because of the higher lead content. The AFM directs operators to the Rotax Maintenance Manual for additional checks required after prolonged use of Avgas.</p>
+                    <div id="diaFuel"></div>
+                    <p>Two integrated wing tanks (<span class="highlight">100L / 26.42 gal each</span>). Usable: 194.4L (51.35 gal). <span class="highlight">Cross-feed only, no transfer.</span> Each selector: Left, Right, Off (pull + rotate for Off). Gascolator at lowest point. Electric backup fuel pump.</p>
                 </div>
 
                 <!-- ===== HYDRAULIC / LANDING GEAR SYSTEM ===== -->
                 <div class="diagram-card">
                     <h3>Landing Gear System (Hydraulic)</h3>
-                    <div class="diagram-img-wrapper" onclick="toggleDiagramExpand(this)">
-                        <img src="images/hydraulic-system-p2006t.png" alt="P2006T Hydraulic Schematic Diagram">
-                        <div class="diagram-img-caption">Hydraulic Schematic Diagram — P2006T AFM</div>
-                    </div>
-                    <p>The landing gear retraction system is <span class="highlight">electro-hydraulic</span>. It is powered by a <span class="highlight">reversible pump</span> that is electrically controlled by the landing gear control knob on the LH instrument panel and by leg position micro-switches.</p>
-                    <p>These micro-switches detect when the landing gear is <span class="highlight">down-locked</span> or <span class="highlight">up</span>, and they also support the warning system that alerts the pilot if approach/landing configuration is unsafe in terms of flaps, throttle, and gear position.</p>
-                    <h4>Normal Operation</h4>
-                    <p>Gear extension and retraction are accomplished by <span class="highlight">hydraulic jacks</span>. Gear extension is also assisted by <span class="highlight">gravity</span>.</p>
-                    <p>Hydraulic oil is stored in an integrated reservoir inside the <span class="highlight">Hydraulic Power Pack</span>. A reversible electric pump pressurizes the fluid. When the landing gear control knob is placed to UP or DOWN, the pump directs hydraulic fluid through the appropriate pressure line to each jack.</p>
-                    <p>To prevent inadvertent retraction, the landing gear control knob must be <span class="highlight">pulled before being pushed upward</span> for an UP command.</p>
-                    <h4>Emergency Operation</h4>
-                    <p>Emergency operation provides <span class="highlight">landing gear extension only</span>.</p>
-                    <p>This is accomplished using a <span class="highlight">hydraulic accumulator</span> that discharges pressurized oil into the hydraulic jacks.</p>
-                    <p>The normal extension line and emergency extension line converge at <span class="highlight">shuttle valves</span>:</p>
-                    <ul>
-                        <li>One valve for the <span class="highlight">nose landing gear (NLG)</span></li>
-                        <li>One valve for the <span class="highlight">main landing gear (MLG)</span> emergency operation</li>
-                    </ul>
-                    <p>The <span class="highlight">emergency accumulator nitrogen pressure indicator</span> is located on the left side of the tail cone. On the ground, a red push-button below the indicator allows the electrical pump to charge the accumulator if nitrogen pressure is below the placarded lower limit.</p>
-                    <p>Emergency extension is controlled by <span class="highlight">two distributors</span> located on the cabin floor under a removable cover beneath the pilot seat.</p>
-                    <h4>Landing Gear Indication System</h4>
-                    <ul>
-                        <li><span class="highlight">Three green lights:</span> respective gear is down and locked</li>
-                        <li><span class="highlight">Red light:</span> gear is in transit, either up or down</li>
-                        <li><span class="highlight">Amber "GEAR PUMP ON" light:</span> pump is electrically supplied</li>
-                    </ul>
-                    <p>The red transition light goes out only when all three gear legs are either down and locked, or fully up. The amber caution light goes out only when the electrical pump is off.</p>
-                    <h4>Gear Warning Horn</h4>
-                    <p>A warning horn sounds when the landing gear control knob is in <span class="highlight">UP</span>, and at least one throttle lever is at <span class="highlight">idle</span> and/or flaps are set to <span class="highlight">LAND</span>.</p>
-                    <p>During emergency extension, gear lights operate the same as in normal extension. The landing gear control knob must be set to <span class="highlight">DOWN</span> before beginning the emergency extension procedure.</p>
-                    <p style="color:#f44336; font-size:12px; margin-top:12px;"><strong>Important:</strong> After each emergency landing gear extension, the aircraft requires the restoration procedure described in the AMM.</p>
+                    <div id="diaHydraulic"></div>
+                    <p><span class="highlight">Electro-hydraulic</span> retractable gear. Reversible pump for normal ops. Emergency: pressurized accumulator (min 20 bar) forces gear down through shuttle valves. Indications: 3 green, 1 red, amber GEAR PUMP ON.</p>
                 </div>
 
                 <!-- ===== BRAKE SYSTEM ===== -->
                 <div class="diagram-card">
                     <h3>Brake System</h3>
-                    <div class="diagram-img-wrapper" onclick="toggleDiagramExpand(this)">
-                        <img src="images/brake-system-p2006t.png" alt="P2006T Brake System Diagram">
-                        <div class="diagram-img-caption">Brake System Schematic — P2006T AFM</div>
-                    </div>
-                    <p>The aircraft has an <span class="highlight">independent hydraulically actuated brake system for each main wheel</span>.</p>
-                    <p>A <span class="highlight">master cylinder</span> is attached to each pilot and co-pilot rudder pedal. Hydraulic pressure from the master cylinders is transmitted through brake lines to the wheel brake calipers.</p>
-                    <p>A <span class="highlight">parking brake valve</span> is mounted on the cabin floor and is operated by a knob on the cockpit central pedestal. Once the brake system is pressurized, this valve traps hydraulic pressure in the lines to hold the brake linings against the brake discs.</p>
-                    <p>Brakes can be operated from either the pilot's or co-pilot's pedals. A <span class="highlight">single vented oil reservoir</span> feeds the pilot-side master cylinders, which are connected by hoses to the co-pilot-side cylinders.</p>
-                    <p style="color:#f44336; font-size:12px; margin-top:12px;"><strong>Brake System Note:</strong> While steering on the ground, do <strong>not</strong> press the opposite toe brake until the pedals are back aligned. Doing so may damage the pedal mechanism.</p>
+                    <div id="diaBrake"></div>
+                    <p>Independent hydraulic brakes for each main wheel. Master cylinders on pilot and copilot pedals. Single vented reservoir. PV-1 parking valve on cabin floor.</p>
+                </div>
+
+                <!-- ===== COOLING SYSTEM ===== -->
+                <div class="diagram-card">
+                    <h3>Liquid Cooling System</h3>
+                    <div id="diaCooling"></div>
+                    <p>Closed liquid circuit for cylinder heads; ram-air for cylinders. Flow: Radiator → water pump → cylinder heads → expansion tank → radiator. CT max 120°C, CHT max 135°C.</p>
                 </div>
 
                 <!-- ===== POWERPLANT ===== -->
                 <div class="diagram-card">
                     <h3>Powerplant</h3>
-                    <p>The Tecnam P2006T is equipped with <span class="highlight">two Rotax 912S3 engines</span>, each producing <span class="highlight">98 hp (73 kW)</span>. Both engines rotate clockwise. They are four-cylinder, four-stroke, horizontally opposed engines with 1352 cc displacement. The engines are partially liquid cooled, using liquid cooling for the cylinder heads and ram-air cooling for the cylinders. Each engine uses two carburetors and includes an integrated reduction gearbox with shock absorber. The engines drive constant-speed propellers with pitch feathering capability.</p>
+                    <p>The Tecnam P2006T is equipped with <span class="highlight">two Rotax 912S3 engines</span>, each producing <span class="highlight">73.5 kW (98.6 hp)</span>. Both engines rotate clockwise. Four-cylinder, four-stroke, horizontally opposed, 1352 cc displacement. Partially liquid cooled. Each engine uses two carburetors and an integrated reduction gearbox (2.27:1) with shock absorber.</p>
                     <h4>Engine Features</h4>
                     <ul>
-                        <li><span class="highlight">Manufacturer:</span> Bombardier-Rotax GmbH</li>
-                        <li><span class="highlight">Model:</span> 912 S3</li>
-                        <li><span class="highlight">Configuration:</span> 4-cylinder horizontally opposed</li>
-                        <li><span class="highlight">Displacement:</span> 1352 cc</li>
-                        <li><span class="highlight">Cooling:</span> Liquid-cooled cylinder heads, ram-air cooled cylinders</li>
-                        <li><span class="highlight">Induction:</span> Two carburetors</li>
-                        <li><span class="highlight">Gearbox:</span> Integrated reduction gearbox with shock absorber</li>
-                        <li><span class="highlight">Maximum power (5 min):</span> 73.5 kW (98.6 hp) at 5800 RPM</li>
-                        <li><span class="highlight">Continuous power:</span> 69.0 kW (92.5 hp) at 5500 RPM</li>
-                    </ul>
-                    <h4>Cooling System</h4>
-                    <p>The cooling system is designed with liquid cooling for the cylinder heads and ram-air cooling for the cylinders. The liquid cooling system is a <span class="highlight">closed circuit</span> with an overflow bottle and an expansion tank.</p>
-                    <p>Coolant is circulated by a <span class="highlight">water pump driven from the camshaft</span>. It flows from the radiator to the cylinder heads, then from the top of the heads to the expansion tank. Because the radiator is located below engine level, the expansion tank is mounted on top of the engine to allow for coolant expansion.</p>
-                    <p>The expansion tank is closed by a <span class="highlight">pressure cap</span> fitted with both a pressure relief valve and a return valve. As coolant temperature rises and the coolant expands, the pressure relief valve opens and sends coolant through a hose into the transparent overflow bottle at atmospheric pressure. When the system cools, coolant is drawn back into the cooling circuit.</p>
-                    <h4>Lubrication System</h4>
-                    <p>The engine uses a <span class="highlight">dry sump forced lubrication system</span> with an oil pump that has an integrated pressure regulator.</p>
-                    <p>A <span class="highlight">thermostatic valve</span> regulates oil flow to the heat exchanger (oil radiator) based on oil temperature. This helps allow engine starting in cold conditions.</p>
-                    <p>The oil tank is installed behind the firewall and is protected from heat sources. Holes in the supporting bracket structure provide ventilation. The oil reservoir has a dipstick, and a hose located under the filler cap allows oil relief to discharge safely in the cowling away from exhausts and other heat sources.</p>
-                    <h4>Powerplant Instruments</h4>
-                    <ul>
-                        <li>LH &amp; RH RPM indicators</li>
-                        <li>LH &amp; RH manifold pressure indicators</li>
-                        <li>LH &amp; RH oil pressure indicators</li>
-                        <li>LH &amp; RH oil temperature indicators</li>
-                        <li>LH &amp; RH cylinder head temperature indicators</li>
+                        <li><span class="highlight">Maximum power (5 min):</span> 73.5 kW (98.6 hp) at 5800 RPM / 2388 prop RPM</li>
+                        <li><span class="highlight">Continuous power:</span> 69.0 kW (92.5 hp) at 5500 RPM / 2265 prop RPM</li>
+                        <li><span class="highlight">Ignition:</span> Dual breakerless CDI, independent from electrical system</li>
+                        <li><span class="highlight">Firing order:</span> 1-4-2-3</li>
                     </ul>
                 </div>
 
                 <!-- ===== PROPELLER SYSTEM ===== -->
                 <div class="diagram-card">
                     <h3>Propeller System</h3>
-                    <p>The aircraft uses <span class="highlight">MT Propeller</span> constant-speed propellers.</p>
-                    <h4>Propeller Features</h4>
                     <ul>
-                        <li><span class="highlight">Model:</span> MTV-21-A-C-F/CF178-05</li>
-                        <li><span class="highlight">Blades/Hub:</span> 2 wood/composite blades, aluminum hub</li>
-                        <li><span class="highlight">Diameter:</span> 1780 mm</li>
-                        <li><span class="highlight">Type:</span> Variable-pitch, hydraulically controlled</li>
-                    </ul>
-                    <h4>Propeller Governor</h4>
-                    <ul>
-                        <li><span class="highlight">Manufacturer:</span> MT Propeller</li>
-                        <li><span class="highlight">Model:</span> P-875-12</li>
-                        <li><span class="highlight">Type:</span> Hydraulic</li>
+                        <li><span class="highlight">Model:</span> MT MTV-21-A-C-F/CF178-05 — 2 wood/composite blades, aluminium hub</li>
+                        <li><span class="highlight">Diameter:</span> 1780 mm (no reduction allowed)</li>
+                        <li><span class="highlight">Type:</span> Variable-pitch, hydraulically controlled, fully featherable</li>
+                        <li><span class="highlight">Governor:</span> MT P-875-12 — oil pressure reduces pitch; loss of pressure → feather</li>
+                        <li><span class="highlight">Power change:</span> Increase: Prop FIRST, then MAP. Decrease: MAP FIRST, then Prop</li>
+                        <li>Governor check: 3 purge cycles, 400–500 RPM drop each</li>
                     </ul>
                 </div>
 
@@ -1403,6 +1466,185 @@ document.addEventListener('keydown', function(e) {
     }
 });
 console.log('[Systems Diagrams] Tab loaded');
+
+// ===================== INTERACTIVE DIAGRAM PINS =====================
+function diaPin(x, y, color, title, desc) {
+    return '<div class="dia-pin ' + color + '" style="left:' + x + '%;top:' + y + '%">' +
+        '<div class="dia-tip"><div class="dia-tip-title">' + title + '</div>' +
+        (desc ? '<div class="dia-tip-desc">' + desc + '</div>' : '') + '</div></div>';
+}
+function diaDiagram(imgSrc, alt, caption, pins) {
+    return '<div class="dia-interactive">' +
+        '<img src="' + imgSrc + '" alt="' + alt + '">' +
+        pins.join('') +
+        '<div style="position:absolute;bottom:6px;left:0;right:0;text-align:center"><span class="diagram-img-caption">' + caption + '</span></div>' +
+        '</div>';
+}
+
+// Build interactive diagrams
+(function() {
+    var ib = 'images/';
+
+    // Fuel system
+    document.getElementById('diaFuel').innerHTML = diaDiagram(ib + 'fuel-system-p2006t.svg', 'P2006T Fuel System', 'Fuel System Schematic — P2006T AFM (hover pins for details)', [
+        diaPin(8, 4, '', 'LH Fuel Quantity Indicator', 'Displays fuel quantity for the left tank on the RH instrument panel.'),
+        diaPin(12, 11, '', 'LH Fuel Quantity Sensor', 'Float-type sensor inside the left tank measures fuel level.'),
+        diaPin(5, 19, 'blue', 'Fuel Vent & Check Valve', 'Allows air pressure equalization in the tank. Check valve prevents fuel spillage. Outlet on lower wing skin.'),
+        diaPin(16, 24, 'blue', 'LH Fuel Tank', '100L (26.42 US gal) capacity. Integrated into the wing torque box. Usable: 97.2L (25.68 gal).'),
+        diaPin(11, 30, '', 'LH Sump', 'Fitted with a drain valve for removing water and moisture from the tank bottom.'),
+        diaPin(30, 27, 'orange', 'LH Fuel Selector', 'Positions: LEFT (own tank), RIGHT (crossfeed), OFF (pull + rotate to prevent accidental shutoff). Controlled by Bowden cables.'),
+        diaPin(22, 46, '', 'LH Mesh Filter & Tank Drain', 'Filters debris before fuel enters the pump system. Drain valve for ground servicing.'),
+        diaPin(22, 57, 'blue', 'LH Electric Fuel Pump', 'Electric backup pump feeds the engine if the engine-driven mechanical pump fails.'),
+        diaPin(28, 59, '', 'LH Fuel Filter', 'Inline filter downstream of the electric pump removes fine particulates.'),
+        diaPin(38, 52, '', 'LH Fuel Pressure Indicator', 'Displays fuel pressure on the RH instrument panel. Monitors pump output.'),
+        diaPin(8, 67, 'red', 'LH Firewall', 'Fire barrier between the engine nacelle and fuel system components.'),
+        diaPin(34, 71, '', 'LH Fuel Pressure Sender', 'Sends fuel pressure readings to the cockpit indicator.'),
+        diaPin(24, 79, 'blue', 'LH Mechanical Fuel Pump', 'Engine-driven pump — primary fuel delivery method during normal operation.'),
+        diaPin(14, 92, '', 'To LH Carburetor', 'Fuel delivery to the left engine\'s left carburetor.'),
+        diaPin(34, 92, '', 'To RH Carburetor', 'Fuel delivery to the left engine\'s right carburetor (2 carbs per engine).'),
+        diaPin(7, 95, 'orange', 'LH Return Line', 'Surplus fuel returns to the system, preventing vapour lock.'),
+        diaPin(47, 50, 'red', 'Electrical Line (Center)', 'Electrical connections cross the center of the aircraft between LH and RH fuel systems.'),
+        diaPin(92, 4, '', 'RH Fuel Quantity Indicator', 'Displays fuel quantity for the right tank on the RH instrument panel.'),
+        diaPin(88, 11, '', 'RH Fuel Quantity Sensor', 'Float-type sensor inside the right tank measures fuel level.'),
+        diaPin(95, 19, 'blue', 'RH Fuel Vent & Check Valve', 'Allows air pressure equalization. Check valve prevents fuel spillage.'),
+        diaPin(84, 24, 'blue', 'RH Fuel Tank', '100L (26.42 US gal) capacity. Integrated into the wing torque box. Usable: 97.2L (25.68 gal).'),
+        diaPin(89, 30, '', 'RH Sump', 'Fitted with a drain valve for removing water and moisture.'),
+        diaPin(67, 27, 'orange', 'RH Fuel Selector', 'Positions: LEFT (crossfeed), RIGHT (own tank), OFF (pull + rotate). Controlled by Bowden cables.'),
+        diaPin(78, 46, '', 'RH Mesh Filter & Tank Drain', 'Filters debris before fuel enters the pump system.'),
+        diaPin(78, 57, 'blue', 'RH Electric Fuel Pump', 'Electric backup pump feeds the right engine if the engine-driven pump fails.'),
+        diaPin(62, 52, '', 'RH Fuel Pressure Indicator', 'Displays fuel pressure for the right engine.'),
+        diaPin(92, 67, 'red', 'RH Firewall', 'Fire barrier between the right engine nacelle and fuel system.'),
+        diaPin(66, 71, '', 'RH Fuel Pressure Sender', 'Sends fuel pressure readings to the cockpit indicator.'),
+        diaPin(76, 79, 'blue', 'RH Mechanical Fuel Pump', 'Engine-driven pump — primary fuel delivery for the right engine.'),
+        diaPin(66, 92, '', 'To LH Carburetor (RH)', 'Fuel to the right engine\'s left carburetor.'),
+        diaPin(86, 92, '', 'To RH Carburetor (RH)', 'Fuel to the right engine\'s right carburetor.'),
+        diaPin(93, 95, 'orange', 'RH Return Line', 'Surplus fuel returns to prevent vapour lock.'),
+    ]);
+
+    // Hydraulic system
+    document.getElementById('diaHydraulic').innerHTML = diaDiagram(ib + 'hydraulic-system-p2006t.svg', 'P2006T Hydraulic Schematic', 'Hydraulic Schematic Diagram — P2006T AFM (hover pins for details)', [
+        diaPin(14, 8, 'red', 'Emergency Panel', 'Two distributors on the cabin floor under a removable cover near the pilot seat. Controls emergency gear extension only (not retraction).'),
+        diaPin(35, 11, 'blue', 'Nose Gear (p/n 22-9-620-000)', 'Nose landing gear hydraulic jack. Extended/retracted by the reversible pump. Gravity-assisted extension.'),
+        diaPin(26, 17, '', 'Nose Gear Shuttle Valve', 'Normal and emergency extension lines converge here. Routes hydraulic pressure from either source to the nose gear jack.'),
+        diaPin(80, 8, '', 'Gas Pressure Indicator', 'Located on the left side of the tail cone. Shows accumulator nitrogen pressure. Check before flight.'),
+        diaPin(88, 14, 'orange', 'Gas Valve', 'Nitrogen charge valve for the accumulator. Red push-button below allows recharging on the ground if pressure is low.'),
+        diaPin(90, 33, 'orange', 'Accumulator (p/n 22-9-610-000)', 'Pressurized nitrogen accumulator for emergency gear extension. Min pressure: 20 bar. Forces gear down through shuttle valves.'),
+        diaPin(8, 68, 'blue', 'Main Gear LH (p/n 22-9-620-000)', 'Left main landing gear hydraulic jack. Down-lock and up micro-switches detect position for indication and warning systems.'),
+        diaPin(35, 68, 'blue', 'Main Gear RH (p/n 22-9-620-000)', 'Right main landing gear hydraulic jack. Down-lock and up micro-switches detect position.'),
+        diaPin(22, 78, '', 'Main Gear Shuttle Valve', 'Routes hydraulic pressure from normal or emergency source to both main gear jacks simultaneously.'),
+        diaPin(55, 63, '', 'UP Line', 'Hydraulic pressure line for gear retraction. Pump reverses to direct fluid here when gear lever is set to UP.'),
+        diaPin(68, 63, '', 'DOWN Line', 'Hydraulic pressure line for gear extension. Pump directs fluid here when gear lever is set to DOWN.'),
+        diaPin(48, 75, '', 'TRV (UP)', 'Thermal relief valve on the UP pressure line. Prevents over-pressure from thermal expansion of trapped fluid.'),
+        diaPin(75, 75, '', 'TRV (DOWN)', 'Thermal relief valve on the DOWN pressure line. Same thermal protection function.'),
+        diaPin(42, 83, '', 'HPRV', 'High-pressure relief valve. Limits maximum system pressure to protect components.'),
+        diaPin(80, 83, '', 'LPRV', 'Low-pressure relief valve. Prevents excessive back-pressure in the return circuit.'),
+        diaPin(58, 90, 'blue', 'Pump Parker (Reversible)', 'Electric reversible hydraulic pump. Drives gear up or down based on control knob position. Amber "GEAR PUMP ON" light when energized.'),
+        diaPin(80, 92, '', 'Return / Buffer Tank', 'Hydraulic fluid reservoir. Stores oil for the pump; fluid returns here after actuating the jacks.'),
+    ]);
+
+    // Brake system
+    document.getElementById('diaBrake').innerHTML = diaDiagram(ib + 'brake-system-p2006t.svg', 'P2006T Brake System', 'Brake System Schematic — P2006T AFM (hover pins for details)', [
+        diaPin(45, 8, 'orange', 'R-100 Vented Reservoir', 'Single vented oil reservoir with cap. Feeds hydraulic fluid to all four pilot-side master cylinders. Vented to atmosphere for proper fluid flow.'),
+        diaPin(20, 38, 'blue', 'Pilot Left MC-4', 'Master cylinder attached to the pilot\'s left rudder pedal. Pressing the left toe brake pressurizes the left brake line.'),
+        diaPin(35, 38, 'blue', 'Pilot Right MC-4', 'Master cylinder attached to the pilot\'s right rudder pedal. Pressing the right toe brake pressurizes the right brake line.'),
+        diaPin(62, 38, 'blue', 'Copilot Left MC-4', 'Master cylinder on copilot\'s left pedal. Connected by hoses to the pilot-side cylinders — either crew can operate brakes.'),
+        diaPin(82, 38, 'blue', 'Copilot Right MC-4', 'Master cylinder on copilot\'s right pedal. Connected to the same brake circuit as the pilot\'s right pedal.'),
+        diaPin(10, 85, '', 'Left Main Wheel & Brake', 'Hydraulic disc brake caliper on the left main wheel. Receives pressure from both pilot and copilot left master cylinders.'),
+        diaPin(90, 85, '', 'Right Main Wheel & Brake', 'Hydraulic disc brake caliper on the right main wheel. Receives pressure from both pilot and copilot right master cylinders.'),
+        diaPin(48, 90, 'red', 'PV-1 Parking Valve', 'Mounted on cabin floor, operated by knob on central pedestal. Traps hydraulic pressure in brake lines to hold brake linings against discs when set.'),
+    ]);
+
+    // Cooling system
+    document.getElementById('diaCooling').innerHTML = diaDiagram(ib + 'cooling-system-p2006t.svg', 'P2006T Liquid Cooling System', 'Liquid Cooling System Schematic — P2006T AFM (hover pins for details)', [
+        diaPin(50, 8, 'orange', 'Expansion Tank (1)', 'Located on top of engine. Receives hot coolant from cylinder heads. Sealed by a pressure cap. Since the radiator is below engine level, this tank is positioned high to accommodate thermal expansion.'),
+        diaPin(18, 35, 'blue', 'Radiator (2)', 'Located below engine level. Cools the liquid coolant before it is pumped back to the cylinder heads.'),
+        diaPin(58, 22, 'red', 'Pressure Cap (3)', 'Fitted with pressure relief valve + return valve. Relief valve opens when coolant expands under heat, routing excess to overflow bottle. Return valve allows coolant to be sucked back when system cools.'),
+        diaPin(82, 30, '', 'Overflow Bottle (4)', 'Transparent bottle at atmospheric pressure. Receives overflow coolant when relief valve opens. Coolant is drawn back into the circuit by vacuum when the system cools down.'),
+        diaPin(30, 55, 'blue', 'Water Pump', 'Driven from the camshaft. Forces coolant through the closed circuit: radiator → cylinder heads → expansion tank → radiator.'),
+        diaPin(55, 60, '', 'Cylinder Heads', 'Liquid-cooled cylinder heads (cylinders are ram-air cooled). Temperature sensors at heads 2 and 3 (hottest cylinders).'),
+        diaPin(40, 80, '', 'Coolant Flow Path', 'Radiator → water pump → cylinder heads → expansion tank → back to radiator. Overflow circuit branches to/from the overflow bottle via the pressure cap.'),
+    ]);
+})();
+
+// ===================== FUEL BURN CALCULATOR =====================
+var CRUISE_PERF = [
+  {rpm:2250, map:29.5, temps:[{pwr:103,ktas:143,lthr:28.6,ushr:7.6},{pwr:97,ktas:145,lthr:27.1,ushr:7.2},{pwr:92,ktas:146,lthr:25.8,ushr:6.8}]},
+  {rpm:2250, map:28,   temps:[{pwr:88,ktas:134,lthr:24.5,ushr:6.5},{pwr:83,ktas:136,lthr:23.2,ushr:6.1},{pwr:79,ktas:138,lthr:22.0,ushr:5.8}]},
+  {rpm:2250, map:26,   temps:[{pwr:69,ktas:122,lthr:19.2,ushr:5.1},{pwr:65,ktas:124,lthr:18.2,ushr:4.8},{pwr:62,ktas:125,lthr:17.3,ushr:4.6}]},
+  {rpm:2250, map:24,   temps:[{pwr:59,ktas:115,lthr:16.6,ushr:4.4},{pwr:56,ktas:116,lthr:15.7,ushr:4.1},{pwr:53,ktas:117,lthr:14.9,ushr:3.9}]},
+  {rpm:2250, map:22,   temps:[{pwr:46,ktas:103,lthr:12.8,ushr:3.4},{pwr:43,ktas:103,lthr:12.1,ushr:3.2},{pwr:41,ktas:103,lthr:11.5,ushr:3.0}]},
+  {rpm:2250, map:20,   temps:[{pwr:39,ktas:96,lthr:11.0,ushr:2.9},{pwr:37,ktas:95,lthr:10.4,ushr:2.7},{pwr:35,ktas:94,lthr:9.9,ushr:2.6}]},
+  {rpm:2100, map:28,   temps:[{pwr:84,ktas:132,lthr:23.5,ushr:6.2},{pwr:80,ktas:134,lthr:22.2,ushr:5.9},{pwr:76,ktas:135,lthr:21.1,ushr:5.6}]},
+  {rpm:2100, map:26,   temps:[{pwr:66,ktas:121,lthr:18.5,ushr:4.9},{pwr:63,ktas:122,lthr:17.5,ushr:4.6},{pwr:60,ktas:123,lthr:16.7,ushr:4.4}]},
+  {rpm:2100, map:24,   temps:[{pwr:57,ktas:114,lthr:16.0,ushr:4.2},{pwr:54,ktas:114,lthr:15.1,ushr:4.0},{pwr:52,ktas:115,lthr:14.4,ushr:3.8}]},
+  {rpm:2100, map:22,   temps:[{pwr:43,ktas:100,lthr:12.1,ushr:3.2},{pwr:41,ktas:100,lthr:11.5,ushr:3.0},{pwr:39,ktas:100,lthr:10.9,ushr:2.9}]},
+  {rpm:2100, map:20,   temps:[{pwr:37,ktas:92,lthr:10.2,ushr:2.7},{pwr:35,ktas:91,lthr:9.7,ushr:2.6},{pwr:33,ktas:89,lthr:9.2,ushr:2.4}]},
+  {rpm:1900, map:26,   temps:[{pwr:61,ktas:117,lthr:17.1,ushr:4.5},{pwr:58,ktas:118,lthr:16.2,ushr:4.3},{pwr:55,ktas:119,lthr:15.4,ushr:4.1}]},
+  {rpm:1900, map:24,   temps:[{pwr:53,ktas:110,lthr:14.9,ushr:3.9},{pwr:50,ktas:111,lthr:14.1,ushr:3.7},{pwr:48,ktas:111,lthr:13.4,ushr:3.5}]},
+  {rpm:1900, map:22,   temps:[{pwr:41,ktas:97,lthr:11.4,ushr:3.0},{pwr:39,ktas:97,lthr:10.8,ushr:2.9},{pwr:37,ktas:96,lthr:10.2,ushr:2.7}]},
+  {rpm:1900, map:20,   temps:[{pwr:35,ktas:89,lthr:9.6,ushr:2.5},{pwr:33,ktas:88,lthr:9.1,ushr:2.4},{pwr:31,ktas:85,lthr:8.7,ushr:2.3}]},
+];
+var TEMP_LABELS = ['ISA \u2212 30\u00B0C', 'ISA (15\u00B0C)', 'ISA + 30\u00B0C'];
+var USABLE_FUEL_GAL = 51.35;
+var fbRpm = 2250, fbMap = 28, fbTemp = 1;
+
+function fbMapsForRpm(rpm) {
+  var maps = [];
+  CRUISE_PERF.forEach(function(r) { if (r.rpm === rpm && maps.indexOf(r.map) === -1) maps.push(r.map); });
+  return maps;
+}
+function fbLookup() {
+  for (var i = 0; i < CRUISE_PERF.length; i++) {
+    if (CRUISE_PERF[i].rpm === fbRpm && CRUISE_PERF[i].map === fbMap) return CRUISE_PERF[i].temps[fbTemp];
+  }
+  return null;
+}
+function fbSetRpm(rpm) { fbRpm = rpm; var maps = fbMapsForRpm(rpm); if (maps.indexOf(fbMap) === -1) fbMap = maps[0]; renderFuelCalc(); }
+function fbSetMap(map) { fbMap = map; renderFuelCalc(); }
+function fbSetTemp(idx) { fbTemp = idx; renderFuelCalc(); }
+
+function renderFuelCalc() {
+  var d = fbLookup();
+  var maps = fbMapsForRpm(fbRpm);
+  var rpms = [2250, 2100, 1900];
+  var peUshr = d ? d.ushr : 0, peLthr = d ? d.lthr : 0;
+  var totUshr = peUshr * 2, totLthr = peLthr * 2;
+  var ktas = d ? d.ktas : 0, pwr = d ? d.pwr : 0;
+  var endHrs = totUshr > 0 ? USABLE_FUEL_GAL / totUshr : 0;
+  var endH = Math.floor(endHrs), endM = Math.round((endHrs - endH) * 60);
+  var rangeNM = ktas * endHrs;
+
+  var h = '<div class="info-card" style="padding:18px 20px">' +
+    '<h3 style="margin-bottom:14px">Fuel Burn Calculator</h3>' +
+    '<p style="color:#666;font-size:10px;margin-bottom:14px">Cruise performance at 1150 kg (2535 lb), PA 0 ft. Fuel consumption is <b>per engine</b> from AFM chart.</p>' +
+    '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">' +
+    '<div style="flex:1;min-width:100px"><label style="color:#666;font-size:9px;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">RPM</label><div style="display:flex;gap:4px">';
+  rpms.forEach(function(r) {
+    h += '<button class="fb-btn' + (r === fbRpm ? ' act' : '') + '" onclick="fbSetRpm(' + r + ')">' + r + '</button>';
+  });
+  h += '</div></div><div style="flex:1;min-width:120px"><label style="color:#666;font-size:9px;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">MAP (in.Hg)</label><div style="display:flex;gap:4px">';
+  maps.forEach(function(m) {
+    h += '<button class="fb-btn' + (m === fbMap ? ' act' : '') + '" onclick="fbSetMap(' + m + ')">' + m + '</button>';
+  });
+  h += '</div></div><div style="flex:1;min-width:160px"><label style="color:#666;font-size:9px;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Temperature</label><div style="display:flex;gap:4px">';
+  TEMP_LABELS.forEach(function(lbl, i) {
+    h += '<button class="fb-btn' + (i === fbTemp ? ' act-warm' : '') + '" onclick="fbSetTemp(' + i + ')">' + lbl + '</button>';
+  });
+  h += '</div></div></div>';
+
+  if (!d) { h += '<p style="color:#666">No data for this combination.</p></div>'; document.getElementById('fuelCalcContainer').innerHTML = h; return; }
+
+  h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px">' +
+    '<div class="fb-result"><div class="fb-result-label">Power</div><div class="fb-result-val" style="color:#e0e0e0">' + pwr + '<span style="font-size:12px;color:#666">%</span></div></div>' +
+    '<div class="fb-result"><div class="fb-result-label">True Airspeed</div><div class="fb-result-val" style="color:#e0e0e0">' + ktas + ' <span style="font-size:12px;color:#666">KTAS</span></div></div>' +
+    '<div class="fb-result"><div class="fb-result-label">Per Engine</div><div class="fb-result-val" style="color:#4fc3f7">' + peUshr.toFixed(1) + ' <span style="font-size:12px">gal/hr</span></div><div class="fb-result-sub">' + peLthr.toFixed(1) + ' lt/hr</div></div>' +
+    '<div class="fb-result"><div class="fb-result-label">Total (Both)</div><div class="fb-result-val" style="color:#ffb74d">' + totUshr.toFixed(1) + ' <span style="font-size:12px">gal/hr</span></div><div class="fb-result-sub">' + totLthr.toFixed(1) + ' lt/hr</div></div>' +
+    '<div class="fb-result"><div class="fb-result-label">Endurance</div><div class="fb-result-val" style="color:#4CAF50">' + endH + 'h ' + endM + 'm</div><div class="fb-result-sub">from ' + USABLE_FUEL_GAL + ' gal usable</div></div>' +
+    '<div class="fb-result"><div class="fb-result-label">Still-Air Range</div><div class="fb-result-val" style="color:#4CAF50">' + Math.round(rangeNM) + ' <span style="font-size:12px">NM</span></div><div class="fb-result-sub">no reserve</div></div>' +
+    '</div></div>';
+
+  document.getElementById('fuelCalcContainer').innerHTML = h;
+}
 
 // ===================== TAB SWITCHING =====================
 function switchTab(tab) {
@@ -1446,7 +1688,7 @@ const allCards = [
     {cat:'Aerodynamics', q:'What happens aerodynamically when an engine fails?', a:'<b>Pitch down</b> (loss of stab effectiveness), <b>Roll</b> toward dead engine (loss of lift), <b>Yaw</b> toward dead engine (asymmetric thrust + windmill drag)'},
     {cat:'Aerodynamics', q:'What is zero sideslip and how do you achieve it?', a:'Minimizes drag OEI. Apply rudder toward operating engine + bank 2–5° into operating engine. Ball ½ width toward operating engine.'},
     {cat:'Aerodynamics', q:'What is the sideslip condition (undesirable)?', a:'Wings level + rudder to hold heading → sideward lift from vertical stab → aircraft sideslips → increased drag → vicious cycle requiring more rudder → more drag.'},
-    {cat:'Aerodynamics', q:'What does CRMALOFT stand for? (Vmc Factors)', a:'<span class="hoverable">Critical engine windmilling<span class="hover-detail">Windmilling prop creates high drag, increasing yaw → higher Vmc</span></span>, <span class="hoverable">Rearward CG<span class="hover-detail">Less rudder leverage due to shorter moment arm → higher Vmc</span></span>, <span class="hoverable">Max takeoff power<span class="hover-detail">Greatest asymmetric thrust → higher Vmc</span></span>, <span class="hoverable">Aft CG<span class="hover-detail">Same as rearward — reduced rudder effectiveness</span></span>, <span class="hoverable">Landing gear up<span class="hover-detail">Removes keel effect/drag stabilization → higher Vmc</span></span>, <span class="hoverable">Out of ground effect<span class="hover-detail">More induced drag → higher Vmc</span></span>, <span class="hoverable">Flaps takeoff<span class="hover-detail">Increased yawing moment from flap drag → higher Vmc</span></span>, <span class="hoverable">Trim for takeoff<span class="hover-detail">Reduces control forces, limiting corrective input → higher Vmc</span></span>'},
+    {cat:'Aerodynamics', q:'What does CRMALOFT stand for? (Vmc Factors)', a:'<span class="hoverable">Critical engine windmilling<span class="hover-detail">Windmilling prop creates high drag, increasing yaw → higher Vmc</span></span>, <span class="hoverable">Rearward CG<span class="hover-detail">Less rudder leverage due to shorter moment arm → higher Vmc</span></span>, <span class="hoverable">Max takeoff power<span class="hover-detail">Greatest asymmetric thrust → higher Vmc</span></span>, <span class="hoverable">Airborne, out of ground effect<span class="hover-detail">Out of ground effect, induced drag is higher → higher AOA → more pronounced P-factor/slipstream effects → higher Vmc</span></span>, <span class="hoverable">Landing gear up<span class="hover-detail">Removes keel effect/drag stabilization → higher Vmc</span></span>, <span class="hoverable">Out of ground effect<span class="hover-detail">More induced drag → higher Vmc</span></span>, <span class="hoverable">Flaps takeoff<span class="hover-detail">Increased yawing moment from flap drag → higher Vmc</span></span>, <span class="hoverable">Trim for takeoff<span class="hover-detail">Reduces control forces, limiting corrective input → higher Vmc</span></span>'},
     {cat:'Aerodynamics', q:'How does Vmc change with altitude?', a:'Vmc <b>decreases</b> with altitude because the operating engine produces less power (less asymmetric thrust). Published as IAS; TAS at Vmc increases with altitude.'},
     {cat:'Aerodynamics', q:'How much performance is lost with one engine inoperative?', a:'50% power loss but <b>≥80% performance loss</b>. Remaining engine must overcome drag from failed engine. Best SE performance: max power, min drag (gear up, flaps up, feather), zero sideslip.'},
     {cat:'Aerodynamics', q:'What are the Vmc certification requirements?', a:'Maintain heading within <b>20°</b> of original heading. After recovery, maintain straight flight with not more than <b>5° bank</b>.'},
@@ -1953,6 +2195,7 @@ buildFilters();
 renderCard();
 renderDefs();
 renderSpeeds();
+renderFuelCalc();
 buildQuizCats();
 renderQuiz();
 
